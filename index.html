@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a;--s1:#0e0e14;--s2:#14141e;--s3:#1c1c28;--bdr:#222233;
+  --acc:#c8ff00;--acc2:#00d4ff;--acc3:#ff5c5c;--acc4:#ffa94d;
+  --txt:#eeeef8;--mut:#52526e;--ok:#2dffa0;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 10% -5%,rgba(200,255,0,.06) 0,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 90% 100%,rgba(0,212,255,.04) 0,transparent 60%);
+  pointer-events:none;z-index:0}
+
+/* ══ SPLASH ══ */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+#splash.bye{animation:fadeOut .35s forwards;pointer-events:none}
+@keyframes fadeOut{to{opacity:0}}
+.sp-logo{font-family:'Bebas Neue';font-size:40px;letter-spacing:5px;color:var(--acc)}
+.sp-sub{font-family:'JetBrains Mono';font-size:10px;color:var(--mut);letter-spacing:1px}
+.sp-bar{width:150px;height:2px;background:var(--s3);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;background:var(--acc);width:0;animation:spfill 1s ease forwards}
+@keyframes spfill{to{width:100%}}
+
+/* ══ MAINTENANCE ══ */
+#maint{display:none;position:fixed;inset:0;background:var(--bg);z-index:9998;
+  flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:32px}
+#maint.on{display:flex}
+.maint-icon{font-size:68px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.maint-title{font-family:'Bebas Neue';font-size:clamp(32px,8vw,64px);letter-spacing:4px;color:var(--acc);line-height:1}
+.maint-sub{font-size:14px;color:var(--mut);max-width:380px;line-height:1.85}
+.maint-bar{width:160px;height:2px;background:var(--s3);border-radius:2px;overflow:hidden}
+.maint-fill{height:100%;background:var(--acc);animation:mfill 2s ease-in-out infinite alternate}
+@keyframes mfill{from{width:15%;margin-left:0}to{width:55%;margin-left:45%}}
+.maint-cd{font-family:'JetBrains Mono';font-size:10px;color:var(--mut)}
+.maint-src{font-family:'JetBrains Mono';font-size:9px;color:var(--bdr);margin-top:4px}
+
+/* ══ APP ══ */
+#app{display:none;position:relative;z-index:1}
+#app.on{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ══ LAYOUT ══ */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:230px;background:var(--s1);border-right:1px solid var(--bdr);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.sb-logo{padding:22px 20px 15px;border-bottom:1px solid var(--bdr)}
+.sb-logo .mark{font-family:'Bebas Neue';font-size:22px;letter-spacing:3px;color:var(--acc)}
+.sb-logo .sub{font-family:'JetBrains Mono';font-size:9px;color:var(--mut);margin-top:2px;letter-spacing:1px}
+.sb-nav{flex:1;padding:11px 9px;display:flex;flex-direction:column;gap:2px}
+.nav{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:7px;
+  cursor:pointer;font-size:13px;font-weight:500;color:var(--mut);
+  transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav:hover{background:var(--s2);color:var(--txt)}
+.nav.on{background:rgba(200,255,0,.1);color:var(--acc)}
+.sb-bot{padding:12px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:8px}
+.saldo-card{background:var(--s2);border:1px solid var(--bdr);border-radius:9px;padding:13px;position:relative;overflow:hidden}
+.saldo-card::before{content:'';position:absolute;top:-16px;right:-16px;width:65px;height:65px;
+  background:var(--acc);opacity:.06;border-radius:50%}
+.sl-lbl{font-family:'JetBrains Mono';font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px}
+.sl-val{font-family:'JetBrains Mono';font-size:19px;font-weight:700;color:var(--acc);margin-top:4px}
+.sl-ip{font-family:'JetBrains Mono';font-size:9px;color:var(--mut);margin-top:3px;word-break:break-all}
+
+/* ══ MAIN ══ */
+.main{margin-left:230px;flex:1;padding:26px 30px;min-height:100vh}
+.page{display:none}.page.on{display:block}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.topbar h2{font-family:'Bebas Neue';font-size:27px;letter-spacing:2px;line-height:1}
+.topbar p{font-size:12px;color:var(--mut);margin-top:3px}
+.tbr{display:flex;align-items:center;gap:9px}
+
+/* ══ STATS ══ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:22px}
+.stat{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);padding:16px 18px;
+  position:relative;overflow:hidden;transition:border-color .2s}
+.stat:hover{border-color:var(--acc)}
+.stat::after{content:'';position:absolute;bottom:0;left:0;height:2px;background:var(--acc);width:0;transition:width .5s}
+.stat.ld::after{width:100%}
+.stl{font-family:'JetBrains Mono';font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px}
+.stv{font-family:'Bebas Neue';font-size:29px;letter-spacing:1px;margin-top:5px;line-height:1}
+.sts{font-size:11px;color:var(--mut);margin-top:2px}
+
+/* ══ CARDS ══ */
+.card{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r);padding:20px 22px;margin-bottom:17px}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.ct{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px}
+.slbl{font-family:'JetBrains Mono';font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+
+/* ══ SERVICES GRID ══ */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:20px}
+.svc-chip{background:var(--s1);border:1px solid var(--bdr);border-radius:8px;padding:13px 14px;
+  cursor:pointer;transition:all .16s;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500}
+.svc-chip:hover{border-color:var(--acc);background:rgba(200,255,0,.05);transform:translateY(-1px)}
+.svc-icon{font-size:20px}
+
+/* ══ INPUTS ══ */
+.fld{margin-bottom:12px}
+.fld label{display:block;font-family:'JetBrains Mono';font-size:9px;color:var(--mut);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+input,select{background:var(--s2);border:1px solid var(--bdr);border-radius:7px;
+  color:var(--txt);font-family:'JetBrains Mono';font-size:12px;padding:8px 12px;outline:none;
+  width:100%;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--acc)}
+select option{background:var(--s2)}
+
+/* ══ BUTTONS ══ */
+.btn{padding:8px 16px;border-radius:7px;border:none;cursor:pointer;
+  font-family:'DM Sans';font-size:13px;font-weight:700;
+  display:inline-flex;align-items:center;gap:6px;transition:all .14s;white-space:nowrap}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-acc{background:var(--acc);color:#07070a}
+.btn-acc:hover:not(:disabled){background:#b6e800;transform:translateY(-1px)}
+.btn-out{background:transparent;color:var(--txt);border:1px solid var(--bdr)}
+.btn-out:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.btn-danger{background:transparent;color:var(--acc3);border:1px solid var(--acc3)}
+.btn-danger:hover:not(:disabled){background:rgba(255,92,92,.1)}
+.btn-blue{background:rgba(0,212,255,.1);color:var(--acc2);border:1px solid rgba(0,212,255,.3)}
+.btn-blue:hover:not(:disabled){background:rgba(0,212,255,.18)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ══ ORDER ══ */
+.ord-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.ord-display{background:var(--s2);border:1px solid var(--bdr);border-radius:9px;
+  padding:22px;text-align:center;min-height:128px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;transition:border-color .3s}
+.ord-display.has-otp{border-color:var(--acc)}
+.ord-phone{font-family:'JetBrains Mono';font-size:19px;font-weight:700;letter-spacing:3px}
+.otp-big{font-family:'Bebas Neue';font-size:54px;letter-spacing:10px;color:var(--acc);line-height:1;
+  animation:pop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.ord-wait{display:flex;align-items:center;gap:8px;color:var(--mut);font-family:'JetBrains Mono';font-size:11px}
+.ord-empty{color:var(--mut);font-family:'JetBrains Mono';font-size:11px}
+.poll-wrap{margin-top:9px;display:none}
+.poll-trk{height:2px;background:var(--s3);border-radius:2px;overflow:hidden}
+.poll-fill{height:100%;background:var(--acc);width:0%;transition:width .1s linear}
+
+/* ══ TABLE ══ */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:7px 11px;font-family:'JetBrains Mono';font-size:9px;
+  color:var(--mut);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bdr)}
+.tbl td{padding:11px 11px;border-bottom:1px solid rgba(34,34,51,.6);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--s2)}
+.ptag{font-family:'JetBrains Mono';font-size:13px;font-weight:700;color:var(--acc)}
+.ptag-orig{font-family:'JetBrains Mono';font-size:10px;color:var(--mut);text-decoration:line-through}
+.sbadge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:'JetBrains Mono'}
+.s-ok{background:rgba(45,255,160,.1);color:var(--ok);border:1px solid rgba(45,255,160,.25)}
+.s-low{background:rgba(255,169,77,.1);color:var(--acc4);border:1px solid rgba(255,169,77,.25)}
+.s-out{background:rgba(255,92,92,.1);color:var(--acc3);border:1px solid rgba(255,92,92,.25)}
+
+/* ══ DEPOSIT MODAL ══ */
+#dep-modal{display:none;position:fixed;inset:0;background:rgba(7,7,10,.88);z-index:500;
+  align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+#dep-modal.on{display:flex}
+.dep-box{background:var(--s1);border:1px solid var(--bdr);border-radius:13px;padding:26px;
+  width:100%;max-width:460px;position:relative;animation:slideUp .22s ease}
+@keyframes slideUp{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+.dep-close{position:absolute;top:13px;right:15px;background:none;border:none;color:var(--mut);
+  font-size:19px;cursor:pointer;transition:color .2s}
+.dep-close:hover{color:var(--acc3)}
+.dep-title{font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;margin-bottom:18px}
+.info-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bdr);
+  font-family:'JetBrains Mono';font-size:11px}
+.info-row:last-child{border-bottom:none;font-weight:700;color:var(--acc)}
+.info-lbl{color:var(--mut)}
+.qris-wrap{display:none;text-align:center}
+.qris-wrap.on{display:block}
+.qris-img{width:200px;height:200px;border:3px solid var(--acc);border-radius:10px;object-fit:cover;margin:0 auto 14px}
+.qris-info{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:13px;margin-bottom:13px}
+.dep-cd{font-family:'JetBrains Mono';font-size:11px;color:var(--acc4);text-align:center;margin-bottom:10px}
+.dep-stat-txt{font-family:'JetBrains Mono';font-size:11px;text-align:center;margin-bottom:8px;min-height:16px}
+.dep-poll{height:2px;background:var(--s3);border-radius:2px;overflow:hidden;margin-bottom:13px}
+.dep-poll-fill{height:100%;background:var(--acc2);width:0%;transition:width .1s linear}
+
+/* ══ CHIPS ══ */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'JetBrains Mono'}
+.chip::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.c-ok{background:rgba(45,255,160,.1);color:var(--ok);border:1px solid rgba(45,255,160,.25)}
+.c-pend{background:rgba(255,169,77,.1);color:var(--acc4);border:1px solid rgba(255,169,77,.25)}
+.c-err{background:rgba(255,92,92,.1);color:var(--acc3);border:1px solid rgba(255,92,92,.25)}
+.c-idle{background:rgba(82,82,110,.15);color:var(--mut);border:1px solid rgba(82,82,110,.3)}
+
+/* ══ LOG ══ */
+.log-box{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:11px;
+  height:115px;overflow-y:auto;font-family:'JetBrains Mono';font-size:11px;line-height:1.9}
+.li{color:var(--mut)}.ls{color:var(--ok)}.lw{color:var(--acc4)}.le{color:var(--acc3)}
+
+/* ══ HIST TABLE ══ */
+.htbl{width:100%;border-collapse:collapse;font-size:12px;font-family:'JetBrains Mono'}
+.htbl th{text-align:left;padding:7px 10px;font-size:9px;color:var(--mut);
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bdr)}
+.htbl td{padding:10px 10px;border-bottom:1px solid rgba(34,34,51,.5);vertical-align:middle}
+.htbl tr:last-child td{border-bottom:none}
+.htbl tr:hover td{background:var(--s2)}
+
+/* ══ COPY ══ */
+.cp{background:none;border:1px solid var(--bdr);border-radius:4px;color:var(--mut);
+  cursor:pointer;padding:2px 7px;font-size:10px;transition:all .2s;font-family:'JetBrains Mono';margin-left:5px}
+.cp:hover{color:var(--acc);border-color:var(--acc)}
+
+/* ══ SPINNER ══ */
+.spin{display:inline-block;width:11px;height:11px;border:2px solid rgba(200,255,0,.2);
+  border-top-color:var(--acc);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ══ TOAST ══ */
+#toast{position:fixed;bottom:20px;right:20px;background:var(--s2);border:1px solid var(--acc);
+  color:var(--acc);padding:10px 17px;border-radius:9px;font-family:'JetBrains Mono';
+  font-size:11px;opacity:0;transform:translateY(6px);transition:all .2s;z-index:9999;
+  pointer-events:none;max-width:250px}
+#toast.on{opacity:1;transform:translateY(0)}
+#toast.err{border-color:var(--acc3);color:var(--acc3)}
+
+.divider{height:1px;background:var(--bdr);margin:18px 0}
+.empty{text-align:center;padding:26px;color:var(--mut);font-family:'JetBrains Mono';font-size:11px}
+
+@media(max-width:880px){
+  .sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:16px}
+  .stats{grid-template-columns:1fr 1fr}.ord-grid{grid-template-columns:1fr}
+}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="sp-logo">OTP PANEL</div>
+  <div class="sp-sub">Memeriksa status server...</div>
+  <div class="sp-bar"><div class="sp-fill"></div></div>
+</div>
+
+<!-- ══ MAINTENANCE ══ -->
+<div id="maint">
+  <div class="maint-icon">🔧</div>
+  <div class="maint-title">UNDER MAINTENANCE</div>
+  <div class="maint-sub">Website sedang dalam perbaikan. Tim kami sedang bekerja. Silahkan kembali beberapa saat lagi.</div>
+  <div class="maint-bar"><div class="maint-fill"></div></div>
+  <div class="maint-cd">Auto-refresh dalam <span id="maint-cd">30</span> detik</div>
+  <div class="maint-src">github.com/saurusrawr/saurusdb/refs/head/main/tokensdb.json</div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="mark">OTP PANEL</div>
+      <div class="sub">Virtual Number Store</div>
+    </div>
+    <nav class="sb-nav">
+      <button class="nav on" onclick="goPage('dashboard')"><span>⚡</span> Dashboard</button>
+      <button class="nav" onclick="goPage('order')"><span>📦</span> Beli Nomor</button>
+      <button class="nav" onclick="goPage('deposit')"><span>💳</span> Deposit</button>
+      <button class="nav" onclick="goPage('history')"><span>📋</span> Riwayat</button>
+    </nav>
+    <div class="sb-bot">
+      <div class="saldo-card">
+        <div class="sl-lbl">Saldo Kamu</div>
+        <div class="sl-val" id="sb-saldo">Rp0</div>
+        <div class="sl-ip" id="sb-ip">—</div>
+      </div>
+      <button class="btn btn-blue" style="width:100%;justify-content:center" onclick="openDeposit()">＋ Top Up</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div class="page on" id="page-dashboard">
+      <div class="topbar">
+        <div><h2>DASHBOARD</h2><p>Selamat datang di OTP Panel</p></div>
+        <div class="tbr"><button class="btn btn-out btn-sm" onclick="refreshAll()">↻ Refresh</button></div>
+      </div>
+      <div class="stats">
+        <div class="stat" id="st-saldo"><div class="stl">Saldo</div><div class="stv" id="sv-saldo">—</div><div class="sts">Balance kamu</div></div>
+        <div class="stat" id="st-order"><div class="stl">Total Order</div><div class="stv" id="sv-order">0</div><div class="sts">Sesi ini</div></div>
+        <div class="stat" id="st-otp"><div class="stl">OTP Berhasil</div><div class="stv" id="sv-otp">0</div><div class="sts">Diterima</div></div>
+        <div class="stat" id="st-spend"><div class="stl">Total Belanja</div><div class="stv" id="sv-spend">Rp0</div><div class="sts">Semua waktu</div></div>
+      </div>
+      <div class="slbl">SEMUA LAYANAN</div>
+      <div class="svc-grid" id="svc-grid"><div class="empty">Memuat layanan...</div></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+        <div class="slbl" style="margin:0">ACTIVITY LOG</div>
+        <button class="btn btn-out btn-sm" onclick="clearLog()">Clear</button>
+      </div>
+      <div class="log-box" id="log-box"><div class="li">[system] Memuat panel...</div></div>
+    </div>
+
+    <!-- ═══ ORDER ═══ -->
+    <div class="page" id="page-order">
+      <div class="topbar"><div><h2>BELI NOMOR</h2><p>Auto order virtual number</p></div></div>
+      <div class="ord-grid">
+        <!-- Form -->
+        <div class="card">
+          <div class="ch"><div class="ct">KONFIGURASI</div></div>
+          <div class="fld"><label>Layanan</label>
+            <select id="sel-svc" onchange="onSvcChange()"><option value="">— Pilih layanan —</option></select></div>
+          <div class="fld"><label>Negara</label>
+            <select id="sel-ctr" onchange="onCtrChange()" disabled><option value="">— Pilih negara —</option></select></div>
+          <div class="fld"><label>Operator & Harga</label>
+            <select id="sel-op" disabled><option value="">— Pilih operator —</option></select></div>
+          <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:7px;padding:11px 13px;margin-bottom:13px;font-family:'JetBrains Mono';font-size:11px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="color:var(--mut)">Saldo kamu</span><span id="o-saldo" style="color:var(--acc)">—</span></div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--mut)">Harga order</span><span id="o-price">—</span></div>
+          </div>
+          <button class="btn btn-acc" id="buy-btn" onclick="doOrder()" style="width:100%;justify-content:center" disabled>📲 Beli Nomor</button>
+        </div>
+        <!-- Active -->
+        <div class="card">
+          <div class="ch"><div class="ct">ORDER AKTIF</div><div class="chip c-idle" id="ord-chip">Idle</div></div>
+          <div class="ord-display" id="ord-display"><div class="ord-empty">Belum ada order aktif</div></div>
+          <div class="poll-wrap" id="poll-wrap"><div class="poll-trk"><div class="poll-fill" id="poll-fill"></div></div></div>
+          <div style="display:flex;gap:8px;margin-top:11px">
+            <button class="btn btn-out" id="chk-btn" onclick="doCheckOTP()" disabled style="flex:1;justify-content:center">🔄 Cek OTP</button>
+            <button class="btn btn-danger" id="cancel-btn" onclick="doCancelOrder()" disabled style="flex:1;justify-content:center">✕ Batal</button>
+          </div>
+          <div style="margin-top:9px"><label style="font-size:12px;color:var(--mut);cursor:pointer">
+            <input type="checkbox" id="auto-poll" onchange="togglePoll()"> Auto-cek tiap 5 detik
+          </label></div>
+        </div>
+      </div>
+      <!-- Operator Table -->
+      <div class="card" id="op-card" style="display:none">
+        <div class="ch">
+          <div class="ct">DAFTAR OPERATOR</div>
+          <div id="op-ctr-lbl" style="font-size:11px;color:var(--mut);font-family:'JetBrains Mono'"></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Operator</th><th>Harga Kami</th><th>Harga Asli</th><th>Stok</th><th></th></tr></thead>
+            <tbody id="op-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DEPOSIT ═══ -->
+    <div class="page" id="page-deposit">
+      <div class="topbar">
+        <div><h2>DEPOSIT</h2><p>Top up saldo via QRIS</p></div>
+        <button class="btn btn-acc" onclick="openDeposit()">＋ Buat Deposit</button>
+      </div>
+      <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat"><div class="stl">Saldo Saat Ini</div><div class="stv" id="dp-saldo">—</div></div>
+        <div class="stat"><div class="stl">Total Deposit</div><div class="stv" id="dp-total">—</div></div>
+        <div class="stat"><div class="stl">Total Belanja</div><div class="stv" id="dp-spend">—</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">RIWAYAT DEPOSIT</div></div>
+        <div style="overflow-x:auto">
+          <table class="htbl">
+            <thead><tr><th>ID</th><th>Nominal QRIS</th><th>Diterima</th><th>Fee</th><th>Metode</th><th>Status</th><th>Tanggal</th></tr></thead>
+            <tbody id="dep-body"><tr><td colspan="7" class="empty">Belum ada riwayat deposit</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ HISTORY ═══ -->
+    <div class="page" id="page-history">
+      <div class="topbar"><div><h2>RIWAYAT ORDER</h2><p>Semua nomor & OTP yang sudah dibeli</p></div></div>
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table class="htbl">
+            <thead><tr><th>#</th><th>Nomor</th><th>Layanan</th><th>Harga</th><th>OTP</th><th>Waktu</th><th>Status</th></tr></thead>
+            <tbody id="ord-body"><tr><td colspan="7" class="empty">Belum ada riwayat</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<!-- ══ DEPOSIT MODAL ══ -->
+<div id="dep-modal">
+  <div class="dep-box">
+    <button class="dep-close" onclick="closeDeposit()">✕</button>
+    <div class="dep-title">TOP UP SALDO</div>
+    <!-- Step 1 -->
+    <div id="dep-s1">
+      <div class="fld">
+        <label>Nominal Deposit (min. Rp2.000)</label>
+        <input type="number" id="dep-amt" placeholder="Contoh: 10000" min="2000" step="1000" oninput="calcDep()">
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:7px;padding:12px;margin-bottom:13px">
+        <div class="info-row"><span class="info-lbl">Nominal</span><span id="d-nom">—</span></div>
+        <div class="info-row"><span class="info-lbl">Biaya admin</span><span id="d-fee" style="color:var(--acc4)">—</span></div>
+        <div class="info-row"><span class="info-lbl">Total QRIS</span><span id="d-tot">—</span></div>
+      </div>
+      <button class="btn btn-acc" id="dep-go-btn" onclick="createDeposit()" style="width:100%;justify-content:center">Buat QRIS</button>
+    </div>
+    <!-- Step 2: QRIS -->
+    <div class="qris-wrap" id="dep-s2">
+      <img id="qris-img" src="" alt="QRIS" class="qris-img">
+      <div class="qris-info" id="qris-info"></div>
+      <div class="dep-cd" id="dep-cd"></div>
+      <div class="dep-stat-txt" id="dep-stat"></div>
+      <div class="dep-poll"><div class="dep-poll-fill" id="dep-pfill"></div></div>
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-danger" onclick="cancelDeposit()" style="flex:1;justify-content:center">✕ Batalkan</button>
+        <button class="btn btn-out" onclick="closeDeposit()" style="flex:1;justify-content:center">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIG — URL GitHub untuk cek maintenance & ambil panel_url
+// ══════════════════════════════════════════════════════
+const GITHUB_DB = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/tokensdb.json';
+const FEE_DEP   = 500;   // fee admin deposit (sinkron dengan config.js)
+const MARKUP    = 2000;  // markup harga (info display saja)
+
+// panel_url diambil dari GitHub, dijadikan base URL untuk semua API call
+let BASE = '';
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let me = { ip:'', saldo:0, total_beli:0, total_order:0 };
+let sesOrders = 0, sesOTP = 0;
+let currentOrder = null;
+let pollTimer = null, pollPct = 0;
+let depState = { id:null, diterima:0, total:0, fee:0, expired:0 };
+let depPollTimer = null, depPollPct = 0, depCountTimer = null;
+
+const ICONS = {
+  wa:'💬',whatsapp:'💬',tg:'✈️',telegram:'✈️',ig:'📸',instagram:'📸',
+  fb:'📘',facebook:'📘',tw:'🐦',twitter:'🐦',go:'🛺',gojek:'🛺',
+  gr:'🛒',grab:'🛒',sh:'🛍',shopee:'🛍',tt:'🎵',tiktok:'🎵',gg:'🔍',google:'🔍',
+};
+
+// ══════════════════════════════════════════════════════
+// BOOT: Cek GitHub langsung dari HTML
+// ══════════════════════════════════════════════════════
+async function boot() {
+  try {
+    // Fetch JSON dari GitHub — inilah yang menentukan maintenance atau tidak
+    const res  = await fetch(GITHUB_DB + '?nocache=' + Date.now());
+    const data = await res.json();
+
+    // Jika panel_url tidak ada atau isinya "-" → maintenance
+    if (!data.panel_url || String(data.panel_url).trim() === '-') {
+      hideSplash();
+      showMaint();
+      return;
+    }
+
+    // Set base URL dari GitHub
+    BASE = data.panel_url.replace(/\/$/, '');
+    log('s', 'Panel URL: ' + BASE);
+
+    hideSplash();
+    showApp();
+    await loadMe();
+    await loadServices();
+
+  } catch (e) {
+    // Kalau gagal fetch GitHub → anggap maintenance
+    log('e', 'Gagal fetch config: ' + e.message);
+    hideSplash();
+    showMaint();
+  }
+}
+
+function hideSplash() {
+  const sp = document.getElementById('splash');
+  sp.classList.add('bye');
+  setTimeout(() => sp.style.display = 'none', 400);
+}
+
+function showMaint() {
+  document.getElementById('maint').classList.add('on');
+  // countdown 30 detik lalu auto reload
+  let s = 30;
+  const el = document.getElementById('maint-cd');
+  setInterval(() => { s--; if(el) el.textContent = s; if(s <= 0) location.reload(); }, 1000);
+}
+
+function showApp() {
+  document.getElementById('app').classList.add('on');
+}
+
+window.onload = boot;
+
+// ══════════════════════════════════════════════════════
+// API HELPERS — semua panggil ke BASE (panel_url dari GitHub)
+// ══════════════════════════════════════════════════════
+async function api(path, opts = {}) {
+  const res  = await fetch(BASE + path, { headers:{'Content-Type':'application/json'}, ...opts });
+  const data = await res.json();
+  // Jika server balas maintenance → tampilkan halaman maintenance
+  if (data.status === 'maintenance') { showMaint(); throw new Error('maintenance'); }
+  if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+  return data;
+}
+const apiGet  = p => api(p);
+const apiPost = (p, b) => api(p, { method:'POST', body:JSON.stringify(b) });
+
+// ══════════════════════════════════════════════════════
+// USER INFO / SALDO
+// ══════════════════════════════════════════════════════
+async function loadMe() {
+  try {
+    me = await apiGet('/api/me');
+    updateSaldoUI();
+    log('s', 'IP: ' + me.ip + ' | Saldo: Rp' + me.saldo.toLocaleString('id-ID'));
+  } catch(e) { log('e', 'Gagal load user info.'); }
+}
+
+function updateSaldoUI() {
+  const fmt = 'Rp' + (me.saldo||0).toLocaleString('id-ID');
+  document.getElementById('sb-saldo').textContent = fmt;
+  document.getElementById('sb-ip').textContent    = me.ip || '—';
+  document.getElementById('sv-saldo').textContent = fmt;
+  document.getElementById('sv-spend').textContent = 'Rp' + (me.total_beli||0).toLocaleString('id-ID');
+  document.getElementById('dp-saldo').textContent = fmt;
+  document.getElementById('dp-spend').textContent = 'Rp' + (me.total_beli||0).toLocaleString('id-ID');
+  document.getElementById('o-saldo').textContent  = fmt;
+  document.querySelectorAll('.stat').forEach(s => s.classList.add('ld'));
+}
+
+// ══════════════════════════════════════════════════════
+// SERVICES
+// ══════════════════════════════════════════════════════
+async function loadServices() {
+  try {
+    const data = await apiGet('/api/services');
+    const list = Array.isArray(data) ? data : (data.data || []);
+
+    // Render grid di dashboard
+    const grid = document.getElementById('svc-grid');
+    grid.innerHTML = list.map(s => {
+      const k = (s.name||'').toLowerCase().replace(/\s/g,'').slice(0,3);
+      const icon = ICONS[k] || ICONS[s.id?.toLowerCase()] || '📱';
+      return `<div class="svc-chip" onclick="gotoOrderSvc('${s.id}')">
+        <span class="svc-icon">${icon}</span><span>${s.name}</span></div>`;
+    }).join('') || '<div class="empty">Tidak ada layanan.</div>';
+
+    // Populate select
+    const sel = document.getElementById('sel-svc');
+    sel.innerHTML = '<option value="">— Pilih layanan —</option>';
+    list.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.id; o.textContent = s.name; sel.appendChild(o);
+    });
+
+    log('s', list.length + ' layanan dimuat.');
+  } catch(e) { log('e', 'Gagal load layanan: ' + e.message); }
+}
+
+async function onSvcChange() {
+  const id = document.getElementById('sel-svc').value;
+  resetBelow('ctr');
+  if (!id) return;
+  document.getElementById('sel-ctr').innerHTML = '<option>Loading...</option>';
+  try {
+    const data = await apiGet('/api/countries?service_id=' + id);
+    const list = Array.isArray(data) ? data : (data.data || []);
+    const sel  = document.getElementById('sel-ctr');
+    sel.innerHTML = '<option value="">— Pilih negara —</option>';
+    list.forEach(c => { const o = document.createElement('option'); o.value=c.id; o.textContent=c.name||c.country||c.id; sel.appendChild(o); });
+    sel.disabled = false;
+    log('i', list.length + ' negara tersedia.');
+  } catch(e) {
+    document.getElementById('sel-ctr').innerHTML = '<option value="">Gagal load</option>';
+    log('e', 'Gagal load negara: ' + e.message);
+  }
+}
+
+async function onCtrChange() {
+  const svcId = document.getElementById('sel-svc').value;
+  const ctrId = document.getElementById('sel-ctr').value;
+  resetBelow('op');
+  document.getElementById('op-card').style.display = 'none';
+  if (!ctrId) return;
+  document.getElementById('sel-op').innerHTML = '<option>Loading...</option>';
+  try {
+    const data = await apiGet('/api/operators?service_id=' + svcId + '&country_id=' + ctrId);
+    const list = Array.isArray(data) ? data : (data.data || []);
+    const sel  = document.getElementById('sel-op');
+    sel.innerHTML = '<option value="">— Pilih operator —</option>';
+    list.forEach(op => {
+      const o = document.createElement('option');
+      o.value = op.id;
+      o.textContent = op.name + ' — Rp' + (op.price||0).toLocaleString('id-ID');
+      o.dataset.price = op.price || 0;
+      sel.appendChild(o);
+    });
+    sel.disabled = false;
+    document.getElementById('buy-btn').disabled = false;
+    renderOpTable(list, ctrId);
+    log('i', list.length + ' operator ditemukan.');
+  } catch(e) {
+    document.getElementById('sel-op').innerHTML = '<option value="">Gagal load</option>';
+    log('e', 'Gagal load operator: ' + e.message);
+  }
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id !== 'sel-op') return;
+  const opt = e.target.options[e.target.selectedIndex];
+  const p = opt?.dataset?.price;
+  document.getElementById('o-price').textContent = p ? 'Rp' + Number(p).toLocaleString('id-ID') : '—';
+});
+
+function renderOpTable(list, ctrId) {
+  document.getElementById('op-ctr-lbl').textContent = ctrId;
+  document.getElementById('op-card').style.display = 'block';
+  document.getElementById('op-body').innerHTML = list.map(op => {
+    const price = op.price||0, orig = price - MARKUP;
+    const stock = op.stock ?? op.qty;
+    let sb = stock===undefined||stock===null ? `<span class="sbadge s-low">? stok</span>`
+           : stock<=0 ? `<span class="sbadge s-out">✕ Habis</span>`
+           : stock<5  ? `<span class="sbadge s-low">⚡ ${stock} sisa</span>`
+           : `<span class="sbadge s-ok">✓ ${stock}</span>`;
+    return `<tr>
+      <td><b>${op.name}</b></td>
+      <td><div class="ptag">Rp${price.toLocaleString('id-ID')}</div></td>
+      <td><div class="ptag-orig">Rp${orig.toLocaleString('id-ID')}</div></td>
+      <td>${sb}</td>
+      <td><button class="btn btn-acc btn-sm" onclick="pickOp('${op.id}','${price}')">Pilih</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="empty">Tidak ada operator.</td></tr>';
+}
+
+function pickOp(id, price) {
+  document.getElementById('sel-op').value = id;
+  document.getElementById('o-price').textContent = 'Rp' + Number(price).toLocaleString('id-ID');
+}
+
+// ══════════════════════════════════════════════════════
+// ORDER
+// ══════════════════════════════════════════════════════
+async function doOrder() {
+  const svcId = document.getElementById('sel-svc').value;
+  const ctrId = document.getElementById('sel-ctr').value;
+  const opId  = document.getElementById('sel-op').value;
+  if (!svcId||!ctrId||!opId) { toast('Lengkapi semua pilihan!', 1); return; }
+
+  const opt   = document.getElementById('sel-op').options[document.getElementById('sel-op').selectedIndex];
+  const price = parseFloat(opt?.dataset?.price || 0);
+
+  if (price > 0 && me.saldo < price) {
+    toast('Saldo kurang! Top up dulu.', 1); openDeposit(); return;
+  }
+
+  const btn = document.getElementById('buy-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Memproses...';
+  log('i', 'Membuat order...');
+
+  try {
+    const svcName = document.getElementById('sel-svc').options[document.getElementById('sel-svc').selectedIndex]?.text || svcId;
+    const ctrName = document.getElementById('sel-ctr').options[document.getElementById('sel-ctr').selectedIndex]?.text || ctrId;
+    const data    = await apiPost('/api/order', { service_id:svcId, country_id:ctrId, operator_id:opId, price });
+    const order   = data.data || data;
+
+    currentOrder = {
+      id: order.id||order.order_id, phone: order.phone||order.number||'—',
+      service: svcName, country: ctrName, price, otp: null, status:'pending',
+      time: new Date().toLocaleTimeString('id-ID'),
+    };
+
+    if (data.saldo_sisa !== undefined) { me.saldo = data.saldo_sisa; updateSaldoUI(); }
+
+    sesOrders++;
+    document.getElementById('sv-order').textContent = sesOrders;
+    renderActiveOrder();
+    document.getElementById('chk-btn').disabled    = false;
+    document.getElementById('cancel-btn').disabled = false;
+    setOrdChip('pend', 'Menunggu OTP');
+    log('s', 'Order #' + currentOrder.id + ' | +' + currentOrder.phone);
+    toast('Nomor berhasil dipesan!');
+    goPage('order');
+  } catch(e) {
+    log('e', 'Order gagal: ' + e.message);
+    toast(e.message || 'Order gagal', 1);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '📲 Beli Nomor';
+  }
+}
+
+async function doCheckOTP() {
+  if (!currentOrder) return;
+  try {
+    const data  = await apiGet('/api/order/status?order_id=' + currentOrder.id);
+    const order = data.data || data;
+    const sms   = order.sms || order.otp || order.code || order.message;
+    if (sms) {
+      currentOrder.otp = sms; currentOrder.status = 'success';
+      renderActiveOrder();
+      setOrdChip('ok', 'OTP Diterima');
+      sesOTP++; document.getElementById('sv-otp').textContent = sesOTP;
+      log('s', 'OTP: ' + sms); toast('OTP: ' + sms);
+      stopPoll();
+    } else { log('w', 'OTP belum masuk...'); }
+  } catch(e) { log('e', 'Cek OTP gagal: ' + e.message); }
+}
+
+async function doCancelOrder() {
+  if (!currentOrder) return;
+  try {
+    await apiPost('/api/order/cancel', { order_id: currentOrder.id });
+    log('w', 'Order dibatalkan.'); toast('Order dibatalkan.');
+    setOrdChip('err', 'Dibatalkan'); stopPoll();
+    document.getElementById('chk-btn').disabled = document.getElementById('cancel-btn').disabled = true;
+    document.getElementById('ord-display').innerHTML = '<div class="ord-empty">Order dibatalkan.</div>';
+    document.getElementById('ord-display').classList.remove('has-otp');
+    currentOrder = null;
+  } catch(e) { toast('Gagal batalkan: ' + e.message, 1); }
+}
+
+function renderActiveOrder() {
+  const el = document.getElementById('ord-display');
+  if (!currentOrder) { el.innerHTML = '<div class="ord-empty">Belum ada order aktif</div>'; return; }
+  el.innerHTML = `
+    <div style="font-size:10px;color:var(--mut);font-family:'JetBrains Mono'">${currentOrder.service} · ${currentOrder.country}</div>
+    <div class="ord-phone">+${currentOrder.phone}<button class="cp" onclick="cp('${currentOrder.phone}')">copy</button></div>
+    ${currentOrder.otp
+      ? `<div class="otp-big">${currentOrder.otp}</div><button class="btn btn-out btn-sm" onclick="cp('${currentOrder.otp}')">📋 Salin OTP</button>`
+      : `<div class="ord-wait"><span class="spin"></span> Menunggu OTP...</div>`}
+    <div style="font-size:10px;color:var(--mut);font-family:'JetBrains Mono'">Order #${currentOrder.id}</div>`;
+  el.classList.toggle('has-otp', !!currentOrder.otp);
+}
+
+function togglePoll() { document.getElementById('auto-poll').checked ? startPoll() : stopPoll(); }
+function startPoll() {
+  if (!currentOrder) { document.getElementById('auto-poll').checked=false; toast('Buat order dulu!',1); return; }
+  document.getElementById('poll-wrap').style.display = 'block'; pollPct = 0;
+  pollTimer = setInterval(() => {
+    pollPct += 2; document.getElementById('poll-fill').style.width = pollPct + '%';
+    if (pollPct >= 100) { pollPct = 0; doCheckOTP(); }
+  }, 100);
+}
+function stopPoll() {
+  clearInterval(pollTimer); pollTimer = null;
+  document.getElementById('poll-wrap').style.display = 'none';
+  document.getElementById('auto-poll').checked = false;
+}
+
+// ══════════════════════════════════════════════════════
+// DEPOSIT
+// ══════════════════════════════════════════════════════
+function calcDep() {
+  const v = parseInt(document.getElementById('dep-amt').value) || 0;
+  document.getElementById('d-nom').textContent = v ? 'Rp' + v.toLocaleString('id-ID') : '—';
+  document.getElementById('d-fee').textContent = v ? '+Rp' + FEE_DEP.toLocaleString('id-ID') : '—';
+  document.getElementById('d-tot').textContent = v ? 'Rp' + (v+FEE_DEP).toLocaleString('id-ID') : '—';
+}
+
+function openDeposit() {
+  document.getElementById('dep-modal').classList.add('on');
+  document.getElementById('dep-s1').style.display = 'block';
+  document.getElementById('dep-s2').classList.remove('on');
+  document.getElementById('dep-amt').value = '';
+  calcDep(); goPage('deposit');
+}
+function closeDeposit() {
+  document.getElementById('dep-modal').classList.remove('on');
+  clearInterval(depPollTimer); clearInterval(depCountTimer);
+}
+
+async function createDeposit() {
+  const amount = parseInt(document.getElementById('dep-amt').value);
+  if (!amount || amount < 2000) { toast('Minimal deposit Rp2.000', 1); return; }
+
+  const btn = document.getElementById('dep-go-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Membuat QRIS...';
+  log('i', 'Membuat deposit QRIS Rp' + amount.toLocaleString('id-ID') + '...');
+
+  try {
+    const data = await apiPost('/api/deposit/create', { amount });
+    if (!data.success) throw new Error(data.error || 'Gagal');
+
+    const d = data.data;
+    depState = { id:d.id, diterima:d.diterima, total:d.total, fee:d.fee, expired:d.expired_at };
+
+    document.getElementById('dep-s1').style.display = 'none';
+    document.getElementById('dep-s2').classList.add('on');
+    document.getElementById('qris-img').src = d.qr_image || '';
+    document.getElementById('qris-info').innerHTML = `
+      <div class="info-row"><span class="info-lbl">ID Pembayaran</span><span style="font-size:10px">${d.id}</span></div>
+      <div class="info-row"><span class="info-lbl">Saldo masuk</span><span style="color:var(--ok)">Rp${d.diterima.toLocaleString('id-ID')}</span></div>
+      <div class="info-row"><span class="info-lbl">Biaya admin</span><span style="color:var(--acc4)">Rp${d.fee.toLocaleString('id-ID')}</span></div>
+      <div class="info-row"><span class="info-lbl">Total bayar QRIS</span><span>Rp${d.total.toLocaleString('id-ID')}</span></div>`;
+
+    log('s', 'QRIS dibuat. Total: Rp' + d.total.toLocaleString('id-ID'));
+    toast('QRIS siap! Scan untuk bayar.');
+    startDepCountdown(d.expired_at);
+    startDepPoll(d.id);
+  } catch(e) {
+    log('e', 'Deposit gagal: ' + e.message);
+    toast(e.message || 'Deposit gagal', 1);
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Buat QRIS';
+  }
+}
+
+function startDepCountdown(expTs) {
+  clearInterval(depCountTimer);
+  depCountTimer = setInterval(() => {
+    const left = Math.max(0, Math.floor((expTs - Date.now()) / 1000));
+    const m = Math.floor(left/60), s = left%60;
+    document.getElementById('dep-cd').textContent = left > 0
+      ? '⏳ Kedaluwarsa dalam ' + m + ':' + String(s).padStart(2,'0')
+      : '⏰ QRIS sudah kadaluwarsa';
+    if (left <= 0) { clearInterval(depCountTimer); stopDepPoll(); }
+  }, 1000);
+}
+
+function startDepPoll(depositId) {
+  clearInterval(depPollTimer); depPollPct = 0;
+  depPollTimer = setInterval(async () => {
+    depPollPct += 2;
+    document.getElementById('dep-pfill').style.width = depPollPct + '%';
+    if (depPollPct >= 100) {
+      depPollPct = 0;
+      try {
+        const res = await apiGet('/api/deposit/status?deposit_id=' + depositId);
+        if (res.status === 'success') {
+          stopDepPoll();
+          me.saldo = res.saldo_baru; updateSaldoUI();
+          document.getElementById('dep-stat').innerHTML = `<span style="color:var(--ok)">✅ BERHASIL! +Rp${res.diterima.toLocaleString('id-ID')}</span>`;
+          log('s', 'Deposit sukses! +Rp' + res.diterima.toLocaleString('id-ID'));
+          toast('Deposit berhasil! +Rp' + res.diterima.toLocaleString('id-ID'));
+          await loadDepHistory(); updateDepStats();
+          setTimeout(closeDeposit, 3000);
+        } else {
+          document.getElementById('dep-stat').textContent = 'Menunggu pembayaran...';
+        }
+      } catch(e) { console.error(e); }
+    }
+  }, 100);
+}
+function stopDepPoll() { clearInterval(depPollTimer); depPollTimer = null; }
+
+async function cancelDeposit() {
+  if (!depState.id) return;
+  try {
+    await apiPost('/api/deposit/cancel', { deposit_id: depState.id });
+    stopDepPoll(); clearInterval(depCountTimer);
+    log('w', 'Deposit dibatalkan.'); toast('Deposit dibatalkan.');
+    closeDeposit(); await loadDepHistory();
+  } catch(e) { toast('Gagal batalkan: ' + e.message, 1); }
+}
+
+async function loadDepHistory() {
+  try {
+    const list = await apiGet('/api/deposit/history');
+    const body = document.getElementById('dep-body');
+    if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="empty">Belum ada riwayat deposit</td></tr>'; return; }
+    body.innerHTML = list.map(d => {
+      const chip = d.status==='success' ? '<span class="chip c-ok">Sukses</span>'
+                 : d.status?.includes('cancel') ? '<span class="chip c-err">Dibatalkan</span>'
+                 : '<span class="chip c-pend">Pending</span>';
+      return `<tr>
+        <td style="color:var(--mut);font-size:10px">${(d.id||'').slice(0,10)}...</td>
+        <td>Rp${(d.total||0).toLocaleString('id-ID')}</td>
+        <td style="color:var(--ok)">Rp${(d.diterima||0).toLocaleString('id-ID')}</td>
+        <td style="color:var(--acc4)">Rp${(d.fee||0).toLocaleString('id-ID')}</td>
+        <td>${d.metode||'QRIS'}</td>
+        <td>${chip}</td>
+        <td style="color:var(--mut)">${d.tanggal ? new Date(d.tanggal).toLocaleString('id-ID') : '—'}</td>
+      </tr>`;
+    }).join('');
+    const totDep = list.filter(d=>d.status==='success').reduce((a,b)=>a+(b.diterima||0),0);
+    document.getElementById('dp-total').textContent = 'Rp' + totDep.toLocaleString('id-ID');
+  } catch(e) {}
+}
+
+function updateDepStats() {
+  document.getElementById('dp-saldo').textContent = 'Rp' + (me.saldo||0).toLocaleString('id-ID');
+  document.getElementById('dp-spend').textContent = 'Rp' + (me.total_beli||0).toLocaleString('id-ID');
+}
+
+async function loadOrdHistory() {
+  try {
+    const list = await apiGet('/api/orders/history');
+    const body = document.getElementById('ord-body');
+    if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="empty">Belum ada riwayat</td></tr>'; return; }
+    body.innerHTML = list.map((h,i) => {
+      const chip = h.status==='success' ? '<span class="chip c-ok">OTP ✓</span>'
+                 : h.status==='cancelled' ? '<span class="chip c-err">Dibatalkan</span>'
+                 : '<span class="chip c-pend">Pending</span>';
+      return `<tr>
+        <td style="color:var(--mut)">${i+1}</td>
+        <td>+${h.phone||'—'}<button class="cp" onclick="cp('${h.phone}')">copy</button></td>
+        <td>${h.service_id||'—'}</td>
+        <td style="color:var(--acc)">Rp${(h.harga||0).toLocaleString('id-ID')}</td>
+        <td>${h.otp ? `<b style="color:var(--acc)">${h.otp}</b><button class="cp" onclick="cp('${h.otp}')">copy</button>` : '<span style="color:var(--mut)">—</span>'}</td>
+        <td style="color:var(--mut)">${h.tanggal ? new Date(h.tanggal).toLocaleString('id-ID') : '—'}</td>
+        <td>${chip}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav').forEach(n => n.classList.remove('on'));
+  document.getElementById('page-' + name).classList.add('on');
+  const btn = document.querySelector(`.nav[onclick="goPage('${name}')"]`);
+  if (btn) btn.classList.add('on');
+  if (name === 'history') loadOrdHistory();
+  if (name === 'deposit') { loadDepHistory(); updateDepStats(); }
+}
+
+function gotoOrderSvc(id) {
+  goPage('order');
+  document.getElementById('sel-svc').value = id;
+  onSvcChange();
+}
+
+async function refreshAll() {
+  await loadMe(); await loadServices(); toast('Refreshed!');
+}
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+function resetBelow(from) {
+  if (from === 'ctr' || from === 'op') {
+    const c = document.getElementById('sel-ctr');
+    c.innerHTML = '<option value="">— Pilih negara —</option>'; c.disabled = true;
+  }
+  if (from === 'op') {
+    const o = document.getElementById('sel-op');
+    o.innerHTML = '<option value="">— Pilih operator —</option>'; o.disabled = true;
+    document.getElementById('buy-btn').disabled = true;
+    document.getElementById('op-card').style.display = 'none';
+    document.getElementById('o-price').textContent = '—';
+  }
+}
+
+function setOrdChip(type, label) {
+  const el = document.getElementById('ord-chip');
+  el.className = 'chip c-' + type; el.textContent = label;
+}
+
+function log(type, msg) {
+  const box = document.getElementById('log-box');
+  if (!box) return;
+  const now = new Date().toLocaleTimeString('id-ID');
+  const cls = {i:'li',s:'ls',w:'lw',e:'le'}[type] || 'li';
+  const d = document.createElement('div'); d.className = cls;
+  d.textContent = '[' + now + '] ' + msg;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+
+function clearLog() { document.getElementById('log-box').innerHTML = ''; }
+
+function cp(t) { navigator.clipboard.writeText(t).then(() => toast('Disalin!')); }
+
+let _tt;
+function toast(msg, isErr = 0) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'on' + (isErr ? ' err' : '');
+  clearTimeout(_tt); _tt = setTimeout(() => { el.className = ''; }, 3000);
+}
+</script>
+</body>
+</html>
