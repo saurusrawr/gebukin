@@ -53,6 +53,13 @@
         "filename": "waifu",
         "method": "GET",
         "params": []
+      },
+      {
+      "name": "Random Blue Archive",
+        "endpoint": "/api/random/bluearchive",
+        "filename": "ba",
+        "method": "GET",
+        "params": []
       }
     ],
     "tools": [
