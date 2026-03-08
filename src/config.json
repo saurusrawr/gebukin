@@ -32,20 +32,38 @@
       }
     ],
     "maker": [
+  {
+    "name": "Brat Generator",
+    "endpoint": "/api/maker/brat",
+    "filename": "brat",
+    "method": "GET",
+    "params": [
       {
-        "name": "Brat Generator",
-        "endpoint": "/api/maker/brat",
-        "filename": "brat",
-        "method": "GET",
-        "params": [
-          {
-            "name": "text",
-            "required": true,
-            "description": "Text"
-          }
-        ]
+        "name": "text",
+        "required": true,
+        "description": "Text"
       }
-    ],
+    ]
+  },
+  {
+    "name": "Lobby FF",
+    "endpoint": "/api/maker/lobbyff",
+    "filename": "lobbyff",
+    "method": "GET",
+    "params": [
+      {
+        "name": "nickname",
+        "required": true,
+        "description": "Nama yang akan ditampilkan di lobby"
+      },
+      {
+        "name": "background",
+        "required": false,
+        "description": "Nomor background 1-16, jika tidak diisi akan random"
+      }
+    ]
+  }
+],
     "random": [
       {
         "name": "Random Waifu",
@@ -57,7 +75,7 @@
       {
       "name": "Random Blue Archive",
         "endpoint": "/api/random/bluearchive",
-        "filename": "bluearchive",
+        "filename": "ba",
         "method": "GET",
         "params": []
       }
