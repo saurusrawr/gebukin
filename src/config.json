@@ -57,7 +57,7 @@
       {
       "name": "Random Blue Archive",
         "endpoint": "/api/random/bluearchive",
-        "filename": "ba",
+        "filename": "bluearchive",
         "method": "GET",
         "params": []
       }
