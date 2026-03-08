@@ -1,1 +1,179 @@
-
+{
+  "settings": {
+    "creator": "Saurus",
+    "apiName": "kawaiiyumee",
+    "description": "A free and reliable API service designed for modern application development. Built with Node.js and TypeScript, delivering fast performance, stable endpoints, and easy integration.",
+    "apiVersion": "v1.0",
+    "visitors": "0",
+    "favicon": "/src/saurus.jpg",
+    "thumbnail": "/src/thumbnail.jpg",
+    "channelUrl": "https://whatsapp.com/channel/0029VbBQG1n3QxRsqN7XkS06",
+    "github": "https://github.com/SaurusAraAra"
+  },
+  "tags": {
+    "ai": [
+      {
+        "name": "kawaiiyumee Chat",
+        "endpoint": "/api/ai/kawaiiyumee",
+        "filename": "kawaiiyumee",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Question"
+          },
+          {
+            "name": "session",
+            "required": false,
+            "description": "Session ID"
+          }
+        ]
+      }
+    ],
+    "maker": [
+      {
+        "name": "Brat Generator",
+        "endpoint": "/api/maker/brat",
+        "filename": "brat",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Text"
+          }
+        ]
+      }
+    ],
+    "random": [
+      {
+        "name": "Random Waifu",
+        "endpoint": "/api/random/waifu",
+        "filename": "waifu",
+        "method": "GET",
+        "params": []
+      }
+    ],
+    "tools": [
+       {
+        "name": "Screenshot Web",
+        "endpoint": "/api/tools/ssweb",
+        "filename": "ssweb",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "Website URL"
+          },
+          {
+            "name": "type",
+            "required": false,
+            "description": "mobile | desktop"
+          }
+        ]
+      },
+       {
+        "name": "Short URL",
+        "endpoint": "/api/tools/shorturl",
+        "filename": "shorturl",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "Original URL"
+          },
+          {
+            "name": "alias",
+            "required": false,
+            "description": "Custom Alias"
+          }
+        ]
+      }
+    ],
+    "download": [
+      {
+        "name": "Facebook Downloader",
+        "endpoint": "/api/download/facebook",
+        "filename": "facebook",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "Facebook URL"
+          }
+        ]
+      },
+      {
+        "name": "Instagram Downloader",
+        "endpoint": "/api/download/instagram",
+        "filename": "instagram",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "Instagram URL"
+          }
+        ]
+      },
+      {
+        "name": "TikTok Downloader",
+        "endpoint": "/api/download/tiktok",
+        "filename": "tiktok",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "TikTok URL"
+          }
+        ]
+      }
+    ],
+    "search": [
+      {
+        "name": "Youtube Search",
+        "endpoint": "/api/search/yts",
+        "filename": "yts",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
+        ]
+      },
+      {
+        "name": "TikTok Search",
+        "endpoint": "/api/search/tiktok",
+        "filename": "tiktok",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
+        ]
+      },
+      {
+        "name": "Pinterest Search",
+        "endpoint": "/api/search/pinterest",
+        "filename": "pinterest",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
+        ]
+      }
+    ]
+  }
+}
