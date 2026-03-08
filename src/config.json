@@ -81,43 +81,66 @@
       }
     ],
     "tools": [
-       {
-        "name": "Screenshot Web",
-        "endpoint": "/api/tools/ssweb",
-        "filename": "ssweb",
-        "method": "GET",
-        "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "Website URL"
-          },
-          {
-            "name": "type",
-            "required": false,
-            "description": "mobile | desktop"
-          }
-        ]
+  {
+    "name": "Screenshot Web",
+    "endpoint": "/api/tools/ssweb",
+    "filename": "ssweb",
+    "method": "GET",
+    "params": [
+      {
+        "name": "url",
+        "required": true,
+        "description": "Website URL"
       },
-       {
-        "name": "Short URL",
-        "endpoint": "/api/tools/shorturl",
-        "filename": "shorturl",
-        "method": "GET",
-        "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "Original URL"
-          },
-          {
-            "name": "alias",
-            "required": false,
-            "description": "Custom Alias"
-          }
-        ]
+      {
+        "name": "type",
+        "required": false,
+        "description": "mobile | desktop"
       }
-    ],
+    ]
+  },
+  {
+    "name": "Short URL",
+    "endpoint": "/api/tools/shorturl",
+    "filename": "shorturl",
+    "method": "GET",
+    "params": [
+      {
+        "name": "url",
+        "required": true,
+        "description": "Original URL"
+      },
+      {
+        "name": "alias",
+        "required": false,
+        "description": "Custom Alias"
+      }
+    ]
+  },
+  {
+    "name": "Spam NGL",
+    "endpoint": "/api/tools/spamngl",
+    "filename": "spamngl",
+    "method": "GET",
+    "params": [
+      {
+        "name": "link",
+        "required": true,
+        "description": "https://ngl.link/username"
+      },
+      {
+        "name": "message",
+        "required": true,
+        "description": "Pesan yang dikirim"
+      },
+      {
+        "name": "count",
+        "required": true,
+        "description": "Jumlah spam (max 50)"
+      }
+    ]
+  }
+],
     "download": [
       {
         "name": "Facebook Downloader",
