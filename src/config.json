@@ -77,7 +77,7 @@
         "endpoint": "/api/random/bluearchive",
         "filename": "ba",
         "method": "GET",
-        "params": {}
+        "params": []
       }
     ],
     "tools": [
