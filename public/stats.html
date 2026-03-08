@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KawaiiYumee | Server Monitor</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Quicksand"', 'sans-serif'],
+                    },
+                    colors: {
+                        'fmn-blue': '#89CFF0',
+                        'fmn-dark': '#6495ED',
+                        'fmn-purple': '#B39DDB',
+                        'term-bg': '#1e1e1e',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        #fixed-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -50;
+            background-color: #F0F8FF;
+            background-image: url('https://c.termai.cc/i181/aGwK.png'), url('https://c.termai.cc/i155/wbV.jpg');
+            background-position: bottom right, center center;
+            background-size: 85% auto, cover;
+            background-repeat: no-repeat;
+            opacity: 0.8;
+        }
+        @media (max-width: 768px) { #fixed-bg { background-size: 110% auto, cover; } }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            box-shadow: 4px 4px 10px rgba(137, 207, 240, 0.2);
+        }
+        .meter-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        #realtime-logs::-webkit-scrollbar { width: 6px; }
+        #realtime-logs::-webkit-scrollbar-track { background: #1e1e1e; }
+        #realtime-logs::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+    </style>
+</head>
+<body class="text-slate-700 min-h-screen flex flex-col font-sans selection:bg-fmn-blue selection:text-white">
+
+    <div id="fixed-bg"></div>
+
+    <nav class="border-b border-fmn-blue/50 bg-white/95 backdrop-blur-sm sticky top-0 z-[60] shadow-sm w-full">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4 justify-between">
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="/" class="w-10 h-10 bg-fmn-blue text-white flex items-center justify-center rounded-full hover:bg-fmn-dark hover:scale-105 transition-all shadow-md cursor-pointer border border-fmn-dark/20">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h1 class="font-bold text-xl tracking-tight text-fmn-dark uppercase">SYSTEM STATUS</h1>
+            </div>
+            <a href="/docs" class="text-xs font-bold bg-fmn-bg px-3 py-1.5 rounded-lg border border-fmn-blue/30 text-fmn-dark hover:bg-fmn-blue hover:text-white transition-colors">DOCS</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid gap-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-green-400/20 rounded-full blur-xl group-hover:bg-green-400/30 transition-all"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 text-green-500 flex items-center justify-center text-xl shadow-sm"><i class="fa-solid fa-clock"></i></div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">System Uptime</h3>
+                        <p id="uptime" class="font-mono font-bold text-lg text-slate-700">Loading...</p>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden"><div class="h-full bg-green-400 animate-pulse-slow w-full"></div></div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-fmn-blue/20 rounded-full blur-xl group-hover:bg-fmn-blue/30 transition-all"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-fmn-dark flex items-center justify-center text-xl shadow-sm"><i class="fa-solid fa-server"></i></div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Platform</h3>
+                        <p id="platform" class="font-mono font-bold text-lg text-slate-700">Loading...</p>
+                    </div>
+                </div>
+                 <div class="flex gap-2 text-[10px] font-bold">
+                    <span id="arch" class="bg-blue-50 text-blue-600 px-2 py-1 rounded border border-blue-100">--</span>
+                    <span id="node-ver" class="bg-purple-50 text-purple-600 px-2 py-1 rounded border border-purple-100">--</span>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-red-400/20 rounded-full blur-xl group-hover:bg-red-400/30 transition-all"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-red-100 text-red-500 flex items-center justify-center text-xl shadow-sm"><i class="fa-solid fa-microchip"></i></div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">CPU Load</h3>
+                        <p id="cpu-load" class="font-mono font-bold text-lg text-slate-700">0%</p>
+                    </div>
+                </div>
+                 <p id="cpu-model" class="text-[10px] font-mono text-slate-500 truncate">Detecting...</p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 md:p-8">
+            <h2 class="text-lg font-bold text-slate-700 mb-6 flex items-center gap-2"><i class="fa-solid fa-memory text-fmn-purple"></i> MEMORY USAGE</h2>
+            <div class="mb-2 flex justify-between text-xs font-bold text-slate-500 font-mono">
+                <span>USED: <span id="mem-used" class="text-slate-800">0 GB</span></span>
+                <span>TOTAL: <span id="mem-total" class="text-slate-800">0 GB</span></span>
+            </div>
+            <div class="w-full h-8 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 relative mb-2">
+                <div id="ram-bar" class="h-full bg-gradient-to-r from-fmn-blue to-fmn-purple meter-bar w-0 flex items-center justify-end pr-2">
+                    <span id="ram-percent" class="text-[10px] font-bold text-white drop-shadow-md">0%</span>
+                </div>
+                <div class="absolute inset-0 grid grid-cols-10 pointer-events-none">
+                    <div class="border-r border-white/50 h-full"></div><div class="border-r border-white/50 h-full"></div>
+                    <div class="border-r border-white/50 h-full"></div><div class="border-r border-white/50 h-full"></div>
+                    <div class="border-r border-white/50 h-full"></div><div class="border-r border-white/50 h-full"></div>
+                    <div class="border-r border-white/50 h-full"></div><div class="border-r border-white/50 h-full"></div>
+                    <div class="border-r border-white/50 h-full"></div>
+                </div>
+            </div>
+            <p class="text-right text-[10px] font-bold text-fmn-dark">FREE: <span id="mem-free">0 GB</span></p>
+        </div>
+
+        <div class="bg-term-bg border-2 border-slate-600 shadow-xl rounded-lg overflow-hidden flex flex-col h-[300px] font-mono text-xs relative">
+            <div class="bg-[#2d2d2d] px-3 py-2 flex items-center justify-between border-b border-gray-700 select-none">
+                <div class="flex gap-1.5 items-center">
+                    <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                    <span class="ml-2 text-gray-400 font-bold">Public Requests</span>
+                </div>
+            </div>
+            <div id="realtime-logs" class="p-4 text-gray-300 overflow-y-auto flex-1 space-y-1 font-mono leading-relaxed">
+                <div class="text-gray-500 italic">Listening for requests...</div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const updateInterval = 1000;
+        let lastRequestsJson = '';
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/stats/data');
+                const data = await response.json();
+                
+                if(data.status) {
+                    const s = data.server;
+                    document.getElementById('uptime').innerText = s.uptime;
+                    document.getElementById('platform').innerText = s.hostname;
+                    document.getElementById('arch').innerText = s.arch;
+                    document.getElementById('node-ver').innerText = s.node_version;
+                    document.getElementById('cpu-model').innerText = `${s.cpu.model} (${s.cpu.cores} Cores)`;
+                    document.getElementById('cpu-load').innerText = (parseFloat(s.cpu.load) * 10).toFixed(1) + '%';
+                    document.getElementById('mem-used').innerText = s.memory.used;
+                    document.getElementById('mem-total').innerText = s.memory.total;
+                    document.getElementById('mem-free').innerText = s.memory.free;
+                    
+                    const ramBar = document.getElementById('ram-bar');
+                    const ramPct = document.getElementById('ram-percent');
+                    ramBar.style.width = `${s.memory.percent}%`;
+                    ramPct.innerText = `${s.memory.percent}%`;
+                    
+                    if(s.memory.percent > 90) ramBar.className = 'h-full bg-red-500 meter-bar w-0 flex items-center justify-end pr-2';
+                    else if(s.memory.percent > 70) ramBar.className = 'h-full bg-yellow-500 meter-bar w-0 flex items-center justify-end pr-2';
+                    else ramBar.className = 'h-full bg-gradient-to-r from-fmn-blue to-fmn-purple meter-bar w-0 flex items-center justify-end pr-2';
+                    
+                    const newRequestsJson = JSON.stringify(data.requests);
+                    if (data.requests && newRequestsJson !== lastRequestsJson) {
+                        lastRequestsJson = newRequestsJson;
+                        renderLogs(data.requests);
+                    }
+                }
+            } catch (e) { console.error("Stats fetch error", e); }
+        }
+
+        function renderLogs(logs) {
+            const container = document.getElementById('realtime-logs');
+            container.innerHTML = ''; 
+
+            if (!logs || logs.length === 0) {
+                container.innerHTML = '<div class="text-gray-500 italic">Listening for requests...</div>';
+                return;
+            }
+
+            logs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = "break-all hover:bg-white/5 px-1 rounded transition-colors flex gap-2";
+                
+                const match = log.match(/^\[([A-Z]+)\] \[(\d+)\] (.*)$/);
+                
+                if (match) {
+                    const method = match[1];
+                    const status = match[2];
+                    const url = match[3];
+                    
+                    let methodColor = 'text-blue-400';
+                    if(method === 'POST') methodColor = 'text-green-400';
+                    if(method === 'DELETE') methodColor = 'text-red-400';
+                    
+                    let statusColor = 'text-green-400';
+                    if(status.startsWith('4') || status.startsWith('5')) statusColor = 'text-red-500';
+
+                    div.innerHTML = `
+                        <span class="${methodColor} font-bold w-12 shrink-0">[${method}]</span>
+                        <span class="${statusColor} font-bold w-12 shrink-0">[${status}]</span>
+                        <span class="text-gray-300 truncate">${url}</span>
+                    `;
+                } else {
+                    div.innerText = log;
+                }
+                
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        fetchStats();
+        setInterval(fetchStats, updateInterval);
+    </script>
+</body>
+</html>
