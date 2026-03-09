@@ -137,6 +137,13 @@
         "name": "count",
         "required": true,
         "description": "Jumlah spam (max 50)"
+      },
+      {
+  "name": "Upload Image To Url",
+  "endpoint": "/api/tools/tourl",
+  "filename": "tourl",
+  "method": "POST",
+  "params": []
       }
     ]
   }
