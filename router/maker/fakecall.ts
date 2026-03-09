@@ -8,6 +8,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
 
     if (!name || !time || !image) {
       return res.status(400).json({
+        creator "Saurus",
         status: false,
         message: "Parameter name, time, pp wajib diisi"
       })
@@ -37,12 +38,12 @@ export default async function fakeCallHandler(req: Request, res: Response) {
     const centerX = canvas.width / 2
     const centerY = canvas.height / 2
     const radius = 500
-    const imageY = centerY - 150
+    const ppY = centerY - 150
 
     // crop lingkaran
     ctx.save()
     ctx.beginPath()
-    ctx.arc(centerX, imageY, radius, 0, Math.PI * 2, true)
+    ctx.arc(centerX, ppY, radius, 0, Math.PI * 2, true)
     ctx.closePath()
     ctx.clip()
 
