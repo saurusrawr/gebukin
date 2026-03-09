@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import axios from "axios"
 
-const BASE_URL = "https://backup-yogaxd-react.zone.id"
+const BASE_URL = "https://yogaxd-react.web.id"
 const VIP_KEY = "vip-liyaa111"
 
 const uaList = [
