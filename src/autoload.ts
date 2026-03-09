@@ -192,8 +192,9 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
 
                     if (maintenanceStatus === "off") {
                         return res.status(503).json({
+                            creator: "Saurus",
                             status: false,
-                            message: "Maintenance website"
+                            message: "🔧 API sedang dalam maintenance. Silakan coba beberapa saat lagi."
                         });
                     }
 
