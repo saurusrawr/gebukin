@@ -47,8 +47,8 @@
   },
   {
     "name": "Lobby FF",
-    "endpoint": "/api/maker/lobbyff",
-    "filename": "lobbyff",
+    "endpoint": "/api/maker/lobbyffmax",
+    "filename": "lobbyffmax",
     "method": "GET",
     "params": [
       {
@@ -121,8 +121,9 @@
     {
       "name": "file",
       "required": true,
-      "description": "File gambar (png/jpg/gif/etc)"
+      "description": "File gambar (png/jpg/gif/etc)",
     }
+ "type": "files"
   ]
 }
 ],
