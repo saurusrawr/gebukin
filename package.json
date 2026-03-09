@@ -28,7 +28,8 @@
     "jimp": "^0.22.10",
     "canvas": "^3.2.1",
     "multer": "^1.4.5-lts.2",
-    "tough-cookie": "^5.1.2"
+    "tough-cookie": "^5.1.2",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
