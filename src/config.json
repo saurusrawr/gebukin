@@ -153,6 +153,32 @@
         ]
       },
       {
+        "name": "Brat Pink",
+        "endpoint": "/api/maker/bratpink",
+        "filename": "bratpink",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Text bratnya"
+          }
+        ]
+      },
+      {
+        "name": "Brat Gawr gura",
+        "endpoint": "/api/maker/bratgura",
+        "filename": "bratgura",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Text bratnya"
+          }
+        ]
+      },
+      {
         "name": "Fake Story",
         "endpoint": "/api/maker/fakestory",
         "filename": "fakestory",
