@@ -32,57 +32,56 @@
       }
     ],
     "maker": [
-  {
-    "name": "Brat Generator",
-    "endpoint": "/api/maker/brat",
-    "filename": "brat",
-    "method": "GET",
-    "params": []
-  },
- {
-  "name": "Tweet Generator",
-  "endpoint": "/api/maker/tweetgen",
-  "filename": "tweetgen",
-  "method": "GET",
-  "params": [
-    { "name": "name", "required": true, "description": "Nama yang tampil di tweet" },
-    { "name": "username", "required": true, "description": "Username di tweet" },
-    { "name": "tweetText", "required": true, "description": "Isi tweet" },
-    { "name": "profile", "required": false, "description": "URL atau Buffer gambar profil" },
-    { "name": "image", "required": false, "description": "URL atau Buffer gambar tweet" },
-    { "name": "theme", "required": false, "description": "Tema: light | dim | dark" },
-    { "name": "retweets", "required": false, "description": "Jumlah retweet" },
-    { "name": "quotes", "required": false, "description": "Jumlah quote" },
-    { "name": "likes", "required": false, "description": "Jumlah like" },
-    { "name": "client", "required": false, "description": "Nama client (default: Twitter for iPhone)" }
-  ]
+      {
+        "name": "Brat Generator",
+        "endpoint": "/api/maker/brat",
+        "filename": "brat",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Text"
+          }
+        ]
       },
       {
-        "name": "text",
-        "required": true,
-        "description": "Text"
-      }
-    ]
-  },
-  {
-    "name": "Lobby FF",
-    "endpoint": "/api/maker/lobbyffmax",
-    "filename": "lobbyffmax",
-    "method": "GET",
-    "params": [
-      {
-        "name": "nickname",
-        "required": true,
-        "description": "Nama yang akan ditampilkan di lobby"
+        "name": "Tweet Generator",
+        "endpoint": "/api/maker/tweetgen",
+        "filename": "tweetgen",
+        "method": "GET",
+        "params": [
+          { "name": "name", "required": true, "description": "Nama yang tampil di tweet" },
+          { "name": "username", "required": true, "description": "Username di tweet" },
+          { "name": "tweetText", "required": true, "description": "Isi tweet" },
+          { "name": "profile", "required": false, "description": "URL atau Buffer gambar profil" },
+          { "name": "image", "required": false, "description": "URL atau Buffer gambar tweet" },
+          { "name": "theme", "required": false, "description": "Tema: light | dim | dark" },
+          { "name": "retweets", "required": false, "description": "Jumlah retweet" },
+          { "name": "quotes", "required": false, "description": "Jumlah quote" },
+          { "name": "likes", "required": false, "description": "Jumlah like" },
+          { "name": "client", "required": false, "description": "Nama client (default: Twitter for iPhone)" }
+        ]
       },
       {
-        "name": "background",
-        "required": false,
-        "description": "Nomor background 1-16, jika tidak diisi akan random"
+        "name": "Lobby FF",
+        "endpoint": "/api/maker/lobbyffmax",
+        "filename": "lobbyffmax",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nickname",
+            "required": true,
+            "description": "Nama yang akan ditampilkan di lobby"
+          },
+          {
+            "name": "background",
+            "required": false,
+            "description": "Nomor background 1-16, jika tidak diisi akan random"
+          }
+        ]
       }
-    ]
-  }
-],
+    ],
     "random": [
       {
         "name": "Random Waifu",
@@ -92,7 +91,7 @@
         "params": []
       },
       {
-      "name": "Random Blue Archive",
+        "name": "Random Blue Archive",
         "endpoint": "/api/random/bluearchive",
         "filename": "ba",
         "method": "GET",
@@ -108,52 +107,52 @@
         "params": []
       }
     ],
-  "tools": [
-  {
-    "name": "Screenshot Web",
-    "endpoint": "/api/tools/ssweb",
-    "filename": "ssweb",
-    "method": "GET",
-    "params": [
-      { "name": "url", "required": true, "description": "Website URL" },
-      { "name": "type", "required": false, "description": "mobile | desktop" }
-    ]
-  },
-  {
-    "name": "Check Website",
-    "endpoint": "/api/tools/checkweb",
-    "filename": "checkweb",
-    "method": "GET",
-    "params": [
+    "tools": [
       {
-        "name": "domain",
-        "required": true,
-        "description": "Domain website (contoh: google.com)"
+        "name": "Screenshot Web",
+        "endpoint": "/api/tools/ssweb",
+        "filename": "ssweb",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "Website URL" },
+          { "name": "type", "required": false, "description": "mobile | desktop" }
+        ]
+      },
+      {
+        "name": "Check Website",
+        "endpoint": "/api/tools/checkweb",
+        "filename": "checkweb",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "Domain website (contoh: google.com)"
+          }
+        ]
+      },
+      {
+        "name": "Short URL",
+        "endpoint": "/api/tools/shorturl",
+        "filename": "shorturl",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "Original URL" },
+          { "name": "alias", "required": false, "description": "Custom Alias" }
+        ]
+      },
+      {
+        "name": "Spam NGL",
+        "endpoint": "/api/tools/spamngl",
+        "filename": "spamngl",
+        "method": "GET",
+        "params": [
+          { "name": "link", "required": true, "description": "https://ngl.link/username" },
+          { "name": "message", "required": true, "description": "Pesan yang dikirim" },
+          { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
+        ]
       }
-    ]
-  },
-  {
-    "name": "Short URL",
-    "endpoint": "/api/tools/shorturl",
-    "filename": "shorturl",
-    "method": "GET",
-    "params": [
-      { "name": "url", "required": true, "description": "Original URL" },
-      { "name": "alias", "required": false, "description": "Custom Alias" }
-    ]
-  },
-  {
-    "name": "Spam NGL",
-    "endpoint": "/api/tools/spamngl",
-    "filename": "spamngl",
-    "method": "GET",
-    "params": [
-      { "name": "link", "required": true, "description": "https://ngl.link/username" },
-      { "name": "message", "required": true, "description": "Pesan yang dikirim" },
-      { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
-    ]
-  }
-],
+    ],
     "download": [
       {
         "name": "Facebook Downloader",
