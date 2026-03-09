@@ -18,8 +18,16 @@
         "filename": "kawaiiyumee",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Question" },
-          { "name": "session", "required": false, "description": "Session ID" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Question"
+          },
+          {
+            "name": "session",
+            "required": false,
+            "description": "Session ID"
+          }
         ]
       },
       {
@@ -28,7 +36,11 @@
         "filename": "muslimai",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Pertanyaan seputar Islam" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Pertanyaan seputar Islam"
+          }
         ]
       },
       {
@@ -37,8 +49,16 @@
         "filename": "sahabatai",
         "method": "GET",
         "params": [
-          { "name": "message", "required": true, "description": "Pesan" },
-          { "name": "cookie", "required": true, "description": "Cookie sID dari sahabat-ai.com" }
+          {
+            "name": "message",
+            "required": true,
+            "description": "Pesan"
+          },
+          {
+            "name": "cookie",
+            "required": true,
+            "description": "Cookie sID dari sahabat-ai.com"
+          }
         ]
       }
     ],
@@ -49,7 +69,11 @@
         "filename": "brat",
         "method": "GET",
         "params": [
-          { "name": "text", "required": true, "description": "Text" }
+          {
+            "name": "text",
+            "required": true,
+            "description": "Text"
+          }
         ]
       },
       {
@@ -58,16 +82,56 @@
         "filename": "tweetgen",
         "method": "GET",
         "params": [
-          { "name": "name", "required": true, "description": "Nama yang tampil di tweet" },
-          { "name": "username", "required": true, "description": "Username di tweet" },
-          { "name": "tweetText", "required": true, "description": "Isi tweet" },
-          { "name": "profile", "required": false, "description": "URL atau Buffer gambar profil" },
-          { "name": "image", "required": false, "description": "URL atau Buffer gambar tweet" },
-          { "name": "theme", "required": false, "description": "Tema: light | dim | dark" },
-          { "name": "retweets", "required": false, "description": "Jumlah retweet" },
-          { "name": "quotes", "required": false, "description": "Jumlah quote" },
-          { "name": "likes", "required": false, "description": "Jumlah like" },
-          { "name": "client", "required": false, "description": "Nama client (default: Twitter for iPhone)" }
+          {
+            "name": "name",
+            "required": true,
+            "description": "Nama yang tampil di tweet"
+          },
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username di tweet"
+          },
+          {
+            "name": "tweetText",
+            "required": true,
+            "description": "Isi tweet"
+          },
+          {
+            "name": "profile",
+            "required": false,
+            "description": "URL atau Buffer gambar profil"
+          },
+          {
+            "name": "image",
+            "required": false,
+            "description": "URL atau Buffer gambar tweet"
+          },
+          {
+            "name": "theme",
+            "required": false,
+            "description": "Tema: light | dim | dark"
+          },
+          {
+            "name": "retweets",
+            "required": false,
+            "description": "Jumlah retweet"
+          },
+          {
+            "name": "quotes",
+            "required": false,
+            "description": "Jumlah quote"
+          },
+          {
+            "name": "likes",
+            "required": false,
+            "description": "Jumlah like"
+          },
+          {
+            "name": "client",
+            "required": false,
+            "description": "Nama client (default: Twitter for iPhone)"
+          }
         ]
       },
       {
@@ -76,8 +140,16 @@
         "filename": "lobbyffmax",
         "method": "GET",
         "params": [
-          { "name": "nickname", "required": true, "description": "Nama yang akan ditampilkan di lobby" },
-          { "name": "background", "required": false, "description": "Nomor background 1-16, jika tidak diisi akan random" }
+          {
+            "name": "nickname",
+            "required": true,
+            "description": "Nama yang akan ditampilkan di lobby"
+          },
+          {
+            "name": "background",
+            "required": false,
+            "description": "Nomor background 1-16, jika tidak diisi akan random"
+          }
         ]
       },
       {
@@ -86,8 +158,16 @@
         "filename": "blur",
         "method": "GET",
         "params": [
-          { "name": "url", "required": false, "description": "URL gambar yang ingin di-blur" },
-          { "name": "file", "required": false, "description": "Upload gambar langsung (multipart/form-data)" }
+          {
+            "name": "url",
+            "required": false,
+            "description": "URL gambar yang ingin di-blur"
+          },
+          {
+            "name": "file",
+            "required": false,
+            "description": "Upload gambar langsung (multipart/form-data)"
+          }
         ]
       },
       {
@@ -96,8 +176,16 @@
         "filename": "carbonn",
         "method": "GET",
         "params": [
-          { "name": "code", "required": true, "description": "Kode yang ingin dijadikan gambar" },
-          { "name": "title", "required": false, "description": "Judul gambar" }
+          {
+            "name": "code",
+            "required": true,
+            "description": "Kode yang ingin dijadikan gambar"
+          },
+          {
+            "name": "title",
+            "required": false,
+            "description": "Judul gambar"
+          }
         ]
       }
     ],
@@ -136,6 +224,13 @@
         "filename": "kucing",
         "method": "GET",
         "params": []
+      },
+      {
+        "name": "Random JKT48",
+        "endpoint": "/api/random/jkt48",
+        "filename": "randomjkt48",
+        "method": "GET",
+        "params": []
       }
     ],
     "games": [
@@ -152,7 +247,11 @@
         "filename": "math",
         "method": "GET",
         "params": [
-          { "name": "level", "required": false, "description": "noob | easy | medium | hard | extreme | impossible | impossible2 | impossible3 | impossible4 | impossible5" }
+          {
+            "name": "level",
+            "required": false,
+            "description": "noob | easy | medium | hard | extreme | impossible | impossible2 | impossible3 | impossible4 | impossible5"
+          }
         ]
       },
       {
@@ -184,8 +283,16 @@
         "filename": "ssweb",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "Website URL" },
-          { "name": "type", "required": false, "description": "mobile | desktop" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "Website URL"
+          },
+          {
+            "name": "type",
+            "required": false,
+            "description": "mobile | desktop"
+          }
         ]
       },
       {
@@ -194,7 +301,11 @@
         "filename": "checkweb",
         "method": "GET",
         "params": [
-          { "name": "domain", "required": true, "description": "Domain website (contoh: google.com)" }
+          {
+            "name": "domain",
+            "required": true,
+            "description": "Domain website (contoh: google.com)"
+          }
         ]
       },
       {
@@ -203,8 +314,16 @@
         "filename": "shorturl",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "Original URL" },
-          { "name": "alias", "required": false, "description": "Custom Alias" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "Original URL"
+          },
+          {
+            "name": "alias",
+            "required": false,
+            "description": "Custom Alias"
+          }
         ]
       },
       {
@@ -213,9 +332,21 @@
         "filename": "spamngl",
         "method": "GET",
         "params": [
-          { "name": "link", "required": true, "description": "https://ngl.link/username" },
-          { "name": "message", "required": true, "description": "Pesan yang dikirim" },
-          { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
+          {
+            "name": "link",
+            "required": true,
+            "description": "https://ngl.link/username"
+          },
+          {
+            "name": "message",
+            "required": true,
+            "description": "Pesan yang dikirim"
+          },
+          {
+            "name": "count",
+            "required": true,
+            "description": "Jumlah spam (max 50)"
+          }
         ]
       },
       {
@@ -224,7 +355,11 @@
         "filename": "lyrics",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Judul atau query lagu" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Judul atau query lagu"
+          }
         ]
       },
       {
@@ -233,7 +368,24 @@
         "filename": "upvidey",
         "method": "POST",
         "params": [
-          { "name": "file", "required": true, "description": "File video (multipart/form-data), max 50MB" }
+          {
+            "name": "file",
+            "required": true,
+            "description": "File video (multipart/form-data), max 50MB"
+          }
+        ]
+      },
+      {
+        "name": "Get Code",
+        "endpoint": "/api/tools/getcode",
+        "filename": "getcode",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL website yang ingin diambil kodenya"
+          }
         ]
       }
     ],
@@ -244,7 +396,11 @@
         "filename": "facebook",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "Facebook URL" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "Facebook URL"
+          }
         ]
       },
       {
@@ -253,7 +409,11 @@
         "filename": "instagram",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "Instagram URL" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "Instagram URL"
+          }
         ]
       },
       {
@@ -262,7 +422,11 @@
         "filename": "tiktok",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "TikTok URL" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "TikTok URL"
+          }
         ]
       },
       {
@@ -271,7 +435,11 @@
         "filename": "mediafire",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "MediaFire URL" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "MediaFire URL"
+          }
         ]
       },
       {
@@ -280,7 +448,11 @@
         "filename": "lahelu",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "Lahelu URL" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "Lahelu URL"
+          }
         ]
       },
       {
@@ -289,7 +461,11 @@
         "filename": "github",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "GitHub URL (repo, file, gist)" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "GitHub URL (repo, file, gist)"
+          }
         ]
       }
     ],
@@ -300,7 +476,11 @@
         "filename": "yts",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Query" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
         ]
       },
       {
@@ -309,7 +489,11 @@
         "filename": "tiktok",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Query" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
         ]
       },
       {
@@ -318,7 +502,11 @@
         "filename": "pinterest",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Query" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query"
+          }
         ]
       },
       {
@@ -327,9 +515,21 @@
         "filename": "github",
         "method": "GET",
         "params": [
-          { "name": "url", "required": true, "description": "GitHub repo URL" },
-          { "name": "begin", "required": false, "description": "Halaman awal (default: 1)" },
-          { "name": "end", "required": false, "description": "Halaman akhir (default: 5)" }
+          {
+            "name": "url",
+            "required": true,
+            "description": "GitHub repo URL"
+          },
+          {
+            "name": "begin",
+            "required": false,
+            "description": "Halaman awal (default: 1)"
+          },
+          {
+            "name": "end",
+            "required": false,
+            "description": "Halaman akhir (default: 5)"
+          }
         ]
       },
       {
@@ -338,7 +538,11 @@
         "filename": "kbbi",
         "method": "GET",
         "params": [
-          { "name": "q", "required": true, "description": "Kata yang ingin dicari di KBBI" }
+          {
+            "name": "q",
+            "required": true,
+            "description": "Kata yang ingin dicari di KBBI"
+          }
         ]
       }
     ],
@@ -386,7 +590,11 @@
         "filename": "tiktokstalk",
         "method": "GET",
         "params": [
-          { "name": "user", "required": true, "description": "Username TikTok" }
+          {
+            "name": "user",
+            "required": true,
+            "description": "Username TikTok"
+          }
         ]
       },
       {
@@ -395,7 +603,11 @@
         "filename": "ytstalk",
         "method": "GET",
         "params": [
-          { "name": "username", "required": true, "description": "Username YouTube (contoh: @lordsaurusking)" }
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username YouTube (contoh: @lordsaurusking)"
+          }
         ]
       },
       {
@@ -404,7 +616,11 @@
         "filename": "roblox",
         "method": "GET",
         "params": [
-          { "name": "username", "required": true, "description": "Username Roblox" }
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username Roblox"
+          }
         ]
       }
     ],
@@ -438,8 +654,16 @@
         "filename": "cocokpasangan",
         "method": "GET",
         "params": [
-          { "name": "nama1", "required": true, "description": "Nama pertama" },
-          { "name": "nama2", "required": true, "description": "Nama pasangan" }
+          {
+            "name": "nama1",
+            "required": true,
+            "description": "Nama pertama"
+          },
+          {
+            "name": "nama2",
+            "required": true,
+            "description": "Nama pasangan"
+          }
         ]
       },
       {
@@ -448,9 +672,21 @@
         "filename": "penyakit",
         "method": "GET",
         "params": [
-          { "name": "tgl", "required": true, "description": "Tanggal lahir" },
-          { "name": "bln", "required": true, "description": "Bulan lahir" },
-          { "name": "thn", "required": true, "description": "Tahun lahir" }
+          {
+            "name": "tgl",
+            "required": true,
+            "description": "Tanggal lahir"
+          },
+          {
+            "name": "bln",
+            "required": true,
+            "description": "Bulan lahir"
+          },
+          {
+            "name": "thn",
+            "required": true,
+            "description": "Tahun lahir"
+          }
         ]
       },
       {
@@ -459,14 +695,46 @@
         "filename": "ramaljodoh",
         "method": "GET",
         "params": [
-          { "name": "nama1", "required": true, "description": "Nama orang pertama" },
-          { "name": "tgl1", "required": true, "description": "Tanggal lahir orang pertama" },
-          { "name": "bln1", "required": true, "description": "Bulan lahir orang pertama" },
-          { "name": "thn1", "required": true, "description": "Tahun lahir orang pertama" },
-          { "name": "nama2", "required": true, "description": "Nama orang kedua" },
-          { "name": "tgl2", "required": true, "description": "Tanggal lahir orang kedua" },
-          { "name": "bln2", "required": true, "description": "Bulan lahir orang kedua" },
-          { "name": "thn2", "required": true, "description": "Tahun lahir orang kedua" }
+          {
+            "name": "nama1",
+            "required": true,
+            "description": "Nama orang pertama"
+          },
+          {
+            "name": "tgl1",
+            "required": true,
+            "description": "Tanggal lahir orang pertama"
+          },
+          {
+            "name": "bln1",
+            "required": true,
+            "description": "Bulan lahir orang pertama"
+          },
+          {
+            "name": "thn1",
+            "required": true,
+            "description": "Tahun lahir orang pertama"
+          },
+          {
+            "name": "nama2",
+            "required": true,
+            "description": "Nama orang kedua"
+          },
+          {
+            "name": "tgl2",
+            "required": true,
+            "description": "Tanggal lahir orang kedua"
+          },
+          {
+            "name": "bln2",
+            "required": true,
+            "description": "Bulan lahir orang kedua"
+          },
+          {
+            "name": "thn2",
+            "required": true,
+            "description": "Tahun lahir orang kedua"
+          }
         ]
       },
       {
@@ -475,7 +743,11 @@
         "filename": "tafesirmimpi",
         "method": "GET",
         "params": [
-          { "name": "mimpi", "required": true, "description": "Kata kunci mimpi yang ingin ditafsirkan" }
+          {
+            "name": "mimpi",
+            "required": true,
+            "description": "Kata kunci mimpi yang ingin ditafsirkan"
+          }
         ]
       }
     ]
