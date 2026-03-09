@@ -197,6 +197,24 @@
           { "name": "message", "required": true, "description": "Pesan yang dikirim" },
           { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
         ]
+      },
+      {
+        "name": "Lirik Lagu",
+        "endpoint": "/api/tools/lirik",
+        "filename": "lyrics",
+        "method": "GET",
+        "params": [
+          { "name": "q", "required": true, "description": "Judul atau query lagu" }
+        ]
+      },
+      {
+        "name": "Upload Videy",
+        "endpoint": "/api/tools/uploadvidey",
+        "filename": "upvidey",
+        "method": "POST",
+        "params": [
+          { "name": "file", "required": true, "description": "File video (multipart/form-data), max 50MB" }
+        ]
       }
     ],
     "download": [
@@ -320,6 +338,38 @@
         "params": [
           { "name": "user", "required": true, "description": "Username TikTok" }
         ]
+      },
+      {
+        "name": "YouTube Stalker",
+        "endpoint": "/api/stalker/youtube",
+        "filename": "ytstalk",
+        "method": "GET",
+        "params": [
+          { "name": "username", "required": true, "description": "Username YouTube (contoh: @lordsaurusking)" }
+        ]
+      }
+    ],
+    "nsfw": [
+      {
+        "name": "NSFW Ass",
+        "endpoint": "/api/nsfw/ass",
+        "filename": "nsfwass",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "NSFW Hentai",
+        "endpoint": "/api/nsfw/hentai",
+        "filename": "nsfwhentai",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "NSFW Masturbation",
+        "endpoint": "/api/nsfw/masturbation",
+        "filename": "nsfwmanstrubation",
+        "method": "GET",
+        "params": []
       }
     ]
   }
