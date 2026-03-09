@@ -92,16 +92,14 @@
     ]
   },
   {
-  "name": "Check Website",
-  "endpoint": "/api/tools/checkweb",
-  "filename": "checkweb",
-  "method": "GET",
-  "params": [
-    {
-      "name": "domain",
-      "required": true,
-      "description": "Domain website (contoh: google.com)"
-    },
+    "name": "Check Website",
+    "endpoint": "/api/tools/checkweb",
+    "filename": "checkweb",
+    "method": "GET",
+    "params": [
+      { "name": "domain", "required": true, "description": "Domain website (contoh: google.com)" }
+    ]
+  },
   {
     "name": "Short URL",
     "endpoint": "/api/tools/shorturl",
@@ -123,7 +121,7 @@
       { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
     ]
   }
-],
+    ],
     "download": [
       {
         "name": "Facebook Downloader",
