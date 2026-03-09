@@ -83,7 +83,7 @@
     "games": [
       {
         "name": "Family 100",
-        "endpoint": "/api/random/familly100",
+        "endpoint": "/api/games/familly100",
         "filename": "familly100",
         "method": "GET",
         "params": []
