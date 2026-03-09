@@ -11,48 +11,54 @@ let regRouter = new Set<string>();
 let currentConfig: any = null;
 let appInstance: Application;
 
-// ======== MAINTENANCE CHECK ========
-let maintenanceCache: { status: string; lastChecked: number } = { status: 'on', lastChecked: 0 };
-const CACHE_TTL = 60 * 1000; // 60 detik
-const STATUS_URL = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt';
+/* =======================
+   MAINTENANCE CHECKER
+======================= */
 
-async function checkMaintenanceStatus(): Promise<boolean> {
+const MAINTENANCE_URL = "https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt";
+
+let maintenanceCache = {
+    status: "on",
+    lastCheck: 0
+};
+
+async function checkMaintenance(): Promise<string> {
     const now = Date.now();
-    if (now - maintenanceCache.lastChecked < CACHE_TTL) {
-        return maintenanceCache.status.trim().toLowerCase() === 'off';
+
+    if (now - maintenanceCache.lastCheck < 10000) {
+        return maintenanceCache.status;
     }
 
     try {
-        const response = await axios.get(STATUS_URL, { timeout: 5000 });
-        const status = response.data.toString().trim().toLowerCase();
-        maintenanceCache = { status, lastChecked: now };
-        return status === 'off';
-    } catch {
-        // kalau gagal fetch, anggap on (jalan normal)
-        maintenanceCache.lastChecked = now;
-        return false;
+        const { data } = await axios.get(MAINTENANCE_URL, {
+            timeout: 5000,
+            headers: {
+                "User-Agent": "Mozilla/5.0"
+            }
+        });
+
+        const status = String(data).trim().toLowerCase();
+
+        maintenanceCache = {
+            status,
+            lastCheck: now
+        };
+
+        return status;
+
+    } catch (err) {
+        console.error("[Maintenance Check Failed]");
+        return "on";
     }
 }
 
-const maintenanceMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const isMaintenance = await checkMaintenanceStatus();
-    if (isMaintenance) {
-        return res.status(503).json({
-            status: false,
-            maintenance: true,
-            message: '🔧 API sedang dalam maintenance. Silakan coba beberapa saat lagi.',
-        });
-    }
-    next();
-};
-// ======== END MAINTENANCE CHECK ========
+/* =======================
+   AUTO LOAD SYSTEM
+======================= */
 
 export const initAutoLoad = (app: Application, config: any, configPath: string) => {
     appInstance = app;
     currentConfig = config;
-
-    // Pasang middleware maintenance ke semua route /api/*
-    app.use('/api', maintenanceMiddleware);
 
     console.log('[✓] Auto Load Activated');
 
@@ -136,6 +142,7 @@ export const loadRouter = (app: Application, config: any) => {
 };
 
 const registerRoute = (route: any, category: string, creatorName?: string, app?: Application) => {
+
     const targetApp = app || appInstance;
     const targetCreator = creatorName || currentConfig?.settings?.creator;
 
@@ -169,6 +176,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
 
     if (modulePath) {
         try {
+
             try {
                 delete require.cache[require.resolve(modulePath)];
             } catch (e) {}
@@ -177,11 +185,23 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             const handler = handlerModule.default || handlerModule;
 
             if (typeof handler === 'function') {
+
                 const wrappedHandler = async (req: Request, res: Response, next: NextFunction) => {
+
+                    const maintenanceStatus = await checkMaintenance();
+
+                    if (maintenanceStatus === "off") {
+                        return res.status(503).json({
+                            status: false,
+                            message: "Maintenance website"
+                        });
+                    }
+
                     logRouterRequest(req, res);
 
                     const originalJson = res.json;
                     res.json = function (body) {
+
                         if (body && typeof body === 'object' && !Array.isArray(body)) {
                             const modifiedBody = {
                                 creator: targetCreator,
@@ -189,6 +209,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                             };
                             return originalJson.call(this, modifiedBody);
                         }
+
                         return originalJson.call(this, body);
                     };
 
@@ -196,28 +217,28 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                         await handler(req, res, next);
                     } catch (err) {
                         console.error(`Error in route ${route.endpoint}:`, err);
-                        res.status(500).json({ error: 'Internal Server Error', message: err instanceof Error ? err.message : String(err) });
+                        res.status(500).json({
+                            error: 'Internal Server Error',
+                            message: err instanceof Error ? err.message : String(err)
+                        });
                     }
                 };
 
-                // Handle multer middleware jika ada
-                const middlewareModule = handlerModule.middleware;
-                if (typeof middlewareModule === 'function') {
-                    if (route.method === 'GET') targetApp.get(route.endpoint, middlewareModule, wrappedHandler);
-                    else if (route.method === 'POST') targetApp.post(route.endpoint, middlewareModule, wrappedHandler);
-                } else {
-                    if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler);
-                    else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
-                }
+                if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler);
+                else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
 
                 regRouter.add(routeKey);
+
                 console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}`);
+
             } else {
                 console.error(`[ㄨ] Invalid handler type in ${modulePath}. Expected function, got ${typeof handler}`);
             }
+
         } catch (error) {
             console.error(`[ㄨ] Failed to load route ${route.endpoint} from ${modulePath}:`, error);
         }
+
     } else {
         console.error(`[!] FILE NOT FOUND: router/${category}/${route.filename}.ts`);
     }
