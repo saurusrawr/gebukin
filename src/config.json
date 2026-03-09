@@ -179,18 +179,42 @@
         ]
       },
       {
-        "name": "Brat Anime",
-        "endpoint": "/api/maker/bratanime",
-        "filename": "bratnime",
+        "name": "Fake Call generator",
+        "endpoint": "/api/maker/fakecall",
+        "filename": "fakecall",
         "method": "GET",
         "params": [
           {
-            "name": "text",
+            "name": "name",
             "required": true,
-            "description": "Isi teks nya"
+            "description": "Nama target"
+          },
+          {
+            "name": "time",
+            "required": true,
+            "description": "Lama Telepon"
+          },
+          {
+            "name": "image",
+            "required": true,
+            "description": "Profil target"
           }
         ]
       },
+      {
+  "name": "Fake Dana Transfer",
+  "endpoint": "/api/maker/fakedana",
+  "filename": "fakedana",
+  "method": "GET",
+  "params": [
+    { "name": "timezone", "required": true, "description": "WIB | WITA | WIT" },
+    { "name": "sender_name", "required": true, "description": "Nama pengirim" },
+    { "name": "sender_phone", "required": true, "description": "Nomor HP pengirim" },
+    { "name": "target_name", "required": true, "description": "Nama penerima" },
+    { "name": "target_phone", "required": true, "description": "Nomor HP penerima" },
+    { "name": "amount", "required": true, "description": "Nominal transfer" }
+  ]
+},
       {
         "name": "Fake Story",
         "endpoint": "/api/maker/fakestory",
@@ -224,11 +248,6 @@
             "name": "url",
             "required": false,
             "description": "URL gambar yang ingin di-blur"
-          },
-          {
-            "name": "file",
-            "required": false,
-            "description": "Upload gambar langsung (multipart/form-data)"
           }
         ]
       },
