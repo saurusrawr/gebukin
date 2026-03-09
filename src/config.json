@@ -195,7 +195,7 @@
             "description": "Lama Telepon"
           },
           {
-            "name": "image",
+            "name": "pp",
             "required": true,
             "description": "Profil target"
           }
