@@ -34,10 +34,8 @@ async function laheluDownloader(url: string) {
       } = postInfo
 
       return {
-        status: true,
         user_id: userID,
         post_id: extractedPostID,
-        result: postInfo,
         title,
         media,
         sensitive,
@@ -45,9 +43,29 @@ async function laheluDownloader(url: string) {
         create_time: new Date(createTime * 1000).toISOString(),
       }
     }
-    return null
+
+    throw new Error("Failed to get response from Lahelu API")
   } catch (error: any) {
     console.error("Error fetching Lahelu post data:", error.message)
     throw new Error("Failed to get response from Lahelu API")
+  }
+}
+
+export default async function laheluHandler(req: Request, res: Response) {
+  const url = (req.query.url as string) || (req.body.url as string)
+
+  if (!url) {
+    return res.status(400).json({ status: false, message: "Parameter 'url' is required" })
+  }
+
+  if (!url.includes("lahelu.com")) {
+    return res.status(400).json({ status: false, message: "URL must be a Lahelu link" })
+  }
+
+  try {
+    const result = await laheluDownloader(url)
+    res.json({ status: true, data: result })
+  } catch (error: any) {
+    res.status(500).json({ status: false, message: error.message })
   }
 }
