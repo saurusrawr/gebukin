@@ -3,147 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KawaiiYumee | Documents</title>
-    
+    <title>KawaiiYumee | Dashboard</title>
+    <link id="favicon" rel="icon" href="">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
+                    fontFamily: { 
                         mono: ['"JetBrains Mono"', 'monospace'],
-                        sans: ['"Quicksand"', 'sans-serif'],
+                        display: ['"Space Grotesk"', 'sans-serif']
+                    },
+                    boxShadow: { 
+                        'hard': '5px 5px 0px 0px #1e293b',
+                        'hard-hover': '2px 2px 0px 0px #1e293b',
+                        'hard-sm': '3px 3px 0px 0px #1e293b',
                     },
                     colors: {
-                        'fmn-blue': '#89CFF0',
-                        'fmn-dark': '#6495ED',
-                        'fmn-purple': '#B39DDB',
-                        'fmn-bg': '#F0F8FF',
-                        'term-bg': '#1e1e1e', 
-                        'term-text': '#d4d4d4',
-                        'success-glow': '#10b981',
-                        'error-glow': '#ef4444',
+                        'primary': '#6366f1',
+                        'secondary': '#a855f7',
+                        'dark': '#1e293b',
                     },
-                    boxShadow: {
-                        'soft': '4px 4px 10px rgba(137, 207, 240, 0.4)',
-                        'glow-success': '0 0 15px rgba(16, 185, 129, 0.5)',
-                        'glow-error': '0 0 15px rgba(239, 68, 68, 0.5)',
-                        'neon': '0 0 20px rgba(137, 207, 240, 0.6)',
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)",
                     },
                     animation: {
-                        'blink': 'blink 1s step-end infinite',
-                        'slide-down': 'slideDown 0.3s ease-out forwards',
-                        'marquee': 'marquee 15s linear infinite',
-                        'slide-in-right': 'slideInRight 0.5s ease-out forwards',
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'blob': 'blob 7s infinite',
+                        'fade-up': 'fadeUp 0.5s ease-out forwards',
                     },
                     keyframes: {
-                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
-                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        marquee: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-150%)' } },
-                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                    },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
                 }
             }
         }
     </script>
     <style>
-        html, body {
-            max-width: 100vw;
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
-        }
-
-        #fixed-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -50;
-            background-color: #F0F8FF;
-            background-image: url('https://c.termai.cc/i181/aGwK.png'), url('https://c.termai.cc/i155/wbV.jpg');
-            background-position: bottom right, center center;
-            background-size: 85% auto, cover;
-            background-repeat: no-repeat;
-            opacity: 0.8;
-        }
-        @media (max-width: 768px) {
-            #fixed-bg { background-size: 110% auto, cover; }
-        }
-
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        body { background-color: #f8fafc; }
+        .bg-grid-size { background-size: 40px 40px; }
+        
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #89CFF0; border-radius: 4px; border: 2px solid #fff; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         
-        .json-key { color: #f87171; font-weight: bold; }
-        .json-string { color: #a3e635; }
-        .json-number { color: #60a5fa; font-weight: bold; }
-        .json-boolean { color: #c084fc; font-style: italic; }
-        .json-null { color: #94a3b8; }
-        
-        /* Removed CRT Text Shadow and Lines */
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border: none; border-radius: 2px; }
-        
-        /* Removed .terminal-scan animation */
-        
-        .response-area {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: top center;
+        .shimmer {
+            background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
-        
-        .response-area.showing {
-            animation: slideInRight 0.5s ease-out, fadeInUp 0.6s ease-out;
-        }
-        
-        .response-area.success {
-            border-color: #10b981 !important;
-        }
-        
-        .response-area.error {
-            border-color: #ef4444 !important;
-        }
-        
-        .json-key, .json-string, .json-number, .json-boolean, .json-null {
-            transition: all 0.3s ease;
-        }
-        
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .status-success {
-            background-color: #10b981;
-            box-shadow: 0 0 10px #10b981;
-            animation: blink 1.5s infinite;
-        }
-        
-        .status-error {
-            background-color: #ef4444;
-            box-shadow: 0 0 10px #ef4444;
-            animation: blink 1.5s infinite;
-        }
-        
-        .status-waiting {
-            background-color: #f59e0b;
-            box-shadow: 0 0 10px #f59e0b;
-            animation: blink 1.5s infinite;
-        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* --- SOFT BUTTON CSS START --- */
         .soft-btn {
-            --button-raise-level: 6px;
-            --press-inset: 3px;
+            --button-raise-level: 8px; /* Slightly reduced for mobile fit */
+            --press-inset: 4px;
             --press-compensated: 0px;
             --button-hover-pressure: 1.5;
             --transform-speed: 160ms;
             --radius: 12px;
+            --border-width: 0px;
+            --edge-aa: 0px;
             --glare-rgb: 255, 255, 255;
             --glare-alpha: 0.2;
             --glare-width: 20;
@@ -157,6 +88,7 @@
             outline: none;
             -webkit-tap-highlight-color: transparent;
             display: block;
+            text-decoration: none;
         }
 
         .soft-btn__wrapper {
@@ -198,7 +130,6 @@
             transform-origin: center;
             z-index: 2;
             border: var(--border-width) solid var(--border-color);
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
         }
 
         .soft-btn__inner {
@@ -209,7 +140,7 @@
             z-index: 4;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            pointer-events: none; /* Let clicks pass to parent */
         }
 
         /* Hover deformation */
@@ -231,159 +162,185 @@
             transform: skewY(calc(1deg * var(--button-hover-pressure))) translateY(var(--press-inset));
         }
 
-        /* LAVENDER VARIANT */
-        .variant-lavender {
-            --surface-color: #cec3fd;
-            --side-color: #b489ff;
-            --text-color: #2e1065;
-            --border-color: #a36eff;
+        /* Glare layer */
+        .soft-btn__content::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: linear-gradient(90deg,
+                rgba(var(--glare-rgb), 0) calc(50% - var(--glare-width) * 1%),
+                rgba(var(--glare-rgb), calc(var(--glare-alpha) * 0.5)) calc(50% - var(--glare-width) * 0.5%),
+                rgba(var(--glare-rgb), var(--glare-alpha)) 50%,
+                rgba(var(--glare-rgb), calc(var(--glare-alpha) * 0.5)) calc(50% + var(--glare-width) * 0.5%),
+                rgba(var(--glare-rgb), 0) calc(50% + var(--glare-width) * 1%));
+            background-size: 200% 100%;
+            background-position: 50% 50%;
+            opacity: 0;
+            transition: opacity 160ms ease, background-position var(--transform-speed) ease;
+            z-index: 3;
+        }
+
+        .soft-btn--right .soft-btn__content::after { opacity: 1; background-position: 0% 50%; }
+        .soft-btn--middle .soft-btn__content::after { opacity: 1; background-position: 50% 50%; }
+        .soft-btn--left .soft-btn__content::after { opacity: 1; background-position: 100% 50%; }
+        .soft-btn--active .soft-btn__content::after { opacity: 1; background: rgba(var(--glare-rgb), var(--glare-alpha)); background-position: 50% 50%; }
+
+        /* VARIANTS MAPPING */
+        .variant-solid {
+            --surface-color: #6366f1; /* Primary */
+            --side-color: #4338ca;    /* Darker Primary */
+            --text-color: #ffffff;
+            --border-color: transparent;
+        }
+        .variant-outline {
+            --surface-color: #ffffff;
+            --side-color: #94a3b8;
+            --text-color: #1e293b;
+            --border-color: #cbd5e1;
             --border-width: 2px;
         }
+        .variant-steel {
+            --surface-color: #f1f5f9;
+            --side-color: #94a3b8;
+            --text-color: #334155;
+            --border-color: #cbd5e1;
+            --border-width: 1px;
+        }
         /* --- SOFT BUTTON CSS END --- */
-
-        /* --- LOGIKA OUTLINE BERPUTAR --- */
-        @keyframes outlineSpin {
-            100% { transform: rotate(360deg); }
-        }
-
-        .category-btn {
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            transition: background-color 0.3s;
-        }
-
-        .category-btn.animating { border-color: transparent !important; }
-
-        .category-btn.animating::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent 0%, #89CFF0 25%, transparent 50%, #B39DDB 75%, transparent 100%);
-            z-index: -2; animation: outlineSpin 0.5s linear infinite;
-        }
-
-        .category-btn.animating::after {
-            content: ''; position: absolute; inset: 3px; background: white; border-radius: 0.6rem; z-index: -1;
-        }
-
     </style>
 </head>
-<body class="text-slate-700 min-h-screen flex flex-col font-sans selection:bg-fmn-blue selection:text-white">
-    
-    <div id="fixed-bg"></div>
+<body class="min-h-screen flex items-center justify-center font-mono p-4 selection:bg-primary selection:text-white relative overflow-hidden bg-grid-pattern bg-grid-size">
 
-    <nav class="border-b border-fmn-blue/50 bg-white/95 backdrop-blur-sm sticky top-0 z-[60] shadow-sm w-full">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4 justify-between">
-            <div class="flex items-center gap-3 shrink-0">
-                <a href="/" class="w-10 h-10 bg-fmn-blue text-white flex items-center justify-center rounded-full hover:bg-fmn-dark hover:scale-105 transition-all shadow-md cursor-pointer border border-fmn-dark/20">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </a>
-                <div>
-                    <h1 id="nav-title" class="font-bold text-xl tracking-tight text-fmn-dark uppercase">KawaiiYumee</h1>
-                    <span class="text-[10px] font-bold text-fmn-purple tracking-widest">SAURUS FOR YOU</span>
-                </div>
-            </div>
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-0 left-1/4 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-72 h-72 bg-secondary/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" style="animation-delay: 2s"></div>
+        <div class="absolute -bottom-8 left-1/3 w-72 h-72 bg-pink-300/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" style="animation-delay: 4s"></div>
+    </div>
 
-            <div class="hidden md:flex flex-1 max-w-xl mx-auto overflow-hidden h-8 bg-gradient-to-r from-fmn-blue to-fmn-purple rounded-full flex items-center relative shadow-inner mx-4">
-                <div id="running-text" class="text-white text-xs font-mono font-bold uppercase tracking-widest px-4 whitespace-nowrap animate-marquee inline-block min-w-full">
-                    SYSTEM ONLINE • WAITING FOR CONFIG...
-                </div>
-            </div>
-
-            <a href="https://github.com/SaurusAraAra" target="_blank" class="w-10 h-10 border border-fmn-blue/50 bg-white text-fmn-dark hover:bg-fmn-blue hover:text-white flex items-center justify-center rounded-full shadow-sm transition-all">
-                <i class="fa-brands fa-github text-xl"></i>
-            </a>
-        </div>
-    </nav>
-
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid lg:grid-cols-12 gap-8 items-start relative z-10 overflow-hidden">
+    <div class="relative z-10 w-full max-w-[420px]">
         
-        <aside class="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-6 h-fit z-40 w-full max-w-full">
+        <div class="bg-white/80 backdrop-blur-xl border-2 border-dark shadow-hard rounded-xl overflow-hidden transition-all duration-300">
             
-            <div class="bg-term-bg border-2 border-slate-600 shadow-xl rounded-lg overflow-hidden flex flex-col h-[420px] group relative font-mono text-xs">
-                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center gap-2 border-b border-gray-700 select-none">
-                    <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                    </div>
-                    <span class="text-[10px] text-gray-400 font-bold ml-2">node &mdash; 80x24</span>
+            <div class="bg-white border-b-2 border-dark px-4 py-3 flex justify-between items-center select-none">
+                <div class="flex gap-2 group cursor-pointer">
+                    <div class="w-3 h-3 rounded-full bg-red-400 border border-dark group-hover:bg-red-500 transition-colors"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-400 border border-dark group-hover:bg-yellow-500 transition-colors"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-400 border border-dark group-hover:bg-green-500 transition-colors"></div>
                 </div>
+                <div class="flex items-center gap-2 px-2 py-0.5 rounded bg-slate-100 border border-slate-200">
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-[10px] font-bold text-slate-500 tracking-wider">ONLINE</span>
+                </div>
+            </div>
+
+            <div class="p-6 relative">
                 
-                <div id="term-logs" class="p-3 text-gray-300 overflow-y-auto flex-1 custom-scrollbar space-y-1 leading-relaxed"></div>
-                
-                <div id="term-input-line" class="hidden px-3 pb-2 pt-1 border-t border-gray-700 bg-term-bg">
-                    <span class="text-green-500 font-bold mr-1">root@saurus:~/KawaiiYumee$</span>
-                    <span class="inline-block w-2 h-4 bg-gray-400 align-middle animate-blink"></span>
-                </div>
-            </div>
-
-            <div class="relative group">
-                <input type="text" id="search-input" placeholder="Search Endpoint..." 
-                    class="w-full h-12 border-2 border-fmn-blue/60 px-5 pl-12 font-bold text-sm text-slate-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-fmn-blue/50 focus:border-fmn-dark transition-all placeholder:text-slate-400 bg-white/90 backdrop-blur hover:shadow-neon hover:border-fmn-blue">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-fmn-blue"></i>
-            </div>
-
-            <div class="bg-white/90 backdrop-blur-sm border-2 border-white p-5 shadow-soft rounded-2xl relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-20 h-20 bg-fmn-blue/10 rounded-full blur-xl"></div>
-                <div class="space-y-3 relative z-10">
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>TIME (WIB)</span>
-                        <span id="server-time" class="text-fmn-dark font-mono">--:--:--</span>
+                <div id="loader" class="flex flex-col gap-4">
+                    <div class="w-full aspect-[16/9] border-2 border-slate-100 shimmer rounded-lg"></div>
+                    <div class="space-y-2 mt-2">
+                        <div class="h-8 w-2/3 shimmer rounded"></div>
+                        <div class="h-4 w-full shimmer rounded"></div>
+                        <div class="h-4 w-5/6 shimmer rounded"></div>
                     </div>
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>DATE</span>
-                        <span id="server-date" class="font-mono">--/--/----</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>VISITOR</span>
-                        <span id="stat-visitors" class="text-fmn-purple">0</span>
+                    <div class="flex gap-3 mt-2">
+                        <div class="h-12 w-1/2 shimmer rounded-lg"></div>
+                        <div class="h-12 w-1/2 shimmer rounded-lg"></div>
                     </div>
                 </div>
+
+                <div id="content" class="hidden">
+                    
+                    <div class="relative w-full aspect-[16/9] border-2 border-dark rounded-lg overflow-hidden group mb-6 bg-slate-100">
+                        <div class="absolute inset-0 bg-primary/10 z-10 group-hover:bg-transparent transition-all duration-300"></div>
+                        <img id="dash-thumb" src="" alt="Cover" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out">
+                        
+                        <div class="absolute bottom-3 left-3 z-20">
+                            <span class="bg-white border-2 border-dark px-2 py-1 text-[10px] font-bold shadow-[2px_2px_0px_0px_#1e293b] flex items-center gap-1">
+                                <i class="fa-solid fa-server text-primary"></i> v1.0.0
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 text-center animate-fade-up">
+                        <h1 id="dash-title" class="text-3xl font-display font-bold text-dark mb-2 tracking-tight uppercase"></h1>
+                        <div class="flex justify-center mb-3">
+                            <div class="h-1 w-12 bg-primary rounded-full"></div>
+                        </div>
+                        <p id="dash-desc" class="text-sm font-mono text-slate-500 leading-relaxed px-2"></p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-5 animate-fade-up h-16" style="animation-delay: 0.1s">
+                        
+                        <a href="/docs" class="soft-btn variant-solid w-full h-full">
+                            <span class="soft-btn__wrapper">
+                                <span class="soft-btn__content">
+                                    <span class="soft-btn__inner">
+                                        <i class="fa-solid fa-book-journal-whills text-sm"></i>
+                                        <span class="font-bold text-sm tracking-wide">DOCS</span>
+                                    </span>
+                                </span>
+                            </span>
+                        </a>
+                        
+                        <a href="/stats" class="soft-btn variant-outline w-full h-full">
+                            <span class="soft-btn__wrapper">
+                                <span class="soft-btn__content">
+                                    <span class="soft-btn__inner">
+                                        <i class="fa-solid fa-chart-pie text-secondary"></i>
+                                        <span class="font-bold text-sm tracking-wide">STATS</span>
+                                    </span>
+                                </span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="flex gap-3 justify-center animate-fade-up h-14" style="animation-delay: 0.2s">
+                        <a id="btn-channel" href="#" target="_blank" class="flex-1 soft-btn variant-steel">
+                            <span class="soft-btn__wrapper">
+                                <span class="soft-btn__content">
+                                    <span class="soft-btn__inner">
+                                        <i class="fa-brands fa-whatsapp text-lg text-green-600"></i>
+                                    </span>
+                                </span>
+                            </span>
+                        </a>
+
+                        <a id="btn-source" href="#" target="_blank" class="flex-1 soft-btn variant-steel">
+                            <span class="soft-btn__wrapper">
+                                <span class="soft-btn__content">
+                                    <span class="soft-btn__inner">
+                                        <i class="fa-brands fa-github text-lg text-dark"></i>
+                                    </span>
+                                </span>
+                            </span>
+                        </a>
+
+                        <button onclick="share()" class="flex-1 soft-btn variant-steel">
+                            <span class="soft-btn__wrapper">
+                                <span class="soft-btn__content">
+                                    <span class="soft-btn__inner">
+                                        <i class="fa-solid fa-share-nodes text-lg text-blue-500"></i>
+                                    </span>
+                                </span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="mt-8 pt-4 border-t-2 border-dashed border-slate-300 text-center animate-fade-up" style="animation-delay: 0.3s">
+                        <p class="text-[10px] font-mono text-slate-400">
+                            POWERED BY <span class="text-primary font-bold">SAURUS</span> &bull; 2026
+                        </p>
+                    </div>
+
+                </div>
             </div>
-        </aside>
-
-        <section class="lg:col-span-8 min-h-[50vh] w-full max-w-full">
-            <div id="api-container" class="space-y-4 opacity-0 translate-y-4 transition-all duration-700 w-full"></div>
-            
-            <div id="no-results" class="hidden flex-col items-center justify-center py-20 text-center opacity-70">
-                <i class="fa-solid fa-box-open text-5xl mb-3 text-fmn-blue"></i>
-                <p class="font-bold text-lg text-slate-400">No Data Found</p>
-            </div>
-        </section>
-
-    </main>
-
-    <div id="custom-toast" class="fixed bottom-6 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
-        <div class="bg-white text-slate-700 px-5 py-3 font-bold text-sm shadow-xl rounded-xl flex items-center gap-3 border-2 border-fmn-blue animate-slide-in-right">
-            <div class="w-6 h-6 bg-fmn-blue text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
-            <span id="toast-message">SUCCESS</span>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', init);
-        let globalConfig = null;
-        let toastTimeout;
-
-        function isMobileDevice() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
-
-        async function init() {
-            if (isMobileDevice()) document.body.classList.add('is-mobile');
-            if (document.getElementById('term-logs')) {
-                try {
-                    const response = await fetch('/config');
-                    globalConfig = await response.json();
-                    setUi(globalConfig);
-                    loadEnd(globalConfig.tags);
-                    startWIBClock();
-                    await KawaiiYumee(globalConfig);
-                    loadReminder();
-                    setSearch();
-                } catch (e) {
-                    document.getElementById('term-logs').innerHTML = `<span class="text-red-400 font-bold px-1">SYSTEM FAILURE</span><br>${e.message}`;
-                }
-            }
-        }
+        const minLoadTime = 800; 
+        const startLoad = Date.now();
 
         // --- BUTTON PHYSICS LOGIC START ---
         function initSoftButtons() {
@@ -425,536 +382,65 @@
         }
         // --- BUTTON PHYSICS LOGIC END ---
 
-        function messeg(msg) {
-            const toast = document.getElementById('custom-toast');
-            const msgBox = document.getElementById('toast-message');
-            if(!toast || !msgBox) return;
-            msgBox.innerText = msg;
-            toast.classList.remove('translate-y-32', 'opacity-0');
-            toast.classList.add('animate-fade-in-up');
-            
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => { 
-                toast.classList.add('translate-y-32', 'opacity-0');
-                toast.classList.remove('animate-fade-in-up');
-            }, 3000);
-        }
-
-        function startWIBClock() {
-            const timeEl = document.getElementById('server-time');
-            const dateEl = document.getElementById('server-date');
-            updateTime(); setInterval(updateTime, 1000);
-            function updateTime() {
-                const now = new Date();
-                if(timeEl) {
-                    timeEl.innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour12: false});
-                }
-                if(dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric'});
+        function share() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                // Simple toast or alert
+                const originalText = document.querySelector('button[onclick="share()"] .soft-btn__inner').innerHTML;
+                const inner = document.querySelector('button[onclick="share()"] .soft-btn__inner');
+                inner.innerHTML = '<i class="fa-solid fa-check text-green-500"></i>';
+                setTimeout(() => { inner.innerHTML = originalText; }, 1500);
             }
         }
 
-        async function loadReminder() {
-            try {
-                const req = await fetch('../src/reminder.json');
-                const data = await req.json();
-                if(data?.message) {
-                    const runningText = document.getElementById('running-text');
-                    runningText.innerText = data.message.toUpperCase();
-                }
-            } catch (e) {}
-        }
-
-        function terminalLog(message, type = 'info') {
-            const logs = document.getElementById('term-logs');
-            if(!logs) return;
-            const line = document.createElement('div');
-            
-            let color = "text-gray-300";
-            if(type === 'error') color = "text-red-400";
-            else if(type === 'success') color = "text-green-400";
-            else if(type === 'warn') color = "text-yellow-400";
-            else if(type === 'cmd') color = "text-white font-bold";
-            else if(type === 'system') color = "text-gray-500";
-            
-            // Removed animate-slide-in-right for static linux feel
-            line.className = `${color} break-all`;
-            line.innerHTML = message;
-            logs.appendChild(line);
-            logs.scrollTop = logs.scrollHeight;
-        }
-
-        async function KawaiiYumee(config) {
-            const logs = document.getElementById('term-logs');
-            if(!logs) return;
-            
-            // --- TYPING ANIMATION FOR CMD ---
-            const cmdLine = document.createElement('div');
-            cmdLine.className = 'text-gray-300 break-all';
-            cmdLine.innerHTML = '<span class="text-green-500">root@saurus:~/KawaiiYumee$</span> ';
-            
-            const typeSpan = document.createElement('span');
-            typeSpan.className = 'text-white font-bold';
-            cmdLine.appendChild(typeSpan);
-            logs.appendChild(cmdLine);
-
-            const commandText = "npm run dev";
-            for(let i=0; i < commandText.length; i++) {
-                typeSpan.textContent += commandText.charAt(i);
-                await new Promise(r => setTimeout(r, 80)); // Typing delay
-            }
-            // ---------------------------------
-
-            await new Promise(r => setTimeout(r, 600));
-
-            const ver = config.settings.apiVersion || '1.0.0';
-            terminalLog(`> KawaiiYumee-api@${ver} dev`, 'system');
-            terminalLog(`> ts-node src/index.ts`, 'system');
-            await new Promise(r => setTimeout(r, 800));
-            terminalLog(``, 'system'); 
-
-            terminalLog(`[INFO] Starting Server Instance...`, 'info');
-            await new Promise(r => setTimeout(r, 400));
-            terminalLog(`[INFO] Environment: Production`, 'info');
-            terminalLog(`[DB] Connected to MongoDB Atlas`, 'success');
-            await new Promise(r => setTimeout(r, 400));
-
-            const allRoutes = [];
-            for (const cat in config.tags) {
-                config.tags[cat].forEach(r => allRoutes.push({cat, ...r}));
-            }
-
-            for(const route of allRoutes) {
-                const methodColor = route.method === 'GET' ? 'text-blue-400' : route.method === 'POST' ? 'text-green-400' : 'text-yellow-400';
-                terminalLog(`[+] <span class="${methodColor}">${route.method}</span> ${route.endpoint} <span class="text-gray-500">✓</span>`, 'info');
-                await new Promise(r => setTimeout(r, 20)); 
-            }
-            
-            await new Promise(r => setTimeout(r, 500));
-            terminalLog(``, 'system');
-            terminalLog(`[✓] Server running on https://api.saurusofficial.biz.id`, 'success');
-            terminalLog(`[WATCH] Watching...`, 'warn');
-            
-            const container = document.getElementById('api-container');
-            if(container) {
-                container.classList.remove('opacity-0', 'translate-y-4');
-                container.classList.add('animate-fade-in-up');
-            }
-            document.getElementById('term-input-line').classList.remove('hidden');
-        }
-
-        function setUi(config) {
-            const s = config.settings;
-            if(document.getElementById('nav-title')) {
-                document.getElementById('nav-title').innerText = s.apiName || 'API';
-            }
-            if(document.getElementById('stat-visitors')) {
-                document.getElementById('stat-visitors').innerText = s.visitors || '1';
-                animateCounter('stat-visitors', 0, parseInt(s.visitors) || 1, 2000);
-            }
-            if (s.favicon) {
-                let link = document.querySelector("link[rel~='icon']") || document.createElement('link');
-                link.rel = 'icon'; link.href = s.favicon;
-                document.head.appendChild(link);
-            }
-        }
-
-        function animateCounter(elementId, start, end, duration) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                element.innerText = value;
+        fetch('/config')
+            .then(res => res.json())
+            .then(config => {
+                document.getElementById('dash-title').innerText = config.settings.apiName;
+                document.getElementById('dash-desc').innerText = config.settings.description;
                 
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
+                const btnChannel = document.getElementById('btn-channel');
+                if(config.settings.channelUrl) btnChannel.href = config.settings.channelUrl;
+                else btnChannel.style.display = 'none';
 
-        function setSearch() {
-            const input = document.getElementById('search-input');
-            const noResults = document.getElementById('no-results');
-            if(!input) return;
+                const btnSource = document.getElementById('btn-source');
+                if(config.settings.github) btnSource.href = config.settings.github;
+                else btnSource.style.display = 'none';
 
-            input.addEventListener('input', (e) => {
-                const val = e.target.value.toLowerCase();
+                const thumbEl = document.getElementById('dash-thumb');
+                thumbEl.src = config.settings.thumbnail;
+                thumbEl.onerror = () => { thumbEl.src = 'https://placehold.co/600x400/1e293b/FFF?text=API'; };
+
+                if(config.settings.favicon) document.getElementById('favicon').href = config.settings.favicon;
+
+                const elapsed = Date.now() - startLoad;
+                const remaining = Math.max(0, minLoadTime - elapsed);
+
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                    const content = document.getElementById('content');
+                    content.classList.remove('hidden');
+                    // Initialize button physics after content is visible
+                    initSoftButtons();
+                }, remaining);
+            })
+            .catch(err => {
+                console.error(err);
+                // Fallback for demo/error
+                document.getElementById('dash-title').innerText = "KawaiiYumee";
+                document.getElementById('dash-desc').innerText = "Simple Dashboard Template";
                 
-                if (val === '') {
-                    document.querySelectorAll('.api-section').forEach(section => {
-                        section.classList.remove('hidden'); 
-                        section.querySelector('.api-section-grid').classList.add('hidden'); 
-                        section.querySelector('.cat-arrow').classList.remove('rotate-180'); 
-                        section.querySelectorAll('.api-card-wrapper').forEach(c => c.classList.remove('hidden')); 
-                    });
-                    if(noResults) noResults.classList.add('hidden');
-                    return;
-                }
-
-                let anyVisible = false;
-                document.querySelectorAll('.api-section').forEach(section => {
-                    const grid = section.querySelector('.api-section-grid');
-                    const arrow = section.querySelector('.cat-arrow');
-                    
-                    let match = 0;
-                    section.querySelectorAll('.api-card-wrapper').forEach(card => {
-                        const txt = card.getAttribute('data-search').toLowerCase();
-                        if (txt.includes(val)) { 
-                            card.classList.remove('hidden');
-                            card.classList.add('animate-slide-in-right');
-                            setTimeout(() => card.classList.remove('animate-slide-in-right'), 500);
-                            match++; 
-                        } else { 
-                            card.classList.add('hidden'); 
-                        }
-                    });
-
-                    if (match > 0) {
-                        section.classList.remove('hidden');
-                        grid.classList.remove('hidden'); 
-                        grid.classList.add('animate-fade-in-up');
-                        arrow.classList.add('rotate-180');
-                        anyVisible = true;
-                    } else {
-                        section.classList.add('hidden');
-                    }
-                });
-
-                if(noResults) {
-                    noResults.classList.toggle('hidden', anyVisible);
-                    noResults.classList.toggle('flex', !anyVisible);
-                    if(!anyVisible) {
-                        noResults.classList.add('animate-fade-in-up');
-                    }
-                }
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('content').classList.remove('hidden');
+                    initSoftButtons();
+                }, 1000);
             });
-        }
-
-        function loadEnd(tags) {
-            const container = document.getElementById('api-container');
-            if(!container) return;
-            container.innerHTML = '';
-
-            for (const [cat, routes] of Object.entries(tags)) {
-                const catId = `cat-${cat.replace(/\s+/g, '-')}`;
-                const section = document.createElement('div');
-                section.className = "api-section w-full animate-fade-in-up";
-                section.style.animationDelay = `${Object.keys(tags).indexOf(cat) * 0.1}s`;
-                
-                section.innerHTML = `
-                    <button id="btn-${catId}" onclick="toggleCategory('${catId}')" class="category-btn w-full flex items-center justify-between bg-white text-slate-700 p-4 rounded-xl shadow-sm border-2 border-fmn-blue hover:bg-slate-50 transition-all duration-300 group mb-3">
-                        <div class="relative z-10 flex items-center gap-4 w-full">
-                            <div class="w-10 h-10 bg-slate-100 text-fmn-blue rounded-lg flex items-center justify-center text-lg group-hover:bg-fmn-blue group-hover:text-white transition-colors border-2 border-fmn-purple">
-                                <i class="fa-solid fa-folder"></i>
-                            </div>
-                            <h2 class="text-lg font-bold tracking-wide text-fmn-dark flex-1 text-left">${cat}</h2>
-                            
-                            <div class="flex items-center gap-3">
-                                <span class="text-[10px] font-mono bg-fmn-dark text-white px-2 py-1 rounded-md font-bold">${routes.length} EPS</span>
-                                <i id="arrow-${catId}" class="cat-arrow fa-solid fa-chevron-down transition-transform duration-300 text-fmn-blue"></i>
-                            </div>
-                        </div>
-                    </button>
-                    <div id="grid-${catId}" class="api-section-grid grid grid-cols-1 gap-1 hidden mb-6 pl-2 w-full"></div>
-                `;
-                
-                const grid = section.querySelector('.api-section-grid');
-                
-                routes.forEach((route, idx) => {
-                    const id = `${cat}-${idx}`.replace(/\s+/g, '-');
-                    const methodColor = route.method === 'GET' ? 'bg-sky-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
-                    
-                    let inputs = '';
-if (route.params?.length) {
-  inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` +
-    route.params.map(p => {
-      let inputType = p.type === 'file' ? 'file' : 'text';
-      return `
-        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
-          <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">
-            ${p.name} ${p.required ? '<span class="text-red-400">*</span>' : ''}
-          </label>
-          <input type="${inputType}" id="input-${id}-${p.name}" 
-                 placeholder="${p.description || 'Value...'}"
-                 class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
-        </div>`;
-    }).join('') +
-  `</div>`;
-}
-
-                    const card = document.createElement('div');
-                    card.className = 'api-card-wrapper w-full bg-white border border-slate-300 rounded-lg hover:border-fmn-blue transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md';
-                    card.setAttribute('data-search', `${route.name} ${route.endpoint} ${cat}`);
-                    
-                    card.innerHTML = `
-                        <div class="p-2 cursor-pointer select-none hover:bg-slate-50 transition-colors" onclick="toggle('${id}')">
-                            <div class="flex justify-between items-center gap-3">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <span class="px-2.5 py-1 text-[10px] font-bold text-white ${methodColor} rounded-md font-mono tracking-wide w-14 text-center shadow-sm border border-black/10 shrink-0">${route.method}</span>
-                                    <div class="flex flex-col min-w-0">
-                                        <code class="font-bold text-xs sm:text-sm truncate font-mono text-slate-700 hover:text-fmn-dark transition-colors">${route.endpoint}</code>
-                                        <span class="text-[10px] text-slate-500 mt-0.5 font-bold truncate">${route.name}</span>
-                                    </div>
-                                </div>
-                                <i id="icon-${id}" class="fa-solid fa-plus text-[10px] text-slate-400 transition-transform duration-300 shrink-0"></i>
-                            </div>
-                        </div>
-                        
-                        <div id="body-${id}" class="hidden animate-slide-down w-full">
-                            ${inputs}
-                            <div class="p-4 flex gap-3 bg-white w-full items-center">
-                                
-                                <button id="btn-exec-${id}" onclick="testReq(this, '${route.endpoint}', '${route.method}', '${id}')" class="soft-btn variant-lavender flex-1 h-10 w-full">
-                                    <span class="soft-btn__wrapper">
-                                        <span class="soft-btn__content">
-                                            <span class="soft-btn__inner text-xs font-bold tracking-widest">
-                                                <i class="fa-solid fa-bolt"></i> EXECUTE
-                                            </span>
-                                        </span>
-                                    </span>
-                                </button>
-
-                                <button onclick="copy('${copyUrl}')" class="px-4 h-10 border border-slate-300 bg-white hover:bg-slate-50 text-slate-600 rounded-lg transition-all shadow-sm hover:shadow-neon transform hover:scale-110" title="Copy Full URL"><i class="fa-regular fa-copy"></i></button>
-                            </div>
-
-                            <div id="res-area-${id}" class="response-area hidden mx-4 mb-4 rounded-lg overflow-hidden bg-[#1e1e1e] border border-slate-600 shadow-inner relative max-w-[calc(100%-2rem)]">
-                                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center justify-between border-b border-gray-700">
-                                    <div class="flex gap-1.5">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <div id="status-indicator-${id}" class="status-indicator status-waiting"></div>
-                                        <span id="status-${id}" class="text-[10px] font-mono font-bold text-slate-500">IDLE</span>
-                                        <span id="time-${id}" class="text-[10px] font-mono text-slate-500">0ms</span>
-                                    </div>
-                                    <div class="flex gap-2">
-                                         <a id="dl-btn-${id}" class="hidden text-slate-500 hover:text-white cursor-pointer transform hover:scale-125 transition-transform"><i class="fa-solid fa-download text-[10px]"></i></a>
-                                         <button onclick="copyRes('${id}')" class="text-slate-500 hover:text-white transform hover:scale-125 transition-transform"><i class="fa-regular fa-clone text-[10px]"></i></button>
-                                         <button onclick="reset('${id}')" class="text-slate-500 hover:text-red-400 transform hover:scale-125 transition-transform"><i class="fa-solid fa-xmark text-[10px]"></i></button>
-                                    </div>
-                                </div>
-                                <div class="p-3 font-mono text-[11px] min-h-[100px] max-h-[400px] overflow-y-auto custom-scrollbar bg-[#1e1e1e] break-all whitespace-pre-wrap">
-                                    <div class="flex items-center gap-2 mb-2 text-slate-500 select-none border-b border-gray-800 pb-2 flex-wrap animate-slide-in-right">
-                                        <span class="text-green-500 font-bold">➜</span>
-                                        <span class="text-blue-400">~</span>
-                                        <span class="text-gray-400 break-all">curl -X ${route.method} ${route.endpoint}</span>
-                                    </div>
-                                    <div id="output-${id}" class="text-gray-300 break-all whitespace-pre-wrap leading-relaxed"></div>
-                                </div>
-                            </div>
-                        </div>`;
-                    grid.appendChild(card);
-                });
-                container.appendChild(section);
-            }
-            
-            initSoftButtons();
-        }
-
-        window.toggleCategory = (catId) => {
-            const grid = document.getElementById(`grid-${catId}`);
-            const arrow = document.getElementById(`arrow-${catId}`);
-            const btn = document.getElementById(`btn-${catId}`);
-            
-            if(btn) {
-                btn.classList.add('animating');
-                setTimeout(() => { btn.classList.remove('animating'); }, 500);
-            }
-
-            if(grid.classList.contains('hidden')) { 
-                grid.classList.remove('hidden'); 
-                grid.classList.add('animate-fade-in-up');
-                arrow.classList.add('rotate-180');
-            } else { 
-                grid.classList.add('hidden'); 
-                arrow.classList.remove('rotate-180');
-            }
-        };
-        
-        window.toggle = (id) => {
-            const b = document.getElementById(`body-${id}`);
-            const i = document.getElementById(`icon-${id}`);
-            if (b.classList.contains('hidden')) { 
-                b.classList.remove('hidden'); 
-                b.classList.add('animate-slide-down');
-                i.classList.remove('fa-plus');
-                i.classList.add('fa-minus', 'text-fmn-blue');
-                i.classList.add('rotate-180');
-            } else { 
-                b.classList.add('hidden'); 
-                i.classList.remove('fa-minus', 'text-fmn-blue', 'rotate-180');
-                i.classList.add('fa-plus');
-            }
-        };
-        
-        window.copy = (txt) => { 
-            navigator.clipboard.writeText(window.location.origin + txt); 
-            messeg("URL COPIED"); 
-        };
-        
-        window.copyRes = (id) => { 
-            const out = document.getElementById(`output-${id}`); 
-            if (out.innerText) { 
-                navigator.clipboard.writeText(out.innerText); 
-                messeg("RESPONSE COPIED"); 
-            }
-        };
-        
-        window.reset = (id) => { 
-            const resArea = document.getElementById(`res-area-${id}`);
-            resArea.classList.remove('show', 'success', 'error', 'showing');
-            resArea.classList.add('hidden');
-            document.getElementById(`output-${id}`).innerHTML = ''; 
-            const statusIndicator = document.getElementById(`status-indicator-${id}`);
-            statusIndicator.className = 'status-indicator status-waiting';
-        };
-
-        window.testReq = async (btn, url, method, id) => {
-            if (btn.disabled) return;
-            const out = document.getElementById(`output-${id}`);
-            const status = document.getElementById(`status-${id}`);
-            const time = document.getElementById(`time-${id}`);
-            const dlBtn = document.getElementById(`dl-btn-${id}`);
-            const resArea = document.getElementById(`res-area-${id}`);
-            const statusIndicator = document.getElementById(`status-indicator-${id}`);
-            
-            const btnInner = btn.querySelector('.soft-btn__inner');
-            const originalBtnText = btnInner.innerHTML;
-            btn.disabled = true; 
-            btnInner.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> PROCESSING';
-
-            resArea.classList.remove('hidden', 'success', 'error');
-            resArea.classList.add('show', 'showing');
-            statusIndicator.className = 'status-indicator status-waiting';
-            status.innerText = 'RUNNING...'; 
-            status.className = 'text-[10px] font-mono font-bold text-yellow-500';
-            out.innerHTML = '<span class="text-slate-500 italic">Establishing connection...</span>';
-            
-            const params = {};
-            document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => { 
-                if(i.value) {
-                    params[i.id.split(`input-${id}-`)[1]] = i.value;
-                    i.classList.add('border-green-400', 'bg-green-50');
-                    setTimeout(() => {
-                        i.classList.remove('border-green-400', 'bg-green-50');
-                    }, 1000);
-                }
-            });
-            
-            const formData = new FormData();
-document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => {
-  const key = i.id.split(`input-${id}-`)[1];
-  if(i.type === 'file' && i.files[0]) {
-    formData.append(key, i.files[0]);
-  } else if(i.value) {
-    formData.append(key, i.value);
-  }
-});
-
-let opts;
-if(method === 'GET') {
-  let query = new URLSearchParams();
-  formData.forEach((v,k) => query.append(k,v));
-  opts = { method };
-  fetchUrl = url + (query.toString() ? '?' + query.toString() : '');
-} else {
-  opts = { method, body: formData };
-}
-            
-            
-            terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
-
-            let startTime = Date.now();
-            try {
-                const req = await fetch(fetchUrl, opts);
-                const duration = Date.now() - startTime;
-                
-                animateCounter(`time-${id}`, 0, duration, 500);
-                
-                if (req.ok) {
-                    statusIndicator.className = 'status-indicator status-success';
-                    status.innerText = `${req.status} ${req.statusText}`;
-                    status.className = 'text-[10px] font-mono font-bold text-green-500';
-                    resArea.classList.add('success');
-                } else {
-                    statusIndicator.className = 'status-indicator status-error';
-                    status.innerText = `${req.status} ${req.statusText}`;
-                    status.className = 'text-[10px] font-mono font-bold text-red-500';
-                    resArea.classList.add('error');
-                }
-
-                terminalLog(`RES: [${req.status}] ${fetchUrl}`, req.ok ? 'success' : 'error');
-
-                const type = req.headers.get('content-type');
-                if (type?.includes('json')) {
-                    const json = await req.json();
-                    out.innerHTML = syntaxHighlight(json);
-                    out.querySelectorAll('.json-key, .json-string, .json-number, .json-boolean, .json-null').forEach((el, idx) => {
-                        el.style.animationDelay = `${idx * 0.05}s`;
-                        el.classList.add('animate-slide-in-right');
-                    });
-                } else if (type?.startsWith('image')) {
-                    const blob = await req.blob();
-                    const urlObj = URL.createObjectURL(blob);
-                    dlBtn.href = urlObj; 
-                    dlBtn.download = `img-${Date.now()}.jpg`; 
-                    dlBtn.classList.remove('hidden');
-                    out.innerHTML = `<div class="flex justify-center p-2 animate-fade-in-up">
-                                        <img src="${urlObj}" class="max-w-full rounded border border-gray-700 max-h-[300px] transform transition-all duration-500 hover:scale-105">
-                                     </div>`;
-                } else {
-                    const text = await req.text();
-                    typewriterEffect(`output-${id}`, text, 10);
-                }
-            } catch (err) {
-                const duration = Date.now() - startTime;
-                time.innerText = `${duration}ms`;
-                statusIndicator.className = 'status-indicator status-error';
-                terminalLog(`ERR: ${err.message}`, 'error');
-                status.innerText = 'ERROR'; 
-                status.className = 'text-[10px] font-mono font-bold text-red-500';
-                resArea.classList.add('error');
-                out.innerHTML = `<span class="text-red-500">${err.message}</span>`;
-            } finally {
-                btn.disabled = false; 
-                btnInner.innerHTML = originalBtnText;
-            }
-        };
-
-        function typewriterEffect(elementId, text, speed = 20) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = '';
-            let i = 0;
-            
-            function typeWriter() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, speed);
-                }
-            }
-            typeWriter();
-        }
-
-        function syntaxHighlight(json) {
-            if (typeof json != 'string') json = JSON.stringify(json, undefined, 2);
-            return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) cls = 'json-key';
-                    else cls = 'json-string';
-                } else if (/true|false/.test(match)) cls = 'json-boolean';
-                else if (/null/.test(match)) cls = 'json-null';
-                return `<span class="${cls}">${match}</span>`;
-            });
-        }
     </script>
 </body>
 </html>
