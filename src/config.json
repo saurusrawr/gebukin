@@ -90,6 +90,7 @@
       }
     ],
     "tools": [
+  {"tools": [
   {
     "name": "Screenshot Web",
     "endpoint": "/api/tools/ssweb",
@@ -106,7 +107,11 @@
     "filename": "checkweb",
     "method": "GET",
     "params": [
-      { "name": "domain", "required": true, "description": "Domain website (contoh: google.com)" }
+      {
+        "name": "domain",
+        "required": true,
+        "description": "Domain website (contoh: google.com)"
+      }
     ]
   },
   {
@@ -130,7 +135,7 @@
       { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
     ]
   }
-    ],
+],
     "download": [
       {
         "name": "Facebook Downloader",
