@@ -4,18 +4,51 @@
 import { Application, Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
+import axios from 'axios';
 import { logRouterRequest } from './logger';
 
 let regRouter = new Set<string>();
 let currentConfig: any = null;
 let appInstance: Application;
 
+/* =======================
+   MAINTENANCE CHECKER
+======================= */
+
+async function checkMaintenance(): Promise<string> {
+    const url = `https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt?t=${Date.now()}`;
+
+    try {
+        const { data } = await axios.get(url, {
+            timeout: 5000,
+            headers: {
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "User-Agent": "Mozilla/5.0"
+            }
+        });
+
+        const status = String(data).trim().toLowerCase();
+        console.log(`[Maintenance] Status: "${status}"`);
+        return status;
+
+    } catch (err) {
+        console.error("[Maintenance] Fetch failed, defaulting to ON");
+        return "on";
+    }
+}
+
+/* =======================
+   AUTO LOAD SYSTEM
+======================= */
+
 export const initAutoLoad = (app: Application, config: any, configPath: string) => {
     appInstance = app;
     currentConfig = config;
-    
+
     console.log('[✓] Auto Load Activated');
-    
+
     if (fs.existsSync(configPath)) {
         fs.watch(configPath, (eventType, filename) => {
             if (filename && eventType === 'change') {
@@ -38,13 +71,12 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
         fs.watch(routerDir, { recursive: true }, (eventType, filename) => {
             if (filename && (filename.endsWith('.ts') || filename.endsWith('.js'))) {
                 console.log(`[✓] Route file changed: ${filename}`);
-                
+
                 const fullPath = path.join(routerDir, filename);
-                
                 if (require.cache[fullPath]) {
                     delete require.cache[fullPath];
                 }
-                
+
                 console.log(`Route cache cleared for: ${filename}`);
                 reloadSingleRoute(filename);
             }
@@ -57,8 +89,8 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
 const reloadSingleRoute = (filename: string) => {
     const normalized = filename.split(path.sep).join('/');
     const parts = normalized.split('/');
-    
-    const category = parts.length > 1 ? parts[parts.length - 2] : null; 
+
+    const category = parts.length > 1 ? parts[parts.length - 2] : null;
     const fileNameWithExt = parts[parts.length - 1];
     const routeName = fileNameWithExt.replace(/\.(ts|js)$/, '');
 
@@ -98,11 +130,11 @@ export const loadRouter = (app: Application, config: any) => {
 const registerRoute = (route: any, category: string, creatorName?: string, app?: Application) => {
     const targetApp = app || appInstance;
     const targetCreator = creatorName || currentConfig?.settings?.creator;
-    
+
     if (!targetApp || !targetCreator) return;
-    
+
     const routeKey = `${route.method}:${route.endpoint}`;
-    
+
     if (regRouter.has(routeKey)) {
         return;
     }
@@ -126,7 +158,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             }
         }
     }
-    
+
     if (modulePath) {
         try {
             try {
@@ -137,7 +169,20 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             const handler = handlerModule.default || handlerModule;
 
             if (typeof handler === 'function') {
+
                 const wrappedHandler = async (req: Request, res: Response, next: NextFunction) => {
+
+                    const maintenanceStatus = await checkMaintenance();
+
+                    if (maintenanceStatus === "off") {
+                        return res.status(503).json({
+                            creator: targetCreator,
+                            status: false,
+                            maintenance: true,
+                            message: "🔧 API sedang dalam maintenance. Silakan coba beberapa saat lagi."
+                        });
+                    }
+
                     logRouterRequest(req, res);
 
                     const originalJson = res.json;
@@ -156,21 +201,27 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                         await handler(req, res, next);
                     } catch (err) {
                         console.error(`Error in route ${route.endpoint}:`, err);
-                        res.status(500).json({ error: 'Internal Server Error', message: err instanceof Error ? err.message : String(err) });
+                        res.status(500).json({
+                            error: 'Internal Server Error',
+                            message: err instanceof Error ? err.message : String(err)
+                        });
                     }
                 };
 
                 if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler);
                 else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
-                
+
                 regRouter.add(routeKey);
                 console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}`);
+
             } else {
                 console.error(`[ㄨ] Invalid handler type in ${modulePath}. Expected function, got ${typeof handler}`);
             }
+
         } catch (error) {
             console.error(`[ㄨ] Failed to load route ${route.endpoint} from ${modulePath}:`, error);
         }
+
     } else {
         console.error(`[!] FILE NOT FOUND: router/${category}/${route.filename}.ts`);
     }
