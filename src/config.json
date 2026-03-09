@@ -92,6 +92,17 @@
     ]
   },
   {
+  "name": "Check Website",
+  "endpoint": "/api/tools/checkweb",
+  "filename": "checkweb",
+  "method": "GET",
+  "params": [
+    {
+      "name": "domain",
+      "required": true,
+      "description": "Domain website (contoh: google.com)"
+    },
+  {
     "name": "Short URL",
     "endpoint": "/api/tools/shorturl",
     "filename": "shorturl",
