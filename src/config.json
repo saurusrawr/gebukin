@@ -87,16 +87,8 @@
     "filename": "ssweb",
     "method": "GET",
     "params": [
-      {
-        "name": "url",
-        "required": true,
-        "description": "Website URL"
-      },
-      {
-        "name": "type",
-        "required": false,
-        "description": "mobile | desktop"
-      }
+      { "name": "url", "required": true, "description": "Website URL" },
+      { "name": "type", "required": false, "description": "mobile | desktop" }
     ]
   },
   {
@@ -105,16 +97,8 @@
     "filename": "shorturl",
     "method": "GET",
     "params": [
-      {
-        "name": "url",
-        "required": true,
-        "description": "Original URL"
-      },
-      {
-        "name": "alias",
-        "required": false,
-        "description": "Custom Alias"
-      }
+      { "name": "url", "required": true, "description": "Original URL" },
+      { "name": "alias", "required": false, "description": "Custom Alias" }
     ]
   },
   {
@@ -123,28 +107,18 @@
     "filename": "spamngl",
     "method": "GET",
     "params": [
-      {
-        "name": "link",
-        "required": true,
-        "description": "https://ngl.link/username"
-      },
-      {
-        "name": "message",
-        "required": true,
-        "description": "Pesan yang dikirim"
-      },
-      {
-        "name": "count",
-        "required": true,
-        "description": "Jumlah spam (max 50)"
-      },
-      {
-  "name": "Upload Image To Url",
-  "endpoint": "/api/tools/tourl",
-  "filename": "tourl",
-  "method": "POST",
-  "params": []
-      }
+      { "name": "link", "required": true, "description": "https://ngl.link/username" },
+      { "name": "message", "required": true, "description": "Pesan yang dikirim" },
+      { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
+    ]
+  },
+  {
+    "name": "Upload Image To Url",
+    "endpoint": "/api/tools/tourl",
+    "filename": "tourl",
+    "method": "POST",
+    "params": [
+      { "name": "file", "required": true, "description": "File gambar (png/jpg/gif/etc)" }
     ]
   }
 ],
