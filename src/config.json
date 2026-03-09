@@ -80,6 +80,15 @@
         "params": []
       }
     ],
+    "games": [
+      {
+        "name": "Family 100",
+        "endpoint": "/api/random/familly100",
+        "filename": "familly100",
+        "method": "GET",
+        "params": []
+      }
+    ],
     "tools": [
   {
     "name": "Screenshot Web",
