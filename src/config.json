@@ -216,6 +216,19 @@
   ]
 },
       {
+        "name": "Fake Dana V2",
+        "endpoint": "/api/maker/fakedana2",
+        "filename": "fakedana2",
+        "method": "GET",
+        "params": [
+          {
+            "name": "angka",
+            "required": true,
+            "description": "Nama yang akan ditampilkan di saldo dana plasu"
+          }
+        ]
+      },
+      {
         "name": "Fake Story",
         "endpoint": "/api/maker/fakestory",
         "filename": "fakestory",
