@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
 
-[Demo Website](https://your-demo-link.com) • [Rest Api](https://your-api-link.com) • [Bug Report](https://github.com/DanzzAraAra/KawaiiYumee-base-api/issues)
+[Api Website](https://saurusofficial.biz.id) • [Bug Report](https://wa.me/62895393336779)
 
 </div>
 
@@ -250,5 +250,5 @@ Project ini dilengkapi GUI bawaan:
 </details>
 
 <div align="center">
-Created with ❤️ by Danzz
+Created with ❤️ by Saurus 🔥
 </div>
