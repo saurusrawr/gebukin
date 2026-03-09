@@ -179,6 +179,19 @@
         ]
       },
       {
+        "name": "Brat Anime",
+        "endpoint": "/api/maker/bratanime",
+        "filename": "bratnime",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Isi teks nya"
+          }
+        ]
+      },
+      {
         "name": "Fake Story",
         "endpoint": "/api/maker/fakestory",
         "filename": "fakestory",
