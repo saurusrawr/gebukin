@@ -153,6 +153,29 @@
         ]
       },
       {
+        "name": "Fake Story",
+        "endpoint": "/api/maker/fakestory",
+        "filename": "fakestory",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nickname",
+            "required": true,
+            "description": "Nama yang akan ditampilkan di story"
+          },
+          {
+            "name": "text",
+            "required": true,
+            "description": "Teks untuk story"
+          },
+          {
+            "name": "pp",
+            "required": false,
+            "description": "Profil"
+          }
+        ]
+      },
+      {
         "name": "Blur Image",
         "endpoint": "/api/maker/blur",
         "filename": "blur",
