@@ -8,7 +8,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
 
     if (!name || !time || !image) {
       return res.status(400).json({
-        creator "Saurus",
+        creator: "Saurus",
         status: false,
         message: "Parameter name, time, pp wajib diisi"
       })
