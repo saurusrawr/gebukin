@@ -6,7 +6,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
   try {
     const { name, time, pp } = req.query
 
-    if (!name || !time || !image) {
+    if (!name || !time || !pp) {
       return res.status(400).json({
         creator: "Saurus",
         status: false,
@@ -15,7 +15,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
     }
 
     // ambil pp
-    const ppRes = await axios.get(String(image), {
+    const ppRes = await axios.get(String(pp), {
       responseType: "arraybuffer"
     })
     const ppBuffer = Buffer.from(ppRes.data)
@@ -50,7 +50,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
     ctx.drawImage(
       ppImg,
       centerX - radius,
-      imageY - radius,
+      ppY - radius,
       radius * 2,
       radius * 2
     )
