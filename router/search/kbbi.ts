@@ -1,37 +1,71 @@
 import { Request, Response } from "express"
-import axios from "axios"
+import fetch from "node-fetch"
+import * as cheerio from "cheerio"
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#183;/g, "·")
-    .replace(/&#233;/g, "é")
-    .replace(/&[a-z]+;/gi, "")
-    .replace(/&#\d+;/g, "")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim()
-}
+async function scrapeKbbi(q: string) {
+  const response = await fetch(
+    `https://kbbi.kemdikbud.go.id/entri/${encodeURIComponent(q)}`,
+    {
+      timeout: 30000,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    } as any,
+  )
 
-async function searchKBBI(query: string): Promise<any[]> {
-  const response = await axios.get(`https://kbbi.web.id/${encodeURIComponent(query)}/ajax_`, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      "Referer": "https://kbbi.web.id/",
-      "X-Requested-With": "XMLHttpRequest",
-    },
-    timeout: 10000,
-  })
-
-  if (!Array.isArray(response.data)) {
-    throw new Error("Format respon tidak valid dari KBBI")
+  if (!response.ok) {
+    throw new Error("Network response was not ok " + response.statusText)
   }
 
-  return response.data
+  const html = await response.text()
+  const $ = cheerio.load(html)
+  const isExist = !/tidak ditemukan/i.test(
+    $("body > div.container.body-content > h4[style=\"color:red\"]").text(),
+  )
+
+  if (!isExist) {
+    throw new Error(`${q} tidak ditemukan di KBBI`)
+  }
+
+  const results: { index: number; title: string; means: string[] }[] = []
+  let isContent = false
+  let lastTitle: string | undefined
+
+  $("body > div.container.body-content")
+    .children()
+    .each((_, el) => {
+      const tag = el.tagName
+      const elem = $(el)
+
+      if (tag === "hr") {
+        isContent = !isContent && !results.length
+      }
+
+      if (tag === "h2" && isContent) {
+        const indexText = elem.find("sup").text().trim()
+        const index = parseInt(indexText) || 0
+        const title = elem.text().trim()
+        results.push({ index, title, means: [] })
+        lastTitle = title
+      }
+
+      if ((tag === "ol" || tag === "ul") && isContent && lastTitle) {
+        elem.find("li").each((_, liEl) => {
+          const li = $(liEl).text().trim()
+          const idx = results.findIndex(({ title }) => title === lastTitle)
+          if (idx !== -1) {
+            results[idx].means.push(li)
+          }
+        })
+        lastTitle = undefined
+      }
+    })
+
+  if (results.length === 0) {
+    throw new Error(`${q} tidak ditemukan di KBBI`)
+  }
+
+  return results
 }
 
 export default async function kbbiHandler(req: Request, res: Response) {
@@ -42,21 +76,9 @@ export default async function kbbiHandler(req: Request, res: Response) {
   }
 
   try {
-    const result = await searchKBBI(q.trim())
-
-    if (result.length === 0) {
-      return res.status(404).json({ status: false, message: `Kata '${q}' tidak ditemukan di KBBI` })
-    }
-
-    const data = result
-      .filter((item: any) => item.d)
-      .map((item: any) => ({
-        kata: item.w,
-        definisi: stripHtml(item.d),
-      }))
-
+    const data = await scrapeKbbi(q.trim())
     res.json({ status: true, query: q, total: data.length, data })
   } catch (error: any) {
     res.status(500).json({ status: false, message: error.message })
   }
-      }
+}
