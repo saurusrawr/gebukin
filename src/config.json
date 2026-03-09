@@ -121,9 +121,8 @@
     {
       "name": "file",
       "required": true,
-      "description": "File gambar (png/jpg/gif/etc)",
+      "description": "File gambar (png/jpg/gif/etc)"
     }
- "type": "files"
   ]
 }
 ],
