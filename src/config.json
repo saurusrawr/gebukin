@@ -387,6 +387,49 @@
             "description": "URL website yang ingin diambil kodenya"
           }
         ]
+      },
+      {
+        "name": "React Channel WA",
+        "endpoint": "/api/tools/reactch",
+        "filename": "reactch",
+        "method": "GET",
+        "params": [
+          {
+            "name": "channel",
+            "required": true,
+            "description": "URL post WhatsApp Channel"
+          },
+          {
+            "name": "emoji",
+            "required": true,
+            "description": "Emoji reaction (pisahkan koma atau langsung tulis, max 20)"
+          },
+          {
+            "name": "apikey",
+            "required": true,
+            "description": "API key"
+          }
+        ]
+      },
+      {
+        "name": "Claim Daily VIP",
+        "endpoint": "/api/tools/claimdaily",
+        "filename": "reactch",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Get Code",
+        "endpoint": "/api/tools/getcode",
+        "filename": "getcode",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL website yang ingin diambil kodenya"
+          }
+        ]
       }
     ],
     "download": [
