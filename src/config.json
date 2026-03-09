@@ -112,8 +112,6 @@
       { "name": "count", "required": true, "description": "Jumlah spam (max 50)" }
     ]
   }
-]
-}
 ],
     "download": [
       {
