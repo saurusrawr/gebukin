@@ -37,8 +37,9 @@
     "endpoint": "/api/maker/brat",
     "filename": "brat",
     "method": "GET",
-    "params": [
-      {
+    "params": []
+  },
+ {
   "name": "Tweet Generator",
   "endpoint": "/api/maker/tweetgen",
   "filename": "tweetgen",
