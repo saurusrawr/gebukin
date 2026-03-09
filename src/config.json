@@ -412,13 +412,6 @@
         ]
       },
       {
-        "name": "Claim Daily VIP",
-        "endpoint": "/api/tools/claimdaily",
-        "filename": "reactch",
-        "method": "GET",
-        "params": []
-      },
-      {
         "name": "Get Code",
         "endpoint": "/api/tools/getcode",
         "filename": "getcode",
