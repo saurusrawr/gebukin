@@ -49,6 +49,9 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
 
     console.log('[✓] Auto Load Activated');
 
+    // Load semua route pertama kali
+    loadRouter(app, config);
+
     if (fs.existsSync(configPath)) {
         fs.watch(configPath, (eventType, filename) => {
             if (filename && eventType === 'change') {
