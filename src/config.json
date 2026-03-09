@@ -39,6 +39,24 @@
     "method": "GET",
     "params": [
       {
+  "name": "Tweet Generator",
+  "endpoint": "/api/maker/tweetgen",
+  "filename": "tweetgen",
+  "method": "GET",
+  "params": [
+    { "name": "name", "required": true, "description": "Nama yang tampil di tweet" },
+    { "name": "username", "required": true, "description": "Username di tweet" },
+    { "name": "tweetText", "required": true, "description": "Isi tweet" },
+    { "name": "profile", "required": false, "description": "URL atau Buffer gambar profil" },
+    { "name": "image", "required": false, "description": "URL atau Buffer gambar tweet" },
+    { "name": "theme", "required": false, "description": "Tema: light | dim | dark" },
+    { "name": "retweets", "required": false, "description": "Jumlah retweet" },
+    { "name": "quotes", "required": false, "description": "Jumlah quote" },
+    { "name": "likes", "required": false, "description": "Jumlah like" },
+    { "name": "client", "required": false, "description": "Nama client (default: Twitter for iPhone)" }
+  ]
+      },
+      {
         "name": "text",
         "required": true,
         "description": "Text"
