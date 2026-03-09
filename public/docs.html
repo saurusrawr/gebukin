@@ -669,24 +669,22 @@
                     const methodColor = route.method === 'GET' ? 'bg-sky-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
                     
                     let inputs = '';
-                    let copyUrl = route.endpoint;
-                    if (route.method === 'GET' && route.params && route.params.length > 0) {
-                        const paramsList = route.params.map(p => `${p.name}=`).join('&');
-                        copyUrl = `${route.endpoint}?${paramsList}`;
-                    }
-
-                    if (route.params?.length) {
-                        inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` + 
-                        route.params.map(p => `
-                        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''}</label>
-                            let inputType = p.type === 'file' ? 'file' : 'text';
-let acceptAttr = p.type === 'file' && p.accept ? `accept="${p.accept}"` : '';
-<input type="${inputType}" id="input-${id}-${p.name}" ${acceptAttr}
-    placeholder="${p.type !== 'file' && p.description ? p.description : ''}" 
-    class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
-                        </div>`).join('') + `</div>`;
-                    }
+if (route.params?.length) {
+  inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` +
+    route.params.map(p => {
+      let inputType = p.type === 'file' ? 'file' : 'text';
+      return `
+        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
+          <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">
+            ${p.name} ${p.required ? '<span class="text-red-400">*</span>' : ''}
+          </label>
+          <input type="${inputType}" id="input-${id}-${p.name}" 
+                 placeholder="${p.description || 'Value...'}"
+                 class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
+        </div>`;
+    }).join('') +
+  `</div>`;
+}
 
                     const card = document.createElement('div');
                     card.className = 'api-card-wrapper w-full bg-white border border-slate-300 rounded-lg hover:border-fmn-blue transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md';
@@ -849,23 +847,26 @@ let acceptAttr = p.type === 'file' && p.accept ? `accept="${p.accept}"` : '';
                 }
             });
             
-            let opts = { method };
+            const formData = new FormData();
+document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => {
+  const key = i.id.split(`input-${id}-`)[1];
+  if(i.type === 'file' && i.files[0]) {
+    formData.append(key, i.files[0]);
+  } else if(i.value) {
+    formData.append(key, i.value);
+  }
+});
 
-if(method === 'GET' && Object.keys(params).length) {
-    fetchUrl = url + '?' + new URLSearchParams(params);
-} else if(method !== 'GET') {
-    // Cek jika ada file
-    const hasFile = Object.values(params).some(v => v instanceof File);
-    if(hasFile) {
-        const formData = new FormData();
-        Object.entries(params).forEach(([k,v]) => formData.append(k, v));
-        opts.body = formData;
-        // Jangan set Content-Type, browser otomatis atur multipart/form-data
-    } else {
-        opts.headers = {'Content-Type': 'application/json'};
-        opts.body = JSON.stringify(params);
-    }
+let opts;
+if(method === 'GET') {
+  let query = new URLSearchParams();
+  formData.forEach((v,k) => query.append(k,v));
+  opts = { method };
+  fetchUrl = url + (query.toString() ? '?' + query.toString() : '');
+} else {
+  opts = { method, body: formData };
 }
+            
             
             terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
 
