@@ -18,16 +18,27 @@
         "filename": "kawaiiyumee",
         "method": "GET",
         "params": [
-          {
-            "name": "q",
-            "required": true,
-            "description": "Question"
-          },
-          {
-            "name": "session",
-            "required": false,
-            "description": "Session ID"
-          }
+          { "name": "q", "required": true, "description": "Question" },
+          { "name": "session", "required": false, "description": "Session ID" }
+        ]
+      },
+      {
+        "name": "Muslim AI",
+        "endpoint": "/api/ai/muslimai",
+        "filename": "muslimai",
+        "method": "GET",
+        "params": [
+          { "name": "q", "required": true, "description": "Pertanyaan seputar Islam" }
+        ]
+      },
+      {
+        "name": "Sahabat AI",
+        "endpoint": "/api/ai/sahabatai",
+        "filename": "sahabatai",
+        "method": "GET",
+        "params": [
+          { "name": "message", "required": true, "description": "Pesan" },
+          { "name": "cookie", "required": true, "description": "Cookie sID dari sahabat-ai.com" }
         ]
       }
     ],
@@ -38,11 +49,7 @@
         "filename": "brat",
         "method": "GET",
         "params": [
-          {
-            "name": "text",
-            "required": true,
-            "description": "Text"
-          }
+          { "name": "text", "required": true, "description": "Text" }
         ]
       },
       {
@@ -69,16 +76,8 @@
         "filename": "lobbyffmax",
         "method": "GET",
         "params": [
-          {
-            "name": "nickname",
-            "required": true,
-            "description": "Nama yang akan ditampilkan di lobby"
-          },
-          {
-            "name": "background",
-            "required": false,
-            "description": "Nomor background 1-16, jika tidak diisi akan random"
-          }
+          { "name": "nickname", "required": true, "description": "Nama yang akan ditampilkan di lobby" },
+          { "name": "background", "required": false, "description": "Nomor background 1-16, jika tidak diisi akan random" }
         ]
       }
     ],
@@ -133,11 +132,7 @@
         "filename": "math",
         "method": "GET",
         "params": [
-          {
-            "name": "level",
-            "required": false,
-            "description": "noob | easy | medium | hard | extreme | impossible | impossible2 | impossible3 | impossible4 | impossible5"
-          }
+          { "name": "level", "required": false, "description": "noob | easy | medium | hard | extreme | impossible | impossible2 | impossible3 | impossible4 | impossible5" }
         ]
       },
       {
@@ -179,11 +174,7 @@
         "filename": "checkweb",
         "method": "GET",
         "params": [
-          {
-            "name": "domain",
-            "required": true,
-            "description": "Domain website (contoh: google.com)"
-          }
+          { "name": "domain", "required": true, "description": "Domain website (contoh: google.com)" }
         ]
       },
       {
@@ -215,11 +206,7 @@
         "filename": "facebook",
         "method": "GET",
         "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "Facebook URL"
-          }
+          { "name": "url", "required": true, "description": "Facebook URL" }
         ]
       },
       {
@@ -228,11 +215,7 @@
         "filename": "instagram",
         "method": "GET",
         "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "Instagram URL"
-          }
+          { "name": "url", "required": true, "description": "Instagram URL" }
         ]
       },
       {
@@ -241,11 +224,34 @@
         "filename": "tiktok",
         "method": "GET",
         "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "TikTok URL"
-          }
+          { "name": "url", "required": true, "description": "TikTok URL" }
+        ]
+      },
+      {
+        "name": "MediaFire Downloader",
+        "endpoint": "/api/download/mediafire",
+        "filename": "mediafire",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "MediaFire URL" }
+        ]
+      },
+      {
+        "name": "Lahelu Downloader",
+        "endpoint": "/api/download/lahelu",
+        "filename": "lahelu",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "Lahelu URL" }
+        ]
+      },
+      {
+        "name": "GitHub Downloader",
+        "endpoint": "/api/download/github",
+        "filename": "github",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "GitHub URL (repo, file, gist)" }
         ]
       }
     ],
@@ -256,11 +262,7 @@
         "filename": "yts",
         "method": "GET",
         "params": [
-          {
-            "name": "q",
-            "required": true,
-            "description": "Query"
-          }
+          { "name": "q", "required": true, "description": "Query" }
         ]
       },
       {
@@ -269,11 +271,7 @@
         "filename": "tiktok",
         "method": "GET",
         "params": [
-          {
-            "name": "q",
-            "required": true,
-            "description": "Query"
-          }
+          { "name": "q", "required": true, "description": "Query" }
         ]
       },
       {
@@ -282,11 +280,18 @@
         "filename": "pinterest",
         "method": "GET",
         "params": [
-          {
-            "name": "q",
-            "required": true,
-            "description": "Query"
-          }
+          { "name": "q", "required": true, "description": "Query" }
+        ]
+      },
+      {
+        "name": "GitHub Search",
+        "endpoint": "/api/search/github",
+        "filename": "github",
+        "method": "GET",
+        "params": [
+          { "name": "url", "required": true, "description": "GitHub repo URL" },
+          { "name": "begin", "required": false, "description": "Halaman awal (default: 1)" },
+          { "name": "end", "required": false, "description": "Halaman akhir (default: 5)" }
         ]
       }
     ],
@@ -297,6 +302,24 @@
         "filename": "jkt48news",
         "method": "GET",
         "params": []
+      },
+      {
+        "name": "Berita Kompas",
+        "endpoint": "/api/berita/kompas",
+        "filename": "kompas",
+        "method": "GET",
+        "params": []
+      }
+    ],
+    "stalker": [
+      {
+        "name": "TikTok Stalker",
+        "endpoint": "/api/stalker/tiktok",
+        "filename": "tiktokstalk",
+        "method": "GET",
+        "params": [
+          { "name": "user", "required": true, "description": "Username TikTok" }
+        ]
       }
     ]
   }
