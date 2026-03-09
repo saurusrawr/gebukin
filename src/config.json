@@ -202,19 +202,43 @@
         ]
       },
       {
-  "name": "Fake Dana Transfer",
-  "endpoint": "/api/maker/fakedana",
-  "filename": "fakedana",
-  "method": "GET",
-  "params": [
-    { "name": "timezone", "required": true, "description": "WIB | WITA | WIT" },
-    { "name": "sender_name", "required": true, "description": "Nama pengirim" },
-    { "name": "sender_phone", "required": true, "description": "Nomor HP pengirim" },
-    { "name": "target_name", "required": true, "description": "Nama penerima" },
-    { "name": "target_phone", "required": true, "description": "Nomor HP penerima" },
-    { "name": "amount", "required": true, "description": "Nominal transfer" }
-  ]
-},
+        "name": "Fake Dana Transfer",
+        "endpoint": "/api/maker/fakedana",
+        "filename": "fakedana",
+        "method": "GET",
+        "params": [
+          {
+            "name": "timezone",
+            "required": true,
+            "description": "WIB | WITA | WIT"
+          },
+          {
+            "name": "sender_name",
+            "required": true,
+            "description": "Nama pengirim"
+          },
+          {
+            "name": "sender_phone",
+            "required": true,
+            "description": "Nomor HP pengirim"
+          },
+          {
+            "name": "target_name",
+            "required": true,
+            "description": "Nama penerima"
+          },
+          {
+            "name": "target_phone",
+            "required": true,
+            "description": "Nomor HP penerima"
+          },
+          {
+            "name": "amount",
+            "required": true,
+            "description": "Nominal transfer"
+          }
+        ]
+      },
       {
         "name": "Fake Dana V2",
         "endpoint": "/api/maker/fakedana2",
@@ -281,6 +305,19 @@
             "description": "Judul gambar"
           }
         ]
+      },
+      {
+        "name": "Circle Image",
+        "endpoint": "/api/maker/circle",
+        "filename": "circle",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL gambar yang ingin di-crop circle"
+          }
+        ]
       }
     ],
     "random": [
@@ -316,6 +353,13 @@
         "name": "Random Kucing",
         "endpoint": "/api/random/kucing",
         "filename": "kucing",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random JKT48",
+        "endpoint": "/api/random/jkt48",
+        "filename": "randomjkt48",
         "method": "GET",
         "params": []
       },
@@ -517,6 +561,194 @@
             "description": "URL website yang ingin diambil kodenya"
           }
         ]
+      },
+      {
+        "name": "React Channel WA",
+        "endpoint": "/api/tools/reactch",
+        "filename": "reactch",
+        "method": "GET",
+        "params": [
+          {
+            "name": "channel",
+            "required": true,
+            "description": "URL post WhatsApp Channel"
+          },
+          {
+            "name": "emoji",
+            "required": true,
+            "description": "Emoji reaction (pisahkan koma, max 20)"
+          },
+          {
+            "name": "apikey",
+            "required": true,
+            "description": "API key"
+          }
+        ]
+      },
+      {
+        "name": "Get Code",
+        "endpoint": "/api/tools/getcode",
+        "filename": "getcode",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL website yang ingin diambil kodenya"
+          }
+        ]
+      },
+      {
+        "name": "Temp Mail",
+        "endpoint": "/api/tools/tempmail",
+        "filename": "tempmail",
+        "method": "GET",
+        "params": [
+          {
+            "name": "type",
+            "required": true,
+            "description": "create | inbox"
+          },
+          {
+            "name": "email",
+            "required": false,
+            "description": "Email (wajib jika type=inbox)"
+          }
+        ]
+      },
+      {
+        "name": "Kode Pos",
+        "endpoint": "/api/tools/kodepos",
+        "filename": "kodepos",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Nama desa, kecamatan, kota, atau kode pos"
+          }
+        ]
+      },
+      {
+        "name": "Text to QR",
+        "endpoint": "/api/tools/text2qr",
+        "filename": "text2qr",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Teks yang ingin dijadikan QR code"
+          }
+        ]
+      },
+      {
+        "name": "Text to Speech",
+        "endpoint": "/api/tools/tts",
+        "filename": "tts",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Teks yang ingin di-TTS"
+          },
+          {
+            "name": "voice",
+            "required": false,
+            "description": "Suara (default: id-ID-ArdiNeural)"
+          },
+          {
+            "name": "rate",
+            "required": false,
+            "description": "Rate (default: +0%)"
+          },
+          {
+            "name": "pitch",
+            "required": false,
+            "description": "Pitch (default: +0Hz)"
+          },
+          {
+            "name": "volume",
+            "required": false,
+            "description": "Volume (default: +0%)"
+          }
+        ]
+      },
+      {
+        "name": "Anime Finder",
+        "endpoint": "/api/tools/animefinder",
+        "filename": "animefind",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL gambar anime"
+          }
+        ]
+      },
+      {
+        "name": "HTML to Image",
+        "endpoint": "/api/tools/html2img",
+        "filename": "html2img",
+        "method": "POST",
+        "params": [
+          {
+            "name": "html",
+            "required": true,
+            "description": "Kode HTML yang ingin dijadikan gambar"
+          }
+        ]
+      },
+      {
+        "name": "Cek IP",
+        "endpoint": "/api/tools/cekip",
+        "filename": "cekip",
+        "method": "GET",
+        "params": [
+          {
+            "name": "ip",
+            "required": true,
+            "description": "IP address yang ingin dicek"
+          }
+        ]
+      },
+      {
+        "name": "Jadwal Sholat",
+        "endpoint": "/api/tools/jadwalsholat",
+        "filename": "jadwalsholat",
+        "method": "GET",
+        "params": [
+          {
+            "name": "city",
+            "required": false,
+            "description": "Nama kota"
+          },
+          {
+            "name": "lat",
+            "required": false,
+            "description": "Latitude"
+          },
+          {
+            "name": "lon",
+            "required": false,
+            "description": "Longitude"
+          }
+        ]
+      },
+      {
+        "name": "Kapan Imsak",
+        "endpoint": "/api/tools/kapanimsak",
+        "filename": "kapanimsak",
+        "method": "GET",
+        "params": [
+          {
+            "name": "city",
+            "required": true,
+            "description": "Nama kota"
+          }
+        ]
       }
     ],
     "download": [
@@ -674,6 +906,50 @@
             "description": "Kata yang ingin dicari di KBBI"
           }
         ]
+      },
+      {
+        "name": "AN1 Search",
+        "endpoint": "/api/search/an1",
+        "filename": "an1",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Nama aplikasi/game"
+          }
+        ]
+      },
+      {
+        "name": "Play Store Search",
+        "endpoint": "/api/search/playstore",
+        "filename": "ps",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query pencarian"
+          }
+        ]
+      },
+      {
+        "name": "MCPEDL Search",
+        "endpoint": "/api/search/mcpedl",
+        "filename": "mcpe",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Query pencarian Minecraft addon"
+          },
+          {
+            "name": "max",
+            "required": false,
+            "description": "Jumlah hasil (default: 10)"
+          }
+        ]
       }
     ],
     "berita": [
@@ -709,6 +985,13 @@
         "name": "Hari Libur & Nasional",
         "endpoint": "/api/berita/harilibur",
         "filename": "hari-libur",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Berita Sindonews",
+        "endpoint": "/api/berita/sindonews",
+        "filename": "sindonews",
         "method": "GET",
         "params": []
       }
@@ -877,6 +1160,105 @@
             "name": "mimpi",
             "required": true,
             "description": "Kata kunci mimpi yang ingin ditafsirkan"
+          }
+        ]
+      }
+    ],
+    "provider": [
+      {
+        "name": "Tri SIM Check",
+        "endpoint": "/api/provider/tricheck",
+        "filename": "tricheck",
+        "method": "GET",
+        "params": [
+          {
+            "name": "msisdn",
+            "required": true,
+            "description": "Nomor SIM TRI (prefix 0895-0899)"
+          }
+        ]
+      },
+      {
+        "name": "XL / AXIS Check",
+        "endpoint": "/api/provider/xlcek",
+        "filename": "xlcek",
+        "method": "GET",
+        "params": [
+          {
+            "name": "number",
+            "required": true,
+            "description": "Nomor XL/AXIS (prefix 0817-0819, 0877-0878, 0831-0838)"
+          }
+        ]
+      }
+    ],
+    "check": [
+      {
+        "name": "NPM Package Check",
+        "endpoint": "/api/check/npm",
+        "filename": "npm",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Nama package npm"
+          }
+        ]
+      },
+      {
+        "name": "Tagihan PLN",
+        "endpoint": "/api/check/cektagihanpln",
+        "filename": "cektagihanpln",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nopel",
+            "required": true,
+            "description": "Nomor pelanggan PLN"
+          }
+        ]
+      }
+    ],
+    "encrypt": [
+      {
+        "name": "Text to Base64",
+        "endpoint": "/api/encrypt/texttobase64",
+        "filename": "texttobase64",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Teks yang ingin diubah ke Base64"
+          }
+        ]
+      },
+      {
+        "name": "Base64 to Text",
+        "endpoint": "/api/encrypt/base64totext",
+        "filename": "base64totext",
+        "method": "GET",
+        "params": [
+          {
+            "name": "text",
+            "required": true,
+            "description": "Base64 yang ingin diubah ke teks"
+          }
+        ]
+      }
+    ],
+    "drama": [
+      {
+        "name": "Drama Search",
+        "endpoint": "/api/drama/dramasearch",
+        "filename": "drama-search",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Judul drama yang ingin dicari"
           }
         ]
       }
