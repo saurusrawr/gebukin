@@ -96,6 +96,27 @@
         "filename": "ba",
         "method": "GET",
         "params": []
+      },
+      {
+        "name": "Random Rumah Misteri",
+        "endpoint": "/api/random/rumahmisteri",
+        "filename": "rumahmisteri",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random Neko",
+        "endpoint": "/api/random/neko",
+        "filename": "neko",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random Kucing",
+        "endpoint": "/api/random/kucing",
+        "filename": "kucing",
+        "method": "GET",
+        "params": []
       }
     ],
     "games": [
@@ -103,6 +124,40 @@
         "name": "Family 100",
         "endpoint": "/api/games/familly100",
         "filename": "familly100",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Math Game",
+        "endpoint": "/api/games/math",
+        "filename": "math",
+        "method": "GET",
+        "params": [
+          {
+            "name": "level",
+            "required": false,
+            "description": "noob | easy | medium | hard | extreme | impossible | impossible2 | impossible3 | impossible4 | impossible5"
+          }
+        ]
+      },
+      {
+        "name": "Tebak Hero ML",
+        "endpoint": "/api/games/tebakheroml",
+        "filename": "tebakheroml",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Tebak Karakter FF",
+        "endpoint": "/api/games/tebakkarakterff",
+        "filename": "tebakkarakterff",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Tebak Lagu",
+        "endpoint": "/api/games/tebaklagu",
+        "filename": "tebaklagu",
         "method": "GET",
         "params": []
       }
@@ -233,6 +288,15 @@
             "description": "Query"
           }
         ]
+      }
+    ],
+    "berita": [
+      {
+        "name": "Berita JKT48",
+        "endpoint": "/api/berita/jkt48",
+        "filename": "jkt48news",
+        "method": "GET",
+        "params": []
       }
     ]
   }
