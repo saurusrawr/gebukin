@@ -113,16 +113,6 @@
     ]
   },
   {
-  "name": "Upload Image To Url",
-  "endpoint": "/api/tools/tourl",
-  "filename": "tourl",
-  "method": "POST",
-  "params": [
-    {
-      "name": "file",
-      "required": true,
-      "description": "File gambar (png/jpg/gif/etc)"
-    }
   ]
 }
 ],
