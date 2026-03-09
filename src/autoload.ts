@@ -4,18 +4,58 @@
 import { Application, Request, Response, NextFunction } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
+import axios from 'axios';
 import { logRouterRequest } from './logger';
 
 let regRouter = new Set<string>();
 let currentConfig: any = null;
 let appInstance: Application;
 
+// ======== MAINTENANCE CHECK ========
+let maintenanceCache: { status: string; lastChecked: number } = { status: 'on', lastChecked: 0 };
+const CACHE_TTL = 60 * 1000; // 60 detik
+const STATUS_URL = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt';
+
+async function checkMaintenanceStatus(): Promise<boolean> {
+    const now = Date.now();
+    if (now - maintenanceCache.lastChecked < CACHE_TTL) {
+        return maintenanceCache.status.trim().toLowerCase() === 'off';
+    }
+
+    try {
+        const response = await axios.get(STATUS_URL, { timeout: 5000 });
+        const status = response.data.toString().trim().toLowerCase();
+        maintenanceCache = { status, lastChecked: now };
+        return status === 'off';
+    } catch {
+        // kalau gagal fetch, anggap on (jalan normal)
+        maintenanceCache.lastChecked = now;
+        return false;
+    }
+}
+
+const maintenanceMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    const isMaintenance = await checkMaintenanceStatus();
+    if (isMaintenance) {
+        return res.status(503).json({
+            status: false,
+            maintenance: true,
+            message: '🔧 API sedang dalam maintenance. Silakan coba beberapa saat lagi.',
+        });
+    }
+    next();
+};
+// ======== END MAINTENANCE CHECK ========
+
 export const initAutoLoad = (app: Application, config: any, configPath: string) => {
     appInstance = app;
     currentConfig = config;
-    
+
+    // Pasang middleware maintenance ke semua route /api/*
+    app.use('/api', maintenanceMiddleware);
+
     console.log('[✓] Auto Load Activated');
-    
+
     if (fs.existsSync(configPath)) {
         fs.watch(configPath, (eventType, filename) => {
             if (filename && eventType === 'change') {
@@ -38,13 +78,13 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
         fs.watch(routerDir, { recursive: true }, (eventType, filename) => {
             if (filename && (filename.endsWith('.ts') || filename.endsWith('.js'))) {
                 console.log(`[✓] Route file changed: ${filename}`);
-                
+
                 const fullPath = path.join(routerDir, filename);
-                
+
                 if (require.cache[fullPath]) {
                     delete require.cache[fullPath];
                 }
-                
+
                 console.log(`Route cache cleared for: ${filename}`);
                 reloadSingleRoute(filename);
             }
@@ -57,8 +97,8 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
 const reloadSingleRoute = (filename: string) => {
     const normalized = filename.split(path.sep).join('/');
     const parts = normalized.split('/');
-    
-    const category = parts.length > 1 ? parts[parts.length - 2] : null; 
+
+    const category = parts.length > 1 ? parts[parts.length - 2] : null;
     const fileNameWithExt = parts[parts.length - 1];
     const routeName = fileNameWithExt.replace(/\.(ts|js)$/, '');
 
@@ -98,11 +138,11 @@ export const loadRouter = (app: Application, config: any) => {
 const registerRoute = (route: any, category: string, creatorName?: string, app?: Application) => {
     const targetApp = app || appInstance;
     const targetCreator = creatorName || currentConfig?.settings?.creator;
-    
+
     if (!targetApp || !targetCreator) return;
-    
+
     const routeKey = `${route.method}:${route.endpoint}`;
-    
+
     if (regRouter.has(routeKey)) {
         return;
     }
@@ -126,7 +166,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             }
         }
     }
-    
+
     if (modulePath) {
         try {
             try {
@@ -160,9 +200,16 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                     }
                 };
 
-                if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler);
-                else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
-                
+                // Handle multer middleware jika ada
+                const middlewareModule = handlerModule.middleware;
+                if (typeof middlewareModule === 'function') {
+                    if (route.method === 'GET') targetApp.get(route.endpoint, middlewareModule, wrappedHandler);
+                    else if (route.method === 'POST') targetApp.post(route.endpoint, middlewareModule, wrappedHandler);
+                } else {
+                    if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler);
+                    else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
+                }
+
                 regRouter.add(routeKey);
                 console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}`);
             } else {
