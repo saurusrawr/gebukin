@@ -4,12 +4,12 @@ import { createCanvas, loadImage } from "canvas"
 
 export default async function fakeCallHandler(req: Request, res: Response) {
   try {
-    const { name, time, image } = req.query
+    const { name, time, pp } = req.query
 
     if (!name || !time || !image) {
       return res.status(400).json({
         status: false,
-        message: "Parameter name, time, image wajib diisi"
+        message: "Parameter name, time, pp wajib diisi"
       })
     }
 
@@ -22,7 +22,7 @@ export default async function fakeCallHandler(req: Request, res: Response) {
 
     // ambil background
     const bgRes = await axios.get(
-      "http://elainaacdn.vercel.app/file/8799ce569e.jpg",
+      "https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/saurus_fakecall.jpg",
       { responseType: "arraybuffer" }
     )
 
