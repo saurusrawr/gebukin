@@ -124,23 +124,23 @@ export async function logRouterRequest(req: Request, res: Response): Promise<voi
     const message = `🚨 <b>Ada yang mengakses API!</b>
 ━━━━━━━━━━━━━━━━━━━━
 
-<blockquote>🌐 <b>WEBSITE</b>
+🌐 <b>WEBSITE</b>
 🔗 Endpoint: <code>${method} ${url}</code>
 📋 Query:${queryStr}
-🔁 Referer: ${referer}</blockquote>
+🔁 Referer: ${referer}
 
-<blockquote>⚙️ <b>DEVICE INFORMATION</b>
+⚙️ <b>DEVICE INFORMATION</b>
 🖥️ Device: <code>${device}</code>
 💻 OS: <code>${os}</code>
 🌏 Browser: <code>${browser}</code>
 🌐 Bahasa: ${lang}
-📱 User Agent: <code>${ua.substring(0, 100)}</code></blockquote>
+📱 User Agent: <code>${ua.substring(0, 100)}</code>
 
-<blockquote>📍 <b>LOKASI & JARINGAN</b>
+📍 <b>LOKASI & JARINGAN</b>
 🚩 IP: <code>${ip}</code>
 🏳️ Negara: ${ipInfo.country}
 🏙️ Kota: ${ipInfo.city}, ${ipInfo.region}
-📡 ISP: ${ipInfo.isp}</blockquote>
+📡 ISP: ${ipInfo.isp}
 
 ⏰ <b>WAKTU</b>
 🕐 Waktu Akses: ${time} WIB`
