@@ -2,9 +2,7 @@ import { Request, Response } from "express"
 import { createCanvas, loadImage, registerFont } from "canvas"
 import path from "path"
 
-const __dirname = path.resolve()
-
-registerFont(path.join(__dirname, "font/f5803c-1772975107907.ttf"), { family: "CartoonVibes" })
+registerFont(path.join(__dirname, "../../font/f5803c-1772975107907.ttf"), { family: "CartoonVibes" })
 
 const TARGET_W = 2200
 
