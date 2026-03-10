@@ -240,9 +240,9 @@
         ]
       },
       {
-        "name": "Fake Dana V2",
-        "endpoint": "/api/maker/fakedana2",
-        "filename": "fakedanaversi2",
+        "name": "Fake Dana Saldo",
+        "endpoint": "/api/maker/fakedanasaldo",
+        "filename": "fakedanasaldo",
         "method": "GET",
         "params": [
           {
@@ -360,6 +360,20 @@
         "name": "Random JKT48",
         "endpoint": "/api/random/jkt48",
         "filename": "randomjkt48",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random Wallpaper Islam",
+        "endpoint": "/api/random/wallpaperislam",
+        "filename": "wallpaperislam",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random Dark jokes",
+        "endpoint": "/api/random/darkjoke",
+        "filename": "darkjoke",
         "method": "GET",
         "params": []
       }
