@@ -8,7 +8,6 @@ async function generateQrCodeBuffer(text: string): Promise<Buffer> {
       {
         errorCorrectionLevel: "H",
         type: "png",
-        quality: 1,
         width: 1024,
         margin: 2,
         color: {
