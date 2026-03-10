@@ -445,6 +445,15 @@
     ],
     "tools": [
       {
+  "name": "Tourl all files",
+  "endpoint": "/api/tools/tourl",
+  "filename": "cdnupliad",
+  "method": "POST",
+  "params": [
+    { "name": "file", "required": true, "type": "file", "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)" }
+  ]
+      },
+      {
         "name": "Screenshot Web",
         "endpoint": "/api/tools/ssweb",
         "filename": "ssweb",
