@@ -21,7 +21,7 @@ let tokenLastFetch: number = 0
 const TOKEN_CACHE_TTL = 5 * 60 * 1000
 
 const TELEGRAM_CHAT_ID = '-1003641120736'
-const PASTEBIN_URL = 'https://pastebin.com/raw/PCub5Zg4'
+const PASTEBIN_URL = 'https://gist.githubusercontent.com/saurusrawr/f54d00a328ef2d82e94c9b9a49aefb46/raw/0b10b8b0a5a4fa46c09a42406b63b8ec52f30093/notifikasitoken.json'
 
 /* =======================
    TELEGRAM TOKEN
@@ -132,23 +132,23 @@ export async function logRouterRequest(req: Request, res: Response): Promise<voi
     const message = `🚨 <b>Ada yang mengakses API!</b>
 ━━━━━━━━━━━━━━━━━━━━
 
-<blockquote>🌐 <b>WEBSITE</b>
+🌐 <b>WEBSITE</b>
 🔗 Endpoint: <code>${method} ${url}</code>
 📋 Query:${queryStr}
-🔁 Referer: ${referer}</blockquote>
+🔁 Referer: ${referer}
 
-<blockquote>⚙️ <b>DEVICE INFORMATION</b>
+⚙️ <b>DEVICE INFORMATION</b>
 🖥️ Device: <code>${device}</code>
 💻 OS: <code>${os}</code>
 🌏 Browser: <code>${browser}</code>
 🌐 Bahasa: ${lang}
-📱 User Agent: <code>${ua.substring(0, 100)}</code></blockquote>
+📱 User Agent: <code>${ua.substring(0, 100)}</code>
 
-<blockquote>📍 <b>LOKASI & JARINGAN</b>
+📍 <b>LOKASI & JARINGAN</b>
 🚩 IP: <code>${ip}</code>
 🏳️ Negara: ${ipInfo.country}
 🏙️ Kota: ${ipInfo.city}, ${ipInfo.region}
-📡 ISP: ${ipInfo.isp}</blockquote>
+📡 ISP: ${ipInfo.isp}
 
 ⏰ <b>WAKTU</b>
 🕐 Waktu Akses: ${time} WIB`
