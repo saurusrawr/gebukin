@@ -1,10 +1,26 @@
 import { Request, Response } from "express"
 import { createCanvas, loadImage, registerFont } from "canvas"
-import path from "path"
-
-registerFont(path.join(__dirname, "../../font/f5803c-1772975107907.ttf"), { family: "CartoonVibes" })
+import axios from "axios"
+import * as fs from "fs"
+import * as path from "path"
+import * as os from "os"
 
 const TARGET_W = 2200
+const FONT_URL = "https://github.com/saurusrawr/gebukin/raw/main/font/f5803c-1772975107907.ttf"
+const FONT_CACHE = path.join(os.tmpdir(), "CartoonVibes.ttf")
+let fontRegistered = false
+
+async function ensureFont() {
+  if (fontRegistered) return
+
+  if (!fs.existsSync(FONT_CACHE)) {
+    const { data } = await axios.get(FONT_URL, { responseType: "arraybuffer", timeout: 15000 })
+    fs.writeFileSync(FONT_CACHE, Buffer.from(data))
+  }
+
+  registerFont(FONT_CACHE, { family: "CartoonVibes" })
+  fontRegistered = true
+}
 
 export default async function generateDanaHandler(req: Request, res: Response) {
   try {
@@ -14,6 +30,8 @@ export default async function generateDanaHandler(req: Request, res: Response) {
 
     const raw = Number(String(angka).replace(/\./g, "").replace(/,/g, ""))
     if (isNaN(raw) || raw <= 0) return res.status(400).json({ status: false, message: "Nominal tidak valid" })
+
+    await ensureFont()
 
     const formatted = raw.toLocaleString("id-ID")
 
@@ -40,10 +58,7 @@ export default async function generateDanaHandler(req: Request, res: Response) {
     const logoSize = Math.round(370 * SCALE)
     const offsetY = Math.round(-31 * SCALE)
 
-    const logoX = x + textWidth + jarak
-    const logoY = y + offsetY
-
-    ctx.drawImage(logo, logoX, logoY, logoSize, logoSize)
+    ctx.drawImage(logo, x + textWidth + jarak, y + offsetY, logoSize, logoSize)
 
     const buffer = canvas.toBuffer("image/jpeg", { quality: 0.85 })
 
