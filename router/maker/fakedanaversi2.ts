@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { createCanvas, loadImage, registerFont } from "canvas"
 import path from "path"
 
-const __dirname = path.resolve() // gunakan resolve() untuk CommonJS
+const __dirname = path.resolve()
 
 registerFont(path.join(__dirname, "font/f5803c-1772975107907.ttf"), { family: "CartoonVibes" })
 
@@ -10,11 +10,12 @@ const TARGET_W = 2200
 
 export default async function generateDanaHandler(req: Request, res: Response) {
   try {
-    const { angka } = req.body
-    if (!angka) return res.status(400).json({ error: "Nominal diperlukan" })
+    const angka = (req.query.angka || req.body?.angka) as string
+
+    if (!angka) return res.status(400).json({ status: false, message: "Parameter 'angka' wajib diisi" })
 
     const raw = Number(String(angka).replace(/\./g, "").replace(/,/g, ""))
-    if (isNaN(raw) || raw <= 0) return res.status(400).json({ error: "Nominal tidak valid" })
+    if (isNaN(raw) || raw <= 0) return res.status(400).json({ status: false, message: "Nominal tidak valid" })
 
     const formatted = raw.toLocaleString("id-ID")
 
@@ -48,11 +49,13 @@ export default async function generateDanaHandler(req: Request, res: Response) {
 
     const buffer = canvas.toBuffer("image/jpeg", { quality: 0.85 })
 
-    res.setHeader("Content-Type", "image/jpeg")
-    res.setHeader("Content-Disposition", `attachment; filename="dana-${raw}.jpg"`)
+    res.set({
+      "Content-Type": "image/jpeg",
+      "Content-Disposition": `inline; filename="dana-${raw}.jpg"`,
+    })
     res.send(buffer)
   } catch (e: any) {
     console.error(e)
-    res.status(500).json({ error: e.message })
+    res.status(500).json({ status: false, message: e.message })
   }
 }
