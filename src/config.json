@@ -534,7 +534,7 @@
         ]
       },
       {
-        "name": "React Channel WA",
+        "name": "Reaction Channel Whatsapp",
         "endpoint": "/api/tools/reactch",
         "filename": "reactch",
         "method": "GET",
@@ -548,13 +548,9 @@
             "name": "emoji",
             "required": true,
             "description": "Emoji reaction (pisahkan koma atau langsung tulis, max 20)"
-          },
-          {
-            "name": "apikey",
-            "required": true,
-            "description": "API key"
           }
-        ]
+        ],
+        "needpremium": true
       },
       {
         "name": "Temp Mail",
@@ -1001,21 +997,24 @@
         "endpoint": "/api/nsfw/ass",
         "filename": "nsfwass",
         "method": "GET",
-        "params": []
+        "params": [],
+        "needpremium": false
       },
       {
         "name": "NSFW Hentai",
         "endpoint": "/api/nsfw/hentai",
         "filename": "nsfwhentai",
         "method": "GET",
-        "params": []
+        "params": [],
+        "needpremium": false
       },
       {
         "name": "NSFW Masturbation",
         "endpoint": "/api/nsfw/masturbation",
         "filename": "nsfwmanstrubation",
         "method": "GET",
-        "params": []
+        "params": [],
+        "needpremium": false
       }
     ],
     "primbon": [
