@@ -107,7 +107,7 @@
             max-width: 420px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px #89CFF0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px #F9A8D4;
             transform: scale(0.8) translateY(30px);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
             opacity: 0;
@@ -283,10 +283,10 @@
 
         /* LAVENDER VARIANT */
         .variant-lavender {
-            --surface-color: #fbcfe8;
-            --side-color: #f472b6;
+            --surface-color: #f9a8d4;
+            --side-color: #ec4899;
             --text-color: #831843;
-            --border-color: #ec4899;
+            --border-color: #db2777;
             --border-width: 2px;
         }
         /* --- SOFT BUTTON CSS END --- */
@@ -405,13 +405,13 @@
 
     <!-- WhatsApp Float Button -->
     <a id="wa-float-btn" href="https://wa.me/62895393336779" target="_blank"
-        class="fixed bottom-6 left-6 z-[100] opacity-0 scale-0 transition-all duration-500 ease-out flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-xl hover:bg-[#1ebe5a] hover:scale-110 active:scale-95 group"
+        class="fixed bottom-6 right-6 z-[200] opacity-0 scale-0 transition-all duration-500 ease-out flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-xl hover:bg-[#1ebe5a] hover:scale-110 active:scale-95 group"
         style="box-shadow: 0 4px 20px rgba(37,211,102,0.5);">
         <i class="fa-brands fa-whatsapp text-xl"></i>
         <span class="text-xs font-bold tracking-wide max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 whitespace-nowrap">Hubungi Owner</span>
     </a>
 
-    <div id="custom-toast" class="fixed bottom-6 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
+    <div id="custom-toast" class="fixed bottom-20 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
         <div class="bg-white text-slate-700 px-5 py-3 font-bold text-sm shadow-xl rounded-xl flex items-center gap-3 border-2 border-fmn-blue animate-slide-in-right">
             <div class="w-6 h-6 bg-fmn-blue text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
             <span id="toast-message">SUCCESS</span>
@@ -582,7 +582,7 @@
             }
 
             for(const route of allRoutes) {
-                const methodColor = route.method === 'GET' ? 'text-blue-400' : route.method === 'POST' ? 'text-green-400' : 'text-yellow-400';
+                const methodColor = route.method === 'GET' ? 'text-pink-400' : route.method === 'POST' ? 'text-green-400' : 'text-yellow-400';
                 terminalLog(`[+] <span class="${methodColor}">${route.method}</span> ${route.endpoint} <span class="text-gray-500">✓</span>`, 'info');
                 await new Promise(r => setTimeout(r, 20)); 
             }
@@ -732,7 +732,7 @@
                 
                 routes.forEach((route, idx) => {
                     const id = `${cat}-${idx}`.replace(/\s+/g, '-');
-                    const methodColor = route.method === 'GET' ? 'bg-sky-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
+                    const methodColor = route.method === 'GET' ? 'bg-pink-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
                     
                     let inputs = '';
                     let copyUrl = route.endpoint;
@@ -826,7 +826,7 @@
                                 <div class="p-3 font-mono text-[11px] min-h-[100px] max-h-[400px] overflow-y-auto custom-scrollbar bg-[#1e1e1e] break-all whitespace-pre-wrap">
                                     <div class="flex items-center gap-2 mb-2 text-slate-500 select-none border-b border-gray-800 pb-2 flex-wrap animate-slide-in-right">
                                         <span class="text-green-500 font-bold">➜</span>
-                                        <span class="text-blue-400">~</span>
+                                        <span class="text-pink-400">~</span>
                                         <span class="text-gray-400 break-all">curl -X ${route.method} ${route.endpoint}</span>
                                     </div>
                                     <div id="output-${id}" class="text-gray-300 break-all whitespace-pre-wrap leading-relaxed"></div>
