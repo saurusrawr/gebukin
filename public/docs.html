@@ -88,6 +88,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border: none; border-radius: 2px; }
         
         /* Removed .terminal-scan animation */
+
+        /* Music Player Progress */
+        #music-progress { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; outline: none; }
+        #music-progress::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #EC4899; cursor: pointer; box-shadow: 0 0 4px rgba(236,72,153,0.5); }
+        #music-progress::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #EC4899; cursor: pointer; border: none; }
+        @keyframes spin-note { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .music-spinning { animation: spin-note 2s linear infinite; }
         /* ===== MAINTENANCE POPUP ===== */
         #maintenance-overlay {
             position: fixed; inset: 0; z-index: 9999;
@@ -384,9 +391,28 @@
                         <span>DATE</span>
                         <span id="server-date" class="font-mono">--/--/----</span>
                     </div>
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>VISITOR</span>
-                        <span id="stat-visitors" class="text-fmn-purple">0</span>
+                    <!-- Music Player -->
+                    <div id="music-player" class="bg-fmn-bg p-3 rounded-xl border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-7 h-7 bg-fmn-dark rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                                <i id="music-note-icon" class="fa-solid fa-music text-white text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">NOW PLAYING</div>
+                                <div id="music-title" class="text-[11px] font-bold text-fmn-dark truncate">--</div>
+                            </div>
+                            <button id="music-toggle" onclick="toggleMusic()" class="w-7 h-7 bg-fmn-dark hover:bg-fmn-purple rounded-full flex items-center justify-center transition-all shadow-md flex-shrink-0">
+                                <i id="music-play-icon" class="fa-solid fa-play text-white text-[9px]"></i>
+                            </button>
+                        </div>
+                        <input type="range" id="music-progress" value="0" min="0" max="100" step="0.1"
+                            oninput="seekMusic(this.value)"
+                            class="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                            style="background: linear-gradient(to right, #EC4899 0%, #F9A8D4 0%); accent-color: #EC4899;">
+                        <div class="flex justify-between text-[9px] font-mono text-slate-400 mt-1">
+                            <span id="music-current">0:00</span>
+                            <span id="music-duration">0:00</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -565,6 +591,7 @@
             await new Promise(r => setTimeout(r, 600));
 
             const ver = config.settings.apiVersion || '1.0.0';
+            initMusic(config);
             terminalLog(`> KawaiiYumee-api@${ver} dev`, 'system');
             terminalLog(`> ts-node src/index.ts`, 'system');
             await new Promise(r => setTimeout(r, 800));
@@ -1067,6 +1094,87 @@
             });
         }
 
+
+        /* ===== MUSIC PLAYER ===== */
+        let musicAudio = null;
+        let musicPlaying = false;
+        let musicList = [];
+        let musicIndex = 0;
+
+        function initMusic(config) {
+            const songs = config?.settings?.music;
+            if (!songs || songs.length === 0) return;
+            musicList = Array.isArray(songs) ? songs : [songs];
+            loadSong(0);
+        }
+
+        function loadSong(index) {
+            if (!musicList.length) return;
+            musicIndex = index % musicList.length;
+            const song = musicList[musicIndex];
+
+            if (musicAudio) {
+                musicAudio.pause();
+                musicAudio.removeEventListener('timeupdate', onTimeUpdate);
+                musicAudio.removeEventListener('ended', onSongEnd);
+            }
+
+            musicAudio = new Audio(typeof song === 'string' ? song : song.url);
+            musicAudio.volume = 0.7;
+            musicAudio.addEventListener('timeupdate', onTimeUpdate);
+            musicAudio.addEventListener('ended', onSongEnd);
+            musicAudio.addEventListener('loadedmetadata', () => {
+                document.getElementById('music-duration').textContent = formatTime(musicAudio.duration);
+            });
+
+            const title = typeof song === 'string' 
+                ? decodeURIComponent(song.split('/').pop().replace(/\.[^.]+$/, '').replace(/-|_/g, ' '))
+                : (song.title || 'Unknown');
+            document.getElementById('music-title').textContent = title;
+        }
+
+        function onTimeUpdate() {
+            if (!musicAudio || !musicAudio.duration) return;
+            const pct = (musicAudio.currentTime / musicAudio.duration) * 100;
+            const bar = document.getElementById('music-progress');
+            bar.value = pct;
+            bar.style.background = `linear-gradient(to right, #EC4899 ${pct}%, #F9A8D4 ${pct}%)`;
+            document.getElementById('music-current').textContent = formatTime(musicAudio.currentTime);
+        }
+
+        function onSongEnd() {
+            loadSong(musicIndex + 1);
+            if (musicPlaying) musicAudio.play().catch(() => {});
+        }
+
+        window.toggleMusic = function() {
+            if (!musicAudio) return;
+            if (musicPlaying) {
+                musicAudio.pause();
+                musicPlaying = false;
+                document.getElementById('music-play-icon').className = 'fa-solid fa-play text-white text-[9px]';
+                document.getElementById('music-note-icon').classList.remove('music-spinning');
+            } else {
+                musicAudio.play().then(() => {
+                    musicPlaying = true;
+                    document.getElementById('music-play-icon').className = 'fa-solid fa-pause text-white text-[9px]';
+                    document.getElementById('music-note-icon').classList.add('music-spinning');
+                }).catch(() => {});
+            }
+        }
+
+        window.seekMusic = function(val) {
+            if (!musicAudio || !musicAudio.duration) return;
+            musicAudio.currentTime = (val / 100) * musicAudio.duration;
+        }
+
+        function formatTime(sec) {
+            if (isNaN(sec)) return '0:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+        /* ===== END MUSIC PLAYER ===== */
         /* ===== MAINTENANCE CHECKER ===== */
         const MAINTENANCE_URL = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt';
         let userClosedMaintenance = false;
