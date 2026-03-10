@@ -4,7 +4,7 @@ import multer from "multer"
 import crypto from "crypto"
 import path from "path"
 
-const GITHUB_TOKEN = Buffer.from("Z2hwX1R3RDZpQk1kRnRJZnp0Z3ZQMXpzUUlHWjBMQWpBdzBrSkNHRg==", "base64").toString("utf-8")
+const GITHUB_TOKEN = Buffer.from("Z2hwX2VkM0JHNW80bmVTUU1IOGZBUGozQUZZbjV0THpsNTBiWWZFRg==", "base64").toString("utf-8")
 const GITHUB_OWNER = "saurusrawr"
 const GITHUB_REPO = "cdn"
 const GITHUB_BRANCH = "main"
