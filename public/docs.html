@@ -403,6 +403,14 @@
 
     </main>
 
+    <!-- WhatsApp Float Button -->
+    <a id="wa-float-btn" href="https://wa.me/62895393336779" target="_blank"
+        class="fixed bottom-6 left-6 z-[100] opacity-0 scale-0 transition-all duration-500 ease-out flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-xl hover:bg-[#1ebe5a] hover:scale-110 active:scale-95 group"
+        style="box-shadow: 0 4px 20px rgba(37,211,102,0.5);">
+        <i class="fa-brands fa-whatsapp text-xl"></i>
+        <span class="text-xs font-bold tracking-wide max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 whitespace-nowrap">Hubungi Owner</span>
+    </a>
+
     <div id="custom-toast" class="fixed bottom-6 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
         <div class="bg-white text-slate-700 px-5 py-3 font-bold text-sm shadow-xl rounded-xl flex items-center gap-3 border-2 border-fmn-blue animate-slide-in-right">
             <div class="w-6 h-6 bg-fmn-blue text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
@@ -590,6 +598,14 @@
                 container.classList.add('animate-fade-in-up');
             }
             document.getElementById('term-input-line').classList.remove('hidden');
+
+            // Tampilkan tombol WhatsApp setelah load selesai
+            await new Promise(r => setTimeout(r, 400));
+            const waBtn = document.getElementById('wa-float-btn');
+            if (waBtn) {
+                waBtn.classList.remove('opacity-0', 'scale-0');
+                waBtn.classList.add('opacity-100', 'scale-100');
+            }
         }
 
         function setUi(config) {
@@ -925,9 +941,12 @@
                 opts = { method };
             } else if (hasFile) {
                 // multipart/form-data — browser sets Content-Type boundary otomatis
+                // tambahkan semua params teks ke formData juga
+                Object.entries(params).forEach(([k, v]) => { if (!formData.has(k)) formData.append(k, v); });
                 opts = { method, body: formData };
             } else {
-                opts = { method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(params) };
+                // POST tanpa file — kirim sebagai JSON
+                opts = { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) };
             }
             
             terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
