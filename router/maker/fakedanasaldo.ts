@@ -6,7 +6,7 @@ import * as path from "path"
 import * as os from "os"
 
 const TARGET_W = 2200
-const FONT_URL = "https://github.com/saurusrawr/gebukin/raw/main/font/f5803c-1772975107907.ttf"
+const FONT_URL = "https://raw.githubusercontent.com/saurusrawr/gebukin/main/font/f5803c-1772975107907.ttf"
 const FONT_CACHE = path.join(os.tmpdir(), "CartoonVibes.ttf")
 let fontRegistered = false
 
