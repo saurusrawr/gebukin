@@ -253,6 +253,16 @@
         ]
       },
       {
+  "name": "Fake Bank Jago",
+  "endpoint": "/api/maker/bangjago",
+  "filename": "bangjago",
+  "method": "GET",
+  "params": [
+    { "name": "nama", "required": true, "description": "Nama pemilik rekening" },
+    { "name": "saldo", "required": true, "description": "Nominal saldo" }
+  ]
+      },
+      {
         "name": "Fake Story",
         "endpoint": "/api/maker/fakestory",
         "filename": "fakestory",
