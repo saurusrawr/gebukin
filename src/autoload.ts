@@ -11,12 +11,46 @@ let regRouter = new Set<string>();
 let currentConfig: any = null;
 let appInstance: Application;
 
-/* =======================
-   MAINTENANCE CHECKER
-======================= */
+// dta penyimpanan premium keys
+let premiumKeys: string[] = [];
+let premiumKeyLastFetch: number = 0;
+const PREMIUM_KEY_CACHE_TTL = 60 * 1000; // 1 menit
+
+async function getPremiumKeys(): Promise<string[]> {
+    const now = Date.now();
+    if (premiumKeys.length > 0 && now - premiumKeyLastFetch < PREMIUM_KEY_CACHE_TTL) {
+        return premiumKeys;
+    }
+
+    try {
+        const { data } = await axios.get(
+            `https://raw.githubusercontent.com/saurusrawr/penting/refs/heads/main/apikeyprem.json?t=${now}`,
+            {
+                timeout: 5000,
+                headers: {
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "User-Agent": "Mozilla/5.0"
+                }
+            }
+        );
+
+        if (Array.isArray(data)) {
+            premiumKeys = data;
+            premiumKeyLastFetch = now;
+            console.log(`[Premium] Keys loaded: ${premiumKeys.length} keys`);
+        }
+    } catch (err) {
+        console.error("[Premium] Failed to fetch premium keys");
+    }
+
+    return premiumKeys;
+}
+
+// pengecekan maintenance api
 
 async function checkMaintenance(): Promise<string> {
-    const url = `https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt?t=${Date.now()}`;
+    const url = `https://raw.githubusercontent.com/saurusrawr/penting/refs/heads/main/database-api.txt?t=${Date.now()}`;
 
     try {
         const { data } = await axios.get(url, {
@@ -39,9 +73,7 @@ async function checkMaintenance(): Promise<string> {
     }
 }
 
-/* =======================
-   AUTO LOAD SYSTEM
-======================= */
+// sistem aslinya
 
 export const initAutoLoad = (app: Application, config: any, configPath: string) => {
     appInstance = app;
@@ -49,7 +81,9 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
 
     console.log('[✓] Auto Load Activated');
 
-    // Load semua route pertama kali
+    // Prefetch premium keys saat startup
+    getPremiumKeys().catch(() => {});
+
     loadRouter(app, config);
 
     if (fs.existsSync(configPath)) {
@@ -138,9 +172,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
 
     const routeKey = `${route.method}:${route.endpoint}`;
 
-    if (regRouter.has(routeKey)) {
-        return;
-    }
+    if (regRouter.has(routeKey)) return;
 
     const possibleBaseDirs = [
         path.join(__dirname, '..', 'router', category),
@@ -175,8 +207,8 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
 
                 const wrappedHandler = async (req: Request, res: Response, next: NextFunction) => {
 
+                    // === MAINTENANCE CHECK ===
                     const maintenanceStatus = await checkMaintenance();
-
                     if (maintenanceStatus === "off") {
                         return res.status(503).json({
                             creator: targetCreator,
@@ -186,8 +218,32 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                         });
                     }
 
+                    // === PREMIUM API KEY CHECK ===
+                    if (route.needpremium === true) {
+                        const apikey = (req.query.apikey || req.headers['x-api-key'] || req.body?.apikey) as string;
+
+                        if (!apikey || apikey.trim() === '') {
+                            return res.status(401).json({
+                                creator: targetCreator,
+                                status: false,
+                                message: "🔑 API ini membutuhkan apikey premium. Tambahkan parameter apikey="
+                            });
+                        }
+
+                        const keys = await getPremiumKeys();
+                        if (!keys.includes(apikey.trim())) {
+                            return res.status(403).json({
+                                creator: targetCreator,
+                                status: false,
+                                message: "❌ API key tidak valid atau tidak memiliki akses premium."
+                            });
+                        }
+                    }
+
+                    // === LOGGING ===
                     logRouterRequest(req, res);
 
+                    // === INJECT CREATOR ===
                     const originalJson = res.json;
                     res.json = function (body) {
                         if (body && typeof body === 'object' && !Array.isArray(body)) {
@@ -215,7 +271,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
                 else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler);
 
                 regRouter.add(routeKey);
-                console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}`);
+                console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}${route.needpremium ? ' 🔑 PREMIUM' : ''}`);
 
             } else {
                 console.error(`[ㄨ] Invalid handler type in ${modulePath}. Expected function, got ${typeof handler}`);
