@@ -315,7 +315,9 @@
             "description": "Judul gambar"
           }
         ]
-      },
+      }
+    ],
+    "edit": [
       {
         "name": "Circle Image",
         "endpoint": "/api/maker/circle",
@@ -328,9 +330,7 @@
             "description": "URL gambar yang ingin di-crop circle"
           }
         ]
-      }
-    ],
-    "edit": [
+      },
   {
     "name": "Nano Banana AI",
     "endpoint": "/api/edit/nanobanana",
