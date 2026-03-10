@@ -20,18 +20,6 @@ function rand<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-function makeFingerprint(): string {
-  return Buffer.from(JSON.stringify({
-    screen: `${Math.floor(Math.random() * 1200 + 800)}x${Math.floor(Math.random() * 1200 + 800)}`,
-    timezone: `Asia/${rand(timezones)}`,
-    language: rand(languages),
-    platform: rand(platforms),
-    cookieEnabled: true,
-    canvas: Math.random().toString(36).repeat(2),
-    timestamp: Date.now(),
-  })).toString("base64")
-}
-
 function createSession(ua: string) {
   const cookie = `session=${Math.random().toString(36).substring(2)}; visitor=${Date.now()}`
   return axios.create({
@@ -45,11 +33,6 @@ function createSession(ua: string) {
       "cookie": cookie,
     },
   })
-}
-
-async function getApiKey(): Promise<string> {
-  const response = await axios.get("https://raw.githubusercontent.com/saurusrawr/dbsaurus/refs/heads/main/keyysaurus.txt", { timeout: 10000 })
-  return response.data.trim()
 }
 
 async function reactVip(channel: string, emojis: string[]) {
@@ -74,51 +57,12 @@ async function reactVip(channel: string, emojis: string[]) {
   return submit.data
 }
 
-async function claimDaily() {
-  const ua = rand(uaList)
-  const session = createSession(ua)
-
-  const tokenReq = await session.get("/api/get-token")
-  const token = tokenReq.data.token
-  if (!token) throw new Error("Token tidak ditemukan")
-
-  const result = await session.post("/api/daily-login", {
-    vipKey: VIP_KEY,
-  }, {
-    headers: {
-      "x-csrf-token": token,
-      "content-type": "application/json",
-    },
-  })
-
-  return result.data
-}
-
-export async function claimDailyHandler(req: Request, res: Response) {
-  try {
-    const data = await claimDaily()
-    res.json({ status: true, data })
-  } catch (error: any) {
-    res.status(500).json({ status: false, message: error.message })
-  }
-}
-
 export default async function reactchHandler(req: Request, res: Response) {
   const channel = req.query.channel as string
   const emojiRaw = req.query.emoji as string
-  const apikey = req.query.apikey as string
 
-  if (!channel || !emojiRaw || !apikey) {
-    return res.status(400).json({ status: false, message: "Parameter 'channel', 'emoji', dan 'apikey' wajib diisi" })
-  }
-
-  try {
-    const validKey = await getApiKey()
-    if (apikey !== validKey) {
-      return res.status(403).json({ status: false, message: "API key tidak valid" })
-    }
-  } catch {
-    return res.status(500).json({ status: false, message: "Gagal memvalidasi API key" })
+  if (!channel || !emojiRaw) {
+    return res.status(400).json({ status: false, message: "Parameter 'channel' dan 'emoji' wajib diisi" })
   }
 
   const emojis = emojiRaw.includes(",")
