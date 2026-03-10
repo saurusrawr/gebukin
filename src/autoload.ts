@@ -15,43 +15,35 @@ let premiumKeys: string[] = []
 let premiumKeyLastFetch: number = 0
 const PREMIUM_KEY_CACHE_TTL = 60 * 1000
 
-// Telegram token cache
 let telegramToken: string = ''
-let tokenLastFetch: number = 0
-const TOKEN_CACHE_TTL = 5 * 60 * 1000
-
 const TELEGRAM_CHAT_ID = '-1003641120736'
-const PASTEBIN_URL = 'https://gist.githubusercontent.com/saurusrawr/f54d00a328ef2d82e94c9b9a49aefb46/raw/0b10b8b0a5a4fa46c09a42406b63b8ec52f30093/notifikasitoken.json'
 
 /* =======================
    TELEGRAM TOKEN
 ======================= */
 async function getTelegramToken(): Promise<string> {
-  const now = Date.now()
-  if (telegramToken && now - tokenLastFetch < TOKEN_CACHE_TTL) return telegramToken
-  try {
-    const { data } = await axios.get(PASTEBIN_URL, { timeout: 5000 })
-    const parsed = JSON.parse(data)
-    if (Array.isArray(parsed) && parsed[0]) {
-      telegramToken = parsed[0]
-      tokenLastFetch = now
-    }
-  } catch {
-    console.error('[Logger] Gagal fetch token Telegram')
-  }
+  if (telegramToken) return telegramToken
+  telegramToken = Buffer.from('ODM5MTE3NDc2MDpBQUdQRE1EVUdhWUVDT25QWm5rNXprdTlYUHJtUGJVWU1Faw==', 'base64').toString('utf-8')
   return telegramToken
 }
 
 async function sendTelegram(message: string): Promise<void> {
   try {
     const token = await getTelegramToken()
-    if (!token) return
-    await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+    if (!token) {
+      console.error('[Logger] Token kosong, skip kirim Telegram')
+      return
+    }
+    console.log('[Logger] Mengirim notif ke Telegram...')
+    const res = await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
       chat_id: TELEGRAM_CHAT_ID,
       text: message,
       parse_mode: 'HTML',
     }, { timeout: 5000 })
-  } catch {}
+    console.log('[Logger] Telegram response:', res.data?.ok, res.data?.description || '')
+  } catch (e: any) {
+    console.error('[Logger] Gagal kirim Telegram:', e.message)
+  }
 }
 
 /* =======================
