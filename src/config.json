@@ -729,6 +729,19 @@
     ],
     "download": [
       {
+  "name": "All in one Downloader",
+  "endpoint": "/api/download/aio",
+  "filename": "aio",
+  "method": "GET",
+  "params": [
+    {
+      "name": "url",
+      "required": true,
+      "description": "URL media (Instagram, TikTok, YouTube, Twitter, dll)"
+    }
+  ]
+      },
+      {
         "name": "Facebook Downloader",
         "endpoint": "/api/download/facebook",
         "filename": "facebook",
