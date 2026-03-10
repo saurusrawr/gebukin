@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import axios from "axios"
-import { fileTypeFromBuffer } from "file-type"
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { fileTypeFromBuffer } = require("file-type")
 import crypto from "crypto"
 
 class GridPlus {
@@ -95,5 +96,4 @@ export default async function nanobananaHandler(req: Request, res: Response) {
   } catch (err: any) {
     res.status(500).json({ status: false, message: err.message })
   }
-      }
-      
+}
