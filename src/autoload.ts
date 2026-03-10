@@ -124,23 +124,23 @@ export async function logRouterRequest(req: Request, res: Response): Promise<voi
     const message = `🚨 <b>Ada yang mengakses API!</b>
 ━━━━━━━━━━━━━━━━━━━━
 
-🌐 <b>WEBSITE</b>
+<blockquote>🌐 <b>WEBSITE</b>
 🔗 Endpoint: <code>${method} ${url}</code>
 📋 Query:${queryStr}
-🔁 Referer: ${referer}
+🔁 Referer: ${referer}</blockquote>
 
-⚙️ <b>DEVICE INFORMATION</b>
+<blockquote>⚙️ <b>DEVICE INFORMATION</b>
 🖥️ Device: <code>${device}</code>
 💻 OS: <code>${os}</code>
 🌏 Browser: <code>${browser}</code>
 🌐 Bahasa: ${lang}
-📱 User Agent: <code>${ua.substring(0, 100)}</code>
+📱 User Agent: <code>${ua.substring(0, 100)}</code></blockquote>
 
-📍 <b>LOKASI & JARINGAN</b>
+<blockquote>📍 <b>LOKASI & JARINGAN</b>
 🚩 IP: <code>${ip}</code>
 🏳️ Negara: ${ipInfo.country}
 🏙️ Kota: ${ipInfo.city}, ${ipInfo.region}
-📡 ISP: ${ipInfo.isp}
+📡 ISP: ${ipInfo.isp}</blockquote>
 
 ⏰ <b>WAKTU</b>
 🕐 Waktu Akses: ${time} WIB`
@@ -310,6 +310,7 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
 
       const handlerModule = require(modulePath)
       const handler = handlerModule.default || handlerModule
+      const middleware = handlerModule.middleware // multer atau middleware lain
 
       if (typeof handler === 'function') {
         const wrappedHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -369,7 +370,10 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
         }
 
         if (route.method === 'GET') targetApp.get(route.endpoint, wrappedHandler)
-        else if (route.method === 'POST') targetApp.post(route.endpoint, wrappedHandler)
+        else if (route.method === 'POST') {
+          if (middleware) targetApp.post(route.endpoint, middleware, wrappedHandler)
+          else targetApp.post(route.endpoint, wrappedHandler)
+        }
 
         regRouter.add(routeKey)
         console.log(`[✓] LOADED: ${route.method} ${route.endpoint} -> ${path.basename(modulePath)}${route.needpremium ? ' 🔑 PREMIUM' : ''}`)
