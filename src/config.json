@@ -362,13 +362,6 @@
         "filename": "randomjkt48",
         "method": "GET",
         "params": []
-      },
-      {
-        "name": "Random JKT48",
-        "endpoint": "/api/random/jkt48",
-        "filename": "randomjkt48",
-        "method": "GET",
-        "params": []
       }
     ],
     "games": [
@@ -550,55 +543,6 @@
         ]
       },
       {
-        "name": "Get Code",
-        "endpoint": "/api/tools/getcode",
-        "filename": "getcode",
-        "method": "GET",
-        "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "URL website yang ingin diambil kodenya"
-          }
-        ]
-      },
-      {
-        "name": "React Channel WA",
-        "endpoint": "/api/tools/reactch",
-        "filename": "reactch",
-        "method": "GET",
-        "params": [
-          {
-            "name": "channel",
-            "required": true,
-            "description": "URL post WhatsApp Channel"
-          },
-          {
-            "name": "emoji",
-            "required": true,
-            "description": "Emoji reaction (pisahkan koma, max 20)"
-          },
-          {
-            "name": "apikey",
-            "required": true,
-            "description": "API key"
-          }
-        ]
-      },
-      {
-        "name": "Get Code",
-        "endpoint": "/api/tools/getcode",
-        "filename": "getcode",
-        "method": "GET",
-        "params": [
-          {
-            "name": "url",
-            "required": true,
-            "description": "URL website yang ingin diambil kodenya"
-          }
-        ]
-      },
-      {
         "name": "Temp Mail",
         "endpoint": "/api/tools/tempmail",
         "filename": "tempmail",
@@ -692,7 +636,7 @@
         "name": "HTML to Image",
         "endpoint": "/api/tools/html2img",
         "filename": "html2img",
-        "method": "POST",
+        "method": "GET",
         "params": [
           {
             "name": "html",
