@@ -330,6 +330,18 @@
         ]
       }
     ],
+    "edit": [
+  {
+    "name": "Nano Banana AI",
+    "endpoint": "/api/edit/nanobanana",
+    "filename": "nanobanana",
+    "method": "GET",
+    "params": [
+      { "name": "url", "required": true, "description": "URL gambar" },
+      { "name": "prompt", "required": true, "description": "Instruksi edit AI" }
+    ]
+  }
+    ],
     "random": [
       {
         "name": "Random Waifu",
