@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { Canvas, loadImage, FontLibrary } from "skia-canvas"
+import { createCanvas, loadImage, registerFont } from "canvas"
 import axios from "axios"
 import * as fs from "fs"
 import * as path from "path"
@@ -25,8 +25,8 @@ async function ensureFont() {
     fs.writeFileSync(FONT2_CACHE, Buffer.from(data))
   }
 
-  FontLibrary.use("CustomFont", FONT1_CACHE)
-  FontLibrary.use("GreetingFont", FONT2_CACHE)
+  registerFont(FONT1_CACHE, { family: "CustomFont" })
+  registerFont(FONT2_CACHE, { family: "GreetingFont" })
   fontRegistered = true
 }
 
@@ -36,7 +36,7 @@ async function generateImage(saldo: string, greet: string): Promise<Buffer> {
   const { data: bgData } = await axios.get(BG_URL, { responseType: "arraybuffer", timeout: 15000 })
   const bg = await loadImage(Buffer.from(bgData))
 
-  const canvas = new Canvas(bg.width, bg.height)
+  const canvas = createCanvas(bg.width, bg.height)
   const ctx = canvas.getContext("2d")
 
   ctx.drawImage(bg, 0, 0, bg.width, bg.height)
@@ -59,7 +59,7 @@ async function generateImage(saldo: string, greet: string): Promise<Buffer> {
   ctx.fillStyle = "gray"
   ctx.fillText(greet, 98, 86)
 
-  return Buffer.from(await canvas.png)
+  return canvas.toBuffer("image/png")
 }
 
 function getGreeting(): string {
@@ -75,10 +75,7 @@ export default async function bangjagHandler(req: Request, res: Response) {
   const { nama, saldo } = req.query
 
   if (!nama || !saldo) {
-    return res.status(400).json({
-      status: false,
-      message: "Parameter 'nama' dan 'saldo' wajib diisi"
-    })
+    return res.status(400).json({ status: false, message: "Parameter 'nama' dan 'saldo' wajib diisi" })
   }
 
   try {
@@ -96,4 +93,4 @@ export default async function bangjagHandler(req: Request, res: Response) {
     console.error(err)
     res.status(500).json({ status: false, message: err.message })
   }
-      }
+}
