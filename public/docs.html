@@ -18,20 +18,20 @@
                         sans: ['"Quicksand"', 'sans-serif'],
                     },
                     colors: {
-                        'fmn-blue': '#89CFF0',
-                        'fmn-dark': '#6495ED',
-                        'fmn-purple': '#B39DDB',
-                        'fmn-bg': '#F0F8FF',
+                        'fmn-blue': '#F9A8D4',
+                        'fmn-dark': '#EC4899',
+                        'fmn-purple': '#F472B6',
+                        'fmn-bg': '#FFF0F6',
                         'term-bg': '#1e1e1e', 
                         'term-text': '#d4d4d4',
                         'success-glow': '#10b981',
                         'error-glow': '#ef4444',
                     },
                     boxShadow: {
-                        'soft': '4px 4px 10px rgba(137, 207, 240, 0.4)',
+                        'soft': '4px 4px 10px rgba(249, 168, 212, 0.4)',
                         'glow-success': '0 0 15px rgba(16, 185, 129, 0.5)',
                         'glow-error': '0 0 15px rgba(239, 68, 68, 0.5)',
-                        'neon': '0 0 20px rgba(137, 207, 240, 0.6)',
+                        'neon': '0 0 20px rgba(249, 168, 212, 0.6)',
                     },
                     animation: {
                         'blink': 'blink 1s step-end infinite',
@@ -61,7 +61,7 @@
 
         #fixed-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -50;
-            background-color: #F0F8FF;
+            background-color: #FFF0F6;
             background-image: url('https://c.termai.cc/i181/aGwK.png'), url('https://c.termai.cc/i155/wbV.jpg');
             background-position: bottom right, center center;
             background-size: 85% auto, cover;
@@ -74,7 +74,7 @@
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #89CFF0; border-radius: 4px; border: 2px solid #fff; }
+        ::-webkit-scrollbar-thumb { background: #F9A8D4; border-radius: 4px; border: 2px solid #fff; }
         
         .json-key { color: #f87171; font-weight: bold; }
         .json-string { color: #a3e635; }
@@ -283,10 +283,10 @@
 
         /* LAVENDER VARIANT */
         .variant-lavender {
-            --surface-color: #cec3fd;
-            --side-color: #b489ff;
-            --text-color: #2e1065;
-            --border-color: #a36eff;
+            --surface-color: #fbcfe8;
+            --side-color: #f472b6;
+            --text-color: #831843;
+            --border-color: #ec4899;
             --border-width: 2px;
         }
         /* --- SOFT BUTTON CSS END --- */
@@ -307,7 +307,7 @@
 
         .category-btn.animating::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent 0%, #89CFF0 25%, transparent 50%, #B39DDB 75%, transparent 100%);
+            background: conic-gradient(transparent 0%, #F9A8D4 25%, transparent 50%, #F472B6 75%, transparent 100%);
             z-index: -2; animation: outlineSpin 0.5s linear infinite;
         }
 
@@ -589,7 +589,7 @@
             
             await new Promise(r => setTimeout(r, 500));
             terminalLog(``, 'system');
-            terminalLog(`[✓] Server running on https://api.saurusofficial.biz.id`, 'success');
+            terminalLog(`[✓] Server running on https://api.kawaiiyumee.web.id`, 'success');
             terminalLog(`[WATCH] Watching...`, 'warn');
             
             const container = document.getElementById('api-container');
@@ -741,9 +741,14 @@
                         copyUrl = `${route.endpoint}?${paramsList}`;
                     }
 
-                    if (route.params?.length) {
+                    const allParams = [...(route.params || [])];
+                    if (route.needpremium) {
+                        allParams.push({ name: 'apikey', required: true, description: 'API Key Premium 🔑' });
+                    }
+
+                    if (allParams.length) {
                         inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` + 
-                        route.params.map(p => {
+                        allParams.map(p => {
                             const isFile = p.type === 'file' || p.name.toLowerCase().includes('file') || p.name.toLowerCase().includes('foto') || p.name.toLowerCase().includes('image') || p.name.toLowerCase().includes('gambar');
                             if (isFile) {
                                 return `
@@ -754,12 +759,13 @@
                                 class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-fmn-blue file:text-white hover:file:bg-fmn-dark cursor-pointer">
                         </div>`;
                             }
+                            const isApiKey = p.name === 'apikey';
                             return `
                         <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''}</label>
-                            <input type="text" id="input-${id}-${p.name}" 
+                            <label class="text-[10px] font-bold ${isApiKey ? 'text-pink-500' : 'text-slate-500'} uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''} ${isApiKey ? '<span class="text-pink-400">🔑</span>' : ''}</label>
+                            <input type="${isApiKey ? 'password' : 'text'}" id="input-${id}-${p.name}" 
                                 placeholder="${p.description ? p.description : 'Value...'}" 
-                                class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
+                                class="w-full min-w-0 border ${isApiKey ? 'border-pink-300 focus:border-pink-500 focus:ring-pink-300' : 'border-slate-300 focus:border-fmn-blue focus:ring-fmn-blue'} p-2 text-xs rounded-lg focus:ring-1 focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
                         </div>`;
                         }).join('') + `</div>`;
                     }
@@ -923,30 +929,43 @@
                 if (i.type === 'file') {
                     if (i.files && i.files.length > 0) {
                         hasFile = true;
-                        formData.append(paramName, i.files[0]);
+                        formData.append(paramName, i.files[0], i.files[0].name);
                         i.classList.add('border-green-400', 'bg-green-50');
                         setTimeout(() => { i.classList.remove('border-green-400', 'bg-green-50'); }, 1000);
                     }
                 } else if (i.value) {
                     params[paramName] = i.value;
-                    formData.append(paramName, i.value);
                     i.classList.add('border-green-400', 'bg-green-50');
                     setTimeout(() => { i.classList.remove('border-green-400', 'bg-green-50'); }, 1000);
                 }
             });
-            
-            let fetchUrl = url + (method === 'GET' && Object.keys(params).length ? '?' + new URLSearchParams(params) : '');
+
+            // apikey masuk sebagai query param juga supaya backend bisa baca
+            const apikeyInput = document.getElementById(`input-${id}-apikey`);
+            const apikeyVal = apikeyInput?.value?.trim();
+
+            let fetchUrl = url;
+            if (method === 'GET') {
+                if (Object.keys(params).length) fetchUrl += '?' + new URLSearchParams(params);
+            } else if (apikeyVal) {
+                // tambah apikey sebagai query param untuk POST
+                fetchUrl += '?apikey=' + encodeURIComponent(apikeyVal);
+            }
+
             let opts;
             if (method === 'GET') {
                 opts = { method };
             } else if (hasFile) {
-                // multipart/form-data — browser sets Content-Type boundary otomatis
-                // tambahkan semua params teks ke formData juga
-                Object.entries(params).forEach(([k, v]) => { if (!formData.has(k)) formData.append(k, v); });
+                // multipart/form-data — jangan set Content-Type, browser isi boundary otomatis
+                // params teks masuk ke formData juga
+                Object.entries(params).forEach(([k, v]) => { 
+                    if (k !== 'apikey') formData.append(k, v); 
+                });
                 opts = { method, body: formData };
             } else {
-                // POST tanpa file — kirim sebagai JSON
-                opts = { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) };
+                // POST tanpa file — kirim sebagai JSON, exclude apikey dari body (sudah di query)
+                const bodyParams = Object.fromEntries(Object.entries(params).filter(([k]) => k !== 'apikey'));
+                opts = { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyParams) };
             }
             
             terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
