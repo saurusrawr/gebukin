@@ -10,13 +10,15 @@
     "start": "node dist/index.js",
     "dev": "ts-node index.ts",
     "dev:watch": "nodemon --exec ts-node index.ts",
-    "pm2": "pm2 start index.ts --name KawaiiYumee --interpreter node --node-args=\"-r ts-node/register\" && pm2 save"
+    "pm2": "pm2 start index.ts --name KawaiiYumee --interpreter node --node-args=\"-r ts-node/register\" && pm2 save",
+    "postinstall": "npx playwright install --with-deps"
   },
   "dependencies": {
     "axios": "^1.8.4",
     "axios-cookiejar-support": "^5.0.2",
     "cheerio": "^1.0.0",
     "playwright": "^1.58.2",
+    "playwright-core": "^1.58.2",
     "moment-timezone": "^0.6.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -41,7 +43,6 @@
     "needle": "^3.3.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.1",
-    "playwright-core": "^1.58.2",
     "puppeteer": "^24.12.1",
     "puppeteer-core": "^24.12.1",
     "puppeteer-extra": "^3.3.6",
