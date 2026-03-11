@@ -1240,6 +1240,19 @@
             "description": "Username Roblox"
           }
         ]
+      },
+      {
+        "name": "Ig Stalker",
+        "endpoint": "/api/stalker/instagram",
+        "filename": "instagram",
+        "method": "GET",
+        "params": [
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username IGnya"
+          }
+        ]
       }
     ],
     "nsfw": [
