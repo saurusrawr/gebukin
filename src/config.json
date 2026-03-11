@@ -811,7 +811,7 @@
         ]
       },
       {
-        "name": "WHOIS Domain",
+        "name": "Whois Domain",
         "endpoint": "/api/tools/whois",
         "filename": "whois",
         "method": "GET",
@@ -1067,6 +1067,25 @@
             "description": "Kata kunci pencarian grup (contoh jb)"
           }
         ]
+      },
+      {
+        "name": "Nekopoi Search & Detail (pilih salah satu)",
+        "endpoint": "/api/search/nekopoi",
+        "filename": "nekopoi",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": false,
+            "description": "Keyword pencarian anime — gunakan ini kalau mau search"
+          },
+          {
+            "name": "url",
+            "required": false,
+            "description": "URL detail anime dari nekopoi.care — gunakan ini kalau mau ambil detail"
+          }
+        ],
+        "note": "Wajib isi salah satu: q untuk search, url untuk detail"
       }
     ],
     "berita": [
