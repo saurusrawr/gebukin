@@ -39,8 +39,8 @@ export default async function tiktokSearchHandler(req: Request, res: Response) {
             title: v.title,
             cover: v.cover,
             origin_cover: v.origin_cover,
-            link: "https://tikwm.com" + v.play,
-            watermark_link: "https://tikwm.com" + v.wmplay,
+            link: v.play,
+            watermark_link: v.wmplay,
             music: v.music,
             author: {
                 nickname: v.author.nickname,
