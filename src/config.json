@@ -1218,6 +1218,14 @@
         "method": "GET",
         "needpremium": false,
         "params": []
+      },
+      {
+        "name": "NSFW Lesbian",
+        "endpoint": "/api/nsfw/lesbian",
+        "filename": "nsfw_lesbian",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
       }
     ],
     "primbon": [
