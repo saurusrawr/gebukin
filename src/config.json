@@ -468,6 +468,20 @@
         "filename": "darkjoke",
         "method": "GET",
         "params": []
+      },
+      {
+        "name": "Random Quotes",
+        "endpoint": "/api/random/randomquotes",
+        "filename": "randomquotes",
+        "method": "GET",
+        "params": []
+      },
+      {
+        "name": "Random Boboiboy",
+        "endpoint": "/api/random/boboiboy",
+        "filename": "boboiboy",
+        "method": "GET",
+        "params": []
       }
     ],
     "games": [
@@ -1086,6 +1100,61 @@
           }
         ],
         "note": "Wajib isi salah satu: q untuk search, url untuk detail"
+      },
+      {
+        "name": "Anime Search",
+        "endpoint": "/api/search/searchanime",
+        "filename": "searchanime",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Keyword anime yang dicari"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "description": "Halaman hasil (default: 1)"
+          }
+        ]
+      },
+      {
+        "name": "Spotify Search",
+        "endpoint": "/api/search/searchspotify",
+        "filename": "searchspotify",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Keyword lagu yang dicari"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "description": "Jumlah hasil (default: 10)"
+          }
+        ]
+      },
+      {
+        "name": "Nekopoi Search & Detail",
+        "endpoint": "/api/search/nekopoi",
+        "filename": "nekopoi",
+        "method": "GET",
+        "note": "Wajib isi salah satu: q untuk search, url untuk detail",
+        "params": [
+          {
+            "name": "q",
+            "required": false,
+            "description": "Keyword pencarian anime — gunakan ini kalau mau search"
+          },
+          {
+            "name": "url",
+            "required": false,
+            "description": "URL detail anime dari nekopoi.care — gunakan ini kalau mau ambil detail"
+          }
+        ]
       }
     ],
     "berita": [
