@@ -1,16 +1,19 @@
 import { Request, Response } from "express"
 import axios from "axios"
 
-// pussy dari waifu.pics, langsung buffer no cap
+// pic.re langsung return gambar pake tag query, skibidi
 export default async function pussyHandler(req: Request, res: Response) {
   try {
-    const { data } = await axios.get("https://api.waifu.pics/nsfw/pussy", { timeout: 10000 })
-    if (!data?.url) throw new Error("zonk ga ada url nya")
+    // pic.re langsung balikin gambar, ga perlu parse json dulu
+    const { data, headers } = await axios.get("https://pic.re/image?tags=pussy", {
+      responseType: "arraybuffer",
+      timeout: 15000,
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    })
 
-    // donlot langsung jadi buffer, skibidi
-    const { data: buf } = await axios.get(data.url, { responseType: "arraybuffer", timeout: 15000 })
-    res.set("Content-Type", "image/jpeg")
-    res.send(Buffer.from(buf))
+    const mime = headers['content-type'] || 'image/jpeg'
+    res.set('Content-Type', mime)
+    res.send(Buffer.from(data))
   } catch (err: any) {
     res.status(500).json({ status: false, message: err.message })
   }
