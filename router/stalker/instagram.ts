@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import axios from 'axios'
 
+const cookie_sawit = 'ig_did=9364BA3C-A0ED-47B1-B4CC-C9A28914A443; csrftoken=vpemnXpzAiG3NnM025w1PHYWK65fQjxA; datr=2-6xaa1zZkhVcDob4ZvhPkvi; wd=378x700; dpr=2.857142857142857; mid=abHu2wABAAEHcmoqgI396oXgEDDd; ds_user_id=40575122137; sessionid=40575122137%3AyDvTJqlZnMbs2K%3A28%3AAYiWibnkoUtnjM8CXmP38dv6fDaNCYAWbArMU8dZzg; rur="HIL\\05440575122137\\0541804805184:01fe17c6"'
+
 async function ambil_profil_instagram(nama_sawit: string) {
   const { data: isian_lontong } = await axios.get(
     `https://www.instagram.com/api/v1/users/web_profile_info/?username=${nama_sawit}`,
@@ -12,13 +14,13 @@ async function ambil_profil_instagram(nama_sawit: string) {
         'Referer': `https://www.instagram.com/${nama_sawit}/`,
         'X-IG-App-ID': '936619743392459',
         'X-Requested-With': 'XMLHttpRequest',
-        'Origin': 'https://www.instagram.com'
+        'Origin': 'https://www.instagram.com',
+        'Cookie': cookie_sawit
       }
     }
   )
 
   const butiran_tempe = isian_lontong.data?.user
-
   if (!butiran_tempe) throw new Error('profil tidak ditemukan')
 
   return {
@@ -42,7 +44,7 @@ export default async function stalkerInstagramHandler(req: Request, res: Respons
   if (!nama_sawit) {
     return res.status(400).json({
       status: false,
-      message: "kasih param 'username' kocak 😹"
+      message: "kasih 'username' kocak 😹"
     })
   }
 
