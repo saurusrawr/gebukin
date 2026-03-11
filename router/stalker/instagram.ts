@@ -3,47 +3,25 @@ import axios from 'axios'
 
 const csrftoken = 'vpemnXpzAiG3NnM025w1PHYWK65fQjxA'
 const sessionid = '40575122137%3AyDvTJqlZnMbs2K%3A28%3AAYiWibnkoUtnjM8CXmP38dv6fDaNCYAWbArMU8dZzg'
-const rur = '"HIL\\x2c40575122137\\x2c1804805184:01fe17c6"'
-const cookie_sawit = `csrftoken=${csrftoken}; sessionid=${sessionid}; rur=${rur}`
-
-// rotate ua biar ga kedetect
-const daftar_ua_rendang = [
-  'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36',
-  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
-  'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-]
-
-const ambil_ua_random = () => daftar_ua_rendang[Math.floor(Math.random() * daftar_ua_rendang.length)]
+const cookie_sawit = `csrftoken=${csrftoken}; sessionid=${sessionid}`
 
 const tunggu_dulu = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 async function ambil_profil_instagram(nama_sawit: string, percobaan: number = 0): Promise<any> {
-  const ua_terpilih = ambil_ua_random()
-
   try {
-    // coba endpoint v1 dulu
+    // pake i.instagram.com mobile api, lebih stabil
     const { data: isian_lontong } = await axios.get(
-      `https://www.instagram.com/api/v1/users/web_profile_info/?username=${nama_sawit}`,
+      `https://i.instagram.com/api/v1/users/web_profile_info/?username=${nama_sawit}`,
       {
         headers: {
-          'User-Agent': ua_terpilih,
+          'User-Agent': 'Instagram 269.0.0.18.75 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; 6T Dev; devitron; qcom; en_US; 314665256)',
           'Accept': '*/*',
           'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Referer': `https://www.instagram.com/${nama_sawit}/`,
           'X-IG-App-ID': '936619743392459',
-          'X-Requested-With': 'XMLHttpRequest',
           'X-CSRFToken': csrftoken,
-          'X-Instagram-AJAX': '1',
-          'Origin': 'https://www.instagram.com',
-          'Cookie': cookie_sawit,
-          'Sec-Fetch-Dest': 'empty',
-          'Sec-Fetch-Mode': 'cors',
-          'Sec-Fetch-Site': 'same-origin',
-          'Connection': 'keep-alive'
+          'Cookie': cookie_sawit
         },
+        maxRedirects: 5,
         timeout: 15000
       }
     )
@@ -53,13 +31,11 @@ async function ambil_profil_instagram(nama_sawit: string, percobaan: number = 0)
     return butiran_tempe
 
   } catch (kesalahan_soto: any) {
-    // kalo 429 coba retry max 3x dengan delay
     if (kesalahan_soto?.response?.status === 429 && percobaan < 3) {
       await tunggu_dulu(2000 * (percobaan + 1))
       return ambil_profil_instagram(nama_sawit, percobaan + 1)
     }
 
-    // kalo masih gagal coba endpoint graphql
     if (percobaan >= 3) {
       return await ambil_via_graphql(nama_sawit)
     }
@@ -68,19 +44,17 @@ async function ambil_profil_instagram(nama_sawit: string, percobaan: number = 0)
   }
 }
 
-// fallback pake graphql endpoint
 async function ambil_via_graphql(nama_sawit: string) {
   const { data: isian_opor } = await axios.get(
     `https://www.instagram.com/${nama_sawit}/?__a=1&__d=dis`,
     {
       headers: {
-        'User-Agent': ambil_ua_random(),
+        'User-Agent': 'Instagram 269.0.0.18.75 Android (26/8.0.0; 480dpi; 1080x1920; OnePlus; 6T Dev; devitron; qcom; en_US; 314665256)',
         'Accept': 'application/json',
-        'Accept-Language': 'id-ID,id;q=0.9',
-        'Referer': 'https://www.instagram.com/',
         'X-CSRFToken': csrftoken,
         'Cookie': cookie_sawit
       },
+      maxRedirects: 5,
       timeout: 15000
     }
   )
