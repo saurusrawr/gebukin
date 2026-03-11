@@ -949,6 +949,15 @@
             "description": "Jumlah hasil (default: 10)"
           }
         ]
+      },
+      {
+        "name": "Cari Grup WhatsApp",
+  "endpoint": "/api/search/carigrpwa",
+  "filename": "carigrpwa",
+  "method": "GET",
+  "params": [
+    { "name": "q", "required": true, "description": "Kata kunci pencarian grup (contoh jb)" }
+  ]
       }
     ],
     "berita": [
@@ -993,15 +1002,6 @@
         "filename": "sindonews",
         "method": "GET",
         "params": []
-      },
-      {
-  "name": "Cari Grup WhatsApp",
-  "endpoint": "/api/search/carigrpwa",
-  "filename": "carigrpwa",
-  "method": "GET",
-  "params": [
-    { "name": "q", "required": true, "description": "Kata kunci pencarian grup (contoh jb)" }
-  ]
       }
     ],
     "stalker": [
