@@ -1156,28 +1156,68 @@
     ],
     "nsfw": [
       {
-        "name": "NSFW Ass",
-        "endpoint": "/api/nsfw/ass",
-        "filename": "nsfwass",
+        "name": "NSFW Waifu",
+        "endpoint": "/api/nsfw/waifu",
+        "filename": "nsfw_waifu",
         "method": "GET",
-        "params": [],
-        "needpremium": false
+        "needpremium": false,
+        "params": []
       },
       {
-        "name": "NSFW Hentai",
-        "endpoint": "/api/nsfw/hentai",
-        "filename": "nsfwhentai",
+        "name": "NSFW Neko",
+        "endpoint": "/api/nsfw/neko",
+        "filename": "nsfw_neko",
         "method": "GET",
-        "params": [],
-        "needpremium": false
+        "needpremium": false,
+        "params": []
       },
       {
-        "name": "NSFW Masturbation",
-        "endpoint": "/api/nsfw/masturbation",
-        "filename": "nsfwmanstrubation",
+        "name": "NSFW Trap",
+        "endpoint": "/api/nsfw/trap",
+        "filename": "nsfw_trap",
         "method": "GET",
-        "params": [],
-        "needpremium": false
+        "needpremium": false,
+        "params": []
+      },
+      {
+        "name": "NSFW Blowjob",
+        "endpoint": "/api/nsfw/blowjob",
+        "filename": "nsfw_blowjob",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
+      },
+      {
+        "name": "NSFW Cumslut",
+        "endpoint": "/api/nsfw/cumslut",
+        "filename": "nsfw_cumslut",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
+      },
+      {
+        "name": "NSFW Pussy",
+        "endpoint": "/api/nsfw/pussy",
+        "filename": "nsfw_pussy",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
+      },
+      {
+        "name": "NSFW Creampie",
+        "endpoint": "/api/nsfw/creampie",
+        "filename": "nsfw_creampie",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
+      },
+      {
+        "name": "NSFW Anal",
+        "endpoint": "/api/nsfw/anal",
+        "filename": "nsfw_anal",
+        "method": "GET",
+        "needpremium": false,
+        "params": []
       }
     ],
     "primbon": [
@@ -1314,7 +1354,7 @@
     ],
     "check": [
       {
-        "name": "NPM Package Check",
+        "name": "Npm Package info check",
         "endpoint": "/api/check/npm",
         "filename": "npm",
         "method": "GET",
@@ -1327,7 +1367,7 @@
         ]
       },
       {
-        "name": "Tagihan PLN",
+        "name": "Cek tagihan pln",
         "endpoint": "/api/check/cektagihanpln",
         "filename": "cektagihanpln",
         "method": "GET",
