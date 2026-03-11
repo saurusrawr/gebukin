@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const csrftoken = 'vpemnXpzAiG3NnM025w1PHYWK65fQjxA'
 const sessionid = '40575122137%3AyDvTJqlZnMbs2K%3A28%3AAYiWibnkoUtnjM8CXmP38dv6fDaNCYAWbArMU8dZzg'
-const rur = '"HIL\05440575122137\0541804805184:01fe17c6"'
+const rur = '"HIL\\x2c40575122137\\x2c1804805184:01fe17c6"'
 const cookie_sawit = `csrftoken=${csrftoken}; sessionid=${sessionid}; rur=${rur}`
 
 // rotate ua biar ga kedetect
