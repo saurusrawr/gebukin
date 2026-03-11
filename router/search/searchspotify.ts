@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // ambil token anonymous dari spotify
 async function ambil_token_kuntul(): Promise<string> {
-  const { data: esteh_token } = await axios.get(
+  const { data: masukan_bumbu } = await axios.get(
     'https://open.spotify.com/get_access_token?reason=transport&productType=web_player',
     {
       headers: {
@@ -13,51 +13,51 @@ async function ambil_token_kuntul(): Promise<string> {
       }
     }
   )
-  return esteh_token.accessToken
+  return masukan_bumbu.accessToken
 }
 
-async function fetch_spotify_mieayam(miegoreng: string, batasin_rek: number = 10) {
-  const token_kuntul = await ambil_token_kuntul()
+async function fetch_spotify_mieayam(tambahkan_indomie: string, goreng_dan_isikan: number = 10) {
+  const dia_bersama = await ambil_token_kuntul()
 
-  const { data: balik_sepuh } = await axios.get(
+  const { data: resep_miegoreng } = await axios.get(
     'https://api.spotify.com/v1/search',
     {
-      params: { q: miegoreng, type: 'track', limit: batasin_rek },
+      params: { q: tambahkan_indomie, type: 'track', limit: goreng_dan_isikan },
       headers: {
-        'Authorization': `Bearer ${token_kuntul}`,
+        'Authorization': `Bearer ${dia_bersama}`,
         'Accept': 'application/json'
       }
     }
   )
 
-  const list_miegoreng = balik_sepuh.tracks?.items || []
+  const ketahuan_file = resep_miegoreng.tracks?.items || []
 
-  return list_miegoreng.map((data_muani: any) => ({
-    id: data_muani.id,
-    judul: data_muani.name || '-',
-    artis: data_muani.artists?.map((a: any) => a.name).join(', ') || '-',
-    album: data_muani.album?.name || '-',
+  return ketahuan_file.map((file_windah: any) => ({
+    id: file_windah.id,
+    judul: file_windah.name || '-',
+    artis: file_windah.artists?.map((a: any) => a.name).join(', ') || '-',
+    album: file_windah.album?.name || '-',
     // ambil cover yang paling gede
-    cover: data_muani.album?.images?.[0]?.url || null,
-    durasi_ms: data_muani.duration_ms || 0,
+    cover: file_windah.album?.images?.[0]?.url || null,
+    durasi_ms: file_windah.duration_ms || 0,
     // convert ms ke menit:detik
     durasi: (() => {
-      const menit_popmie = Math.floor(data_muani.duration_ms / 60000)
-      const detik_amba = Math.floor((data_muani.duration_ms % 60000) / 1000)
-      return `${menit_popmie}:${detik_amba.toString().padStart(2, '0')}`
+      const semuapenting_menit = Math.floor(file_windah.duration_ms / 60000)
+      const semuapenting_detik = Math.floor((file_windah.duration_ms % 60000) / 1000)
+      return `${semuapenting_menit}:${semuapenting_detik.toString().padStart(2, '0')}`
     })(),
-    preview_url: data_muani.preview_url || null,
-    link: data_muani.external_urls?.spotify || null,
-    populer: data_muani.popularity || 0,
-    explicit: data_muani.explicit || false
+    preview_url: file_windah.preview_url || null,
+    link: file_windah.external_urls?.spotify || null,
+    populer: file_windah.popularity || 0,
+    explicit: file_windah.explicit || false
   }))
 }
 
 export default async function searchSpotifyHandler(req: Request, res: Response) {
-  const miegoreng = req.query.q as string
-  const batasin_rek = parseInt(req.query.limit as string) || 10
+  const tambahkan_indomie = req.query.q as string
+  const goreng_dan_isikan = parseInt(req.query.limit as string) || 10
 
-  if (!miegoreng) {
+  if (!tambahkan_indomie) {
     return res.status(400).json({
       status: false,
       message: 'query wajib diisi kocak 😹'
@@ -65,16 +65,16 @@ export default async function searchSpotifyHandler(req: Request, res: Response) 
   }
 
   try {
-    const sepuh_cik = await fetch_spotify_mieayam(miegoreng, batasin_rek)
+    const cv_lamaran_ceo = await fetch_spotify_mieayam(tambahkan_indomie, goreng_dan_isikan)
 
-    if (!sepuh_cik.length) return res.json({
+    if (!cv_lamaran_ceo.length) return res.json({
       status: false,
       message: 'ga nemu lagunya, coba keyword lain'
     })
 
-    return res.json({ status: true, result: sepuh_cik })
+    return res.json({ status: true, result: cv_lamaran_ceo })
 
-  } catch (error_mieayam: any) {
-    res.status(500).json({ status: false, message: error_mieayam.message })
+  } catch (error_maszeh: any) {
+    res.status(500).json({ status: false, message: error_maszeh.message })
   }
 }
