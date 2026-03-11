@@ -1,24 +1,184 @@
 import { Request, Response } from 'express'
-import axios from 'axios'
 
-async function sawit_quotes() {
-  const { data: bubur_ayam } = await axios.get(
-    'https://api.quotable.io/random',
-    { headers: { 'Accept': 'application/json' } }
-  )
+const daftar_kata_sawit = [
+  // motivasi
+  { kutipan: "Jangan tunggu sempurna, mulai dulu dari yang ada.", kategori: "motivasi" },
+  { kutipan: "Setiap langkah kecil tetap membawamu maju.", kategori: "motivasi" },
+  { kutipan: "Gagal bukan akhir, itu bagian dari proses.", kategori: "motivasi" },
+  { kutipan: "Tidak ada yang instan, semua butuh waktu.", kategori: "motivasi" },
+  { kutipan: "Kerja keras tidak pernah mengkhianati hasil.", kategori: "motivasi" },
+  { kutipan: "Mulai dari dirimu sendiri, mulai dari sekarang.", kategori: "motivasi" },
+  { kutipan: "Satu hari satu langkah, lama-lama sampai juga.", kategori: "motivasi" },
+  { kutipan: "Jangan bandingkan jalanmu dengan jalan orang lain.", kategori: "motivasi" },
+  { kutipan: "Percaya prosesnya, hasilnya menyusul.", kategori: "motivasi" },
+  { kutipan: "Susah itu sementara, menyerah itu selamanya.", kategori: "motivasi" },
+  { kutipan: "Yang penting konsisten, bukan cepat.", kategori: "motivasi" },
+  { kutipan: "Hari ini lebih baik dari kemarin, itu sudah cukup.", kategori: "motivasi" },
+  { kutipan: "Jangan takut salah, takutlah tidak mencoba.", kategori: "motivasi" },
+  { kutipan: "Mimpi butuh usaha, bukan hanya doa.", kategori: "motivasi" },
+  { kutipan: "Fokus pada tujuan, bukan pada rintangan.", kategori: "motivasi" },
+  { kutipan: "Orang sukses bukan yang tidak pernah jatuh, tapi yang selalu bangkit.", kategori: "motivasi" },
+  { kutipan: "Kelelahan itu tanda kamu sudah berjuang.", kategori: "motivasi" },
+  { kutipan: "Percayakan pada dirimu sendiri dulu sebelum orang lain.", kategori: "motivasi" },
+  { kutipan: "Tidak ada usaha yang sia-sia, semua ada hasilnya.", kategori: "motivasi" },
+  { kutipan: "Jadilah versi terbaik dirimu, bukan versi orang lain.", kategori: "motivasi" },
+  { kutipan: "Terus maju, walaupun pelan tidak apa-apa.", kategori: "motivasi" },
+  { kutipan: "Kamu lebih kuat dari yang kamu kira.", kategori: "motivasi" },
+  { kutipan: "Setiap pagi adalah kesempatan baru untuk memulai.", kategori: "motivasi" },
+  { kutipan: "Jangan minta dipermudah, minta dikuatkan.", kategori: "motivasi" },
+  { kutipan: "Yang membedakan orang sukses adalah keberaniannya untuk tetap jalan.", kategori: "motivasi" },
+  { kutipan: "Capek itu wajar, berhenti itu pilihan.", kategori: "motivasi" },
+  { kutipan: "Lakukanlah hari ini apa yang tidak bisa kamu tunda sampai besok.", kategori: "motivasi" },
+  { kutipan: "Perubahan dimulai dari keputusan kecil setiap hari.", kategori: "motivasi" },
+  { kutipan: "Bukan soal bakat, tapi soal mau atau tidak.", kategori: "motivasi" },
+  { kutipan: "Impianmu tidak akan kedaluwarsa, kamu yang jangan menyerah.", kategori: "motivasi" },
 
-  return {
-    quote: bubur_ayam.content || '-',
-    author: bubur_ayam.author || 'Unknown',
-    tags: bubur_ayam.tags || []
-  }
-}
+  // bijaksana
+  { kutipan: "Diam bukan berarti kalah, kadang diam itu jawaban terbaik.", kategori: "bijaksana" },
+  { kutipan: "Pikir dulu sebelum bicara, karena kata-kata tidak bisa ditarik kembali.", kategori: "bijaksana" },
+  { kutipan: "Kebaikan yang tulus tidak butuh tepuk tangan.", kategori: "bijaksana" },
+  { kutipan: "Orang bijak belajar dari kesalahan orang lain.", kategori: "bijaksana" },
+  { kutipan: "Jangan menilai buku dari sampulnya, jangan menilai orang dari penampilannya.", kategori: "bijaksana" },
+  { kutipan: "Kesabaran adalah kekuatan yang sering disalahpahami sebagai kelemahan.", kategori: "bijaksana" },
+  { kutipan: "Lebih baik sedikit tapi berkualitas daripada banyak tapi tidak berguna.", kategori: "bijaksana" },
+  { kutipan: "Pengalaman adalah guru terbaik yang pernah ada.", kategori: "bijaksana" },
+  { kutipan: "Jangan membenci orang yang menyakitimu, doakan saja mereka.", kategori: "bijaksana" },
+  { kutipan: "Hidup bukan soal siapa yang benar, tapi siapa yang bertanggung jawab.", kategori: "bijaksana" },
+  { kutipan: "Bersyukur bukan berarti puas, tapi menghargai apa yang sudah ada.", kategori: "bijaksana" },
+  { kutipan: "Rendah hati bukan lemah, itu tanda orang yang benar-benar kuat.", kategori: "bijaksana" },
+  { kutipan: "Tidak semua yang hilang itu kerugian.", kategori: "bijaksana" },
+  { kutipan: "Waktu adalah aset paling berharga yang sering disia-siakan.", kategori: "bijaksana" },
+  { kutipan: "Orang yang banyak bicara belum tentu yang paling pintar.", kategori: "bijaksana" },
+  { kutipan: "Kesederhanaan adalah kemewahan yang sesungguhnya.", kategori: "bijaksana" },
+  { kutipan: "Jangan biarkan masa lalu menentukan masa depanmu.", kategori: "bijaksana" },
+  { kutipan: "Bertanya itu tanda kecerdasan, bukan tanda kebodohan.", kategori: "bijaksana" },
+  { kutipan: "Yang kamu tanam hari ini, kamu panen di kemudian hari.", kategori: "bijaksana" },
+  { kutipan: "Tidak semua orang perlu tahu semua tentangmu.", kategori: "bijaksana" },
+  { kutipan: "Jaga lidah lebih susah dari jaga hati.", kategori: "bijaksana" },
+  { kutipan: "Hidup ini singkat, jangan habiskan dengan hal yang tidak penting.", kategori: "bijaksana" },
+  { kutipan: "Bukan seberapa keras kamu jatuh, tapi seberapa cepat kamu bangkit.", kategori: "bijaksana" },
+  { kutipan: "Perkataan baik tidak perlu banyak, yang penting tepat.", kategori: "bijaksana" },
+  { kutipan: "Pilih teman yang menarikmu ke atas, bukan yang menarikmu ke bawah.", kategori: "bijaksana" },
+  { kutipan: "Menghargai diri sendiri adalah langkah pertama menuju kebahagiaan.", kategori: "bijaksana" },
+  { kutipan: "Tidak semua pertanyaan butuh jawaban sekarang.", kategori: "bijaksana" },
+  { kutipan: "Maafkan orang lain bukan untuk mereka, tapi untuk dirimu sendiri.", kategori: "bijaksana" },
+  { kutipan: "Ketenangan jiwa lebih mahal dari kekayaan materi.", kategori: "bijaksana" },
+  { kutipan: "Yang benar tidak selalu populer, yang populer tidak selalu benar.", kategori: "bijaksana" },
+
+  // penyemangat
+  { kutipan: "Kamu sudah sejauh ini, jangan berhenti sekarang.", kategori: "penyemangat" },
+  { kutipan: "Hari ini mungkin berat, tapi kamu lebih berat dari masalahmu.", kategori: "penyemangat" },
+  { kutipan: "Semua akan baik-baik saja, percaya itu.", kategori: "penyemangat" },
+  { kutipan: "Kamu tidak sendirian, ada yang selalu peduli.", kategori: "penyemangat" },
+  { kutipan: "Badai pasti berlalu, yang penting kamu tetap berdiri.", kategori: "penyemangat" },
+  { kutipan: "Senyum dulu, masalah diselesaikan belakangan.", kategori: "penyemangat" },
+  { kutipan: "Kamu bisa melewati ini, sudah terbukti dari masalah sebelumnya.", kategori: "penyemangat" },
+  { kutipan: "Lelah itu wajar, istirahat sebentar lalu lanjut lagi.", kategori: "penyemangat" },
+  { kutipan: "Yang terbaik belum datang, tunggu saja.", kategori: "penyemangat" },
+  { kutipan: "Setiap masalah datang dengan solusinya.", kategori: "penyemangat" },
+  { kutipan: "Kamu sudah cukup baik, percayai dirimu.", kategori: "penyemangat" },
+  { kutipan: "Jangan menyerah tepat sebelum keajaiban datang.", kategori: "penyemangat" },
+  { kutipan: "Hidupmu masih panjang, masih banyak hal indah yang menunggu.", kategori: "penyemangat" },
+  { kutipan: "Kuatkan hatimu, kamu lebih tangguh dari yang kamu bayangkan.", kategori: "penyemangat" },
+  { kutipan: "Tidak ada ujian yang diberikan melebihi kemampuanmu.", kategori: "penyemangat" },
+  { kutipan: "Setelah hujan pasti ada pelangi, bersabarlah.", kategori: "penyemangat" },
+  { kutipan: "Kamu sedang tumbuh, bukan hancur.", kategori: "penyemangat" },
+  { kutipan: "Semua yang berat hari ini akan jadi cerita besok.", kategori: "penyemangat" },
+  { kutipan: "Tetap semangat, rezekimu sedang dalam perjalanan.", kategori: "penyemangat" },
+  { kutipan: "Kamu berhak bahagia, jangan lupakan itu.", kategori: "penyemangat" },
+  { kutipan: "Satu langkah saja dulu, sisanya nanti.", kategori: "penyemangat" },
+  { kutipan: "Percayakan pada Tuhan, Dia tahu yang terbaik untukmu.", kategori: "penyemangat" },
+  { kutipan: "Kamu tidak perlu sempurna untuk dihargai.", kategori: "penyemangat" },
+  { kutipan: "Jangan lupa makan dan minum air, tubuhmu butuh energi.", kategori: "penyemangat" },
+  { kutipan: "Istirahat itu bukan menyerah, itu mengisi ulang kekuatan.", kategori: "penyemangat" },
+  { kutipan: "Besok adalah hari baru dengan kesempatan baru.", kategori: "penyemangat" },
+  { kutipan: "Kamu sudah berjuang keras, banggalah pada dirimu.", kategori: "penyemangat" },
+  { kutipan: "Tetap jalan, walaupun jalannya gelap sekarang.", kategori: "penyemangat" },
+  { kutipan: "Kebaikan yang kamu lakukan akan kembali padamu.", kategori: "penyemangat" },
+  { kutipan: "Jangan patah semangat hanya karena satu kegagalan.", kategori: "penyemangat" },
+
+  // galau
+  { kutipan: "Kehilangan itu menyakitkan, tapi terkadang itu cara terbaik untuk memulai lagi.", kategori: "galau" },
+  { kutipan: "Tidak semua yang kamu mau adalah yang kamu butuh.", kategori: "galau" },
+  { kutipan: "Menangis bukan tanda lemah, itu tanda kamu manusia.", kategori: "galau" },
+  { kutipan: "Ada kalanya diam dan menangis itu lebih melegakan dari seribu kata.", kategori: "galau" },
+  { kutipan: "Orang yang pergi bukan karena kamu kurang baik, tapi karena memang bukan jalannya.", kategori: "galau" },
+  { kutipan: "Rasa sakit itu nyata, tapi tidak permanen.", kategori: "galau" },
+  { kutipan: "Tidak semua cerita berakhir indah, tapi semua cerita mengajarkan sesuatu.", kategori: "galau" },
+  { kutipan: "Biarkan dirimu bersedih, tapi jangan biarkan kesedihan itu menetap selamanya.", kategori: "galau" },
+  { kutipan: "Yang sudah berlalu biarkan berlalu, kamu masih punya masa depan.", kategori: "galau" },
+  { kutipan: "Luka itu perlu waktu untuk sembuh, jangan terburu-buru.", kategori: "galau" },
+  { kutipan: "Kamu berhak merasakan sedih, tapi juga berhak untuk pulih.", kategori: "galau" },
+  { kutipan: "Kadang melepaskan adalah bentuk cinta yang paling tulus.", kategori: "galau" },
+  { kutipan: "Tidak semua orang bisa bertahan, dan itu bukan salahmu.", kategori: "galau" },
+  { kutipan: "Setiap perpisahan mengajarkan arti keberanian.", kategori: "galau" },
+  { kutipan: "Merindukan seseorang itu wajar, tapi hidupmu tidak berhenti karenanya.", kategori: "galau" },
+  { kutipan: "Patah hati itu menyakitkan, tapi hati yang patah bisa disembuhkan.", kategori: "galau" },
+  { kutipan: "Terkadang yang paling menyakitkan adalah harapan yang tidak terpenuhi.", kategori: "galau" },
+  { kutipan: "Tidak apa-apa merasa tidak baik-baik saja.", kategori: "galau" },
+  { kutipan: "Beberapa orang datang hanya untuk mengajarkan pelajaran.", kategori: "galau" },
+  { kutipan: "Yang kamu cari mungkin bukan yang terbaik untukmu.", kategori: "galau" },
+  { kutipan: "Waktu memang tidak menyembuhkan semua luka, tapi membantu kamu terbiasa.", kategori: "galau" },
+  { kutipan: "Jangan mengemis perhatian dari orang yang tidak menghargaimu.", kategori: "galau" },
+  { kutipan: "Hargai dirimu lebih dari kamu menghargai orang yang tidak menghargaimu.", kategori: "galau" },
+  { kutipan: "Kelelahan emosional itu nyata, izinkan dirimu untuk beristirahat.", kategori: "galau" },
+  { kutipan: "Tidak semua yang hilang perlu dicari kembali.", kategori: "galau" },
+  { kutipan: "Kamu tidak harus baik-baik saja setiap saat.", kategori: "galau" },
+  { kutipan: "Kesepian bukan berarti kamu tidak berharga.", kategori: "galau" },
+  { kutipan: "Kadang kamu perlu kehilangan sesuatu untuk tahu nilainya.", kategori: "galau" },
+  { kutipan: "Jangan memaksakan sesuatu yang memang tidak ditakdirkan untukmu.", kategori: "galau" },
+  { kutipan: "Setelah semua ini, kamu akan menjadi pribadi yang lebih kuat.", kategori: "galau" },
+
+  // curhat
+  { kutipan: "Tidak semua orang perlu tahu kamu sedang berjuang.", kategori: "curhat" },
+  { kutipan: "Kadang kamu hanya butuh seseorang yang mau mendengarkan tanpa menghakimi.", kategori: "curhat" },
+  { kutipan: "Perasaanmu valid, jangan biarkan siapapun meremehkannya.", kategori: "curhat" },
+  { kutipan: "Berbicara tentang perasaan bukan tanda lemah.", kategori: "curhat" },
+  { kutipan: "Menyimpan semuanya sendiri itu melelahkan, cari seseorang yang bisa dipercaya.", kategori: "curhat" },
+  { kutipan: "Kamu boleh mengeluh, asal jangan lupa bangkit setelahnya.", kategori: "curhat" },
+  { kutipan: "Tidak semua orang akan mengerti, dan itu tidak apa-apa.", kategori: "curhat" },
+  { kutipan: "Terkadang menulis perasaan lebih lega dari mengucapkannya.", kategori: "curhat" },
+  { kutipan: "Kamu tidak harus terlihat kuat setiap saat.", kategori: "curhat" },
+  { kutipan: "Ceritakan kepada seseorang yang tepat, bukan sembarang orang.", kategori: "curhat" },
+  { kutipan: "Beban terasa lebih ringan ketika dibagi dengan orang yang peduli.", kategori: "curhat" },
+  { kutipan: "Tidak ada salahnya meminta bantuan.", kategori: "curhat" },
+  { kutipan: "Perasaan yang dipendam terlalu lama bisa meledak kapan saja.", kategori: "curhat" },
+  { kutipan: "Kamu berhak didengar, jangan diam saja.", kategori: "curhat" },
+  { kutipan: "Jangan takut terlihat rapuh di depan orang yang benar-benar peduli.", kategori: "curhat" },
+  { kutipan: "Kadang yang kamu butuh hanya pelukan dan kata 'kamu tidak sendirian'.", kategori: "curhat" },
+  { kutipan: "Luapkan saja, tahan terlalu lama itu tidak sehat.", kategori: "curhat" },
+  { kutipan: "Bicara jujur tentang perasaan adalah keberanian tersendiri.", kategori: "curhat" },
+  { kutipan: "Kamu tidak harus punya alasan kuat untuk merasa sedih.", kategori: "curhat" },
+  { kutipan: "Teman yang baik akan mendengarkan tanpa langsung memberi solusi.", kategori: "curhat" },
+  { kutipan: "Tidak semua masalah butuh solusi, kadang hanya butuh didengar.", kategori: "curhat" },
+  { kutipan: "Jangan minta maaf karena merasakan perasaanmu sendiri.", kategori: "curhat" },
+  { kutipan: "Menceritakan masalah tidak menjadikanmu lemah, itu menjadikanmu manusiawi.", kategori: "curhat" },
+  { kutipan: "Kamu boleh tidak baik-baik saja, dan kamu boleh bilang itu.", kategori: "curhat" },
+  { kutipan: "Bukan masalah besar kecilnya, semua perasaan itu penting.", kategori: "curhat" },
+  { kutipan: "Jangan simpan semuanya di dalam hati, nanti sesak.", kategori: "curhat" },
+  { kutipan: "Cerita kepada diri sendiri pun sudah cukup untuk memulai.", kategori: "curhat" },
+  { kutipan: "Yang kamu rasakan itu nyata, jangan biarkan siapapun bilang kamu lebay.", kategori: "curhat" },
+  { kutipan: "Menangis sambil curhat itu sah-sah saja.", kategori: "curhat" },
+  { kutipan: "Kamu tidak harus menyelesaikan semua masalah hari ini.", kategori: "curhat" },
+]
 
 export default async function randomQuotesHandler(req: Request, res: Response) {
   try {
-    const nasi_kuning = await sawit_quotes()
-    return res.json({ status: true, result: nasi_kuning })
-  } catch (pecel_error: any) {
-    res.status(500).json({ status: false, message: pecel_error.message })
+    const kategori_sawit = req.query.kategori as string
+
+    // filter kategori kalo ada, kalo ga ambil semua
+    const tumpukan_rendang = kategori_sawit
+      ? daftar_kata_sawit.filter(butiran_tempe => butiran_tempe.kategori === kategori_sawit)
+      : daftar_kata_sawit
+
+    if (!tumpukan_rendang.length) {
+      return res.status(404).json({ status: false, message: 'kategori tidak ditemukan, coba: motivasi, bijaksana, penyemangat, galau, curhat' })
+    }
+
+    const sajian_nasi_kuning = tumpukan_rendang[Math.floor(Math.random() * tumpukan_rendang.length)]
+    return res.json({ status: true, result: sajian_nasi_kuning })
+
+  } catch (kesalahan_pecel: any) {
+    res.status(500).json({ status: false, message: kesalahan_pecel.message })
   }
 }
