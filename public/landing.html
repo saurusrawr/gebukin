@@ -271,6 +271,21 @@
                         <p id="dash-desc" class="text-sm font-mono text-slate-500 leading-relaxed px-2"></p>
                     </div>
 
+                    <div class="grid grid-cols-3 gap-3 mb-5 animate-fade-up" style="animation-delay: 0.08s">
+                        <div class="bg-slate-50 border-2 border-dark rounded-lg p-3 text-center shadow-hard-sm">
+                            <div class="text-lg font-display font-bold text-primary" id="stat-endpoints">-</div>
+                            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Endpoint</div>
+                        </div>
+                        <div class="bg-slate-50 border-2 border-dark rounded-lg p-3 text-center shadow-hard-sm">
+                            <div class="text-lg font-display font-bold text-secondary" id="stat-visitors">-</div>
+                            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Visitors</div>
+                        </div>
+                        <div class="bg-slate-50 border-2 border-dark rounded-lg p-3 text-center shadow-hard-sm">
+                            <div class="text-lg font-display font-bold text-dark" id="stat-version">-</div>
+                            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Version</div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-4 mb-5 animate-fade-up h-16" style="animation-delay: 0.1s">
                         
                         <a href="/docs" class="soft-btn variant-solid w-full h-full">
@@ -427,6 +442,12 @@
             .then(config => {
                 document.getElementById('dash-title').innerText = config.settings.apiName;
                 document.getElementById('dash-desc').innerText = config.settings.description;
+
+                // isi stats mini
+                const totalEndpoints = Object.values(config.tags).reduce((a, arr) => a + arr.length, 0);
+                document.getElementById('stat-endpoints').innerText = totalEndpoints;
+                document.getElementById('stat-visitors').innerText = config.settings.visitors || '0';
+                document.getElementById('stat-version').innerText = config.settings.apiVersion || 'v1';
                 
                 const btnChannel = document.getElementById('btn-channel');
                 if(config.settings.channelUrl) btnChannel.href = config.settings.channelUrl;
