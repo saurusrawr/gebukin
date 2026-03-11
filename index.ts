@@ -134,22 +134,10 @@ app.get('/', (req: Request, res: Response) => {
     res.sendFile(path.join(process.cwd(), 'public', 'landing.html'));
 });
 app.get('/docs', (req: Request, res: Response) => { res.sendFile(path.join(process.cwd(), 'public', 'docs.html')); });
-app.use((req: Request, res: Response) => {
-    if (req.accepts('html')) {
-        const possible404 = [path.join(process.cwd(), 'public', '404.html'), path.join(__dirname, 'public', '404.html')];
-        for (const p of possible404) { if (fs.existsSync(p)) return res.status(404).sendFile(p); }
-    }
-    res.status(404).json({ status: false, creator: config.settings.creator, message: "Route not found" });
-});
-app.get('/uploader', (req: Request, res: Response) => { res.sendFile(path.join(process.cwd(), 'public', 'uploader.html')); });
-app.use((req: Request, res: Response) => {
-    if (req.accepts('html')) {
-        const possible404 = [path.join(process.cwd(), 'public', '404.html'), path.join(__dirname, 'public', '404.html')];
-        for (const p of possible404) { if (fs.existsSync(p)) return res.status(404).sendFile(p); }
-    }
-    res.status(404).json({ status: false, creator: config.settings.creator, message: "Route not found" });
-});
 app.get('/owner', (req: Request, res: Response) => { res.sendFile(path.join(process.cwd(), 'public', 'owner.html')); });
+app.get('/uploader', (req: Request, res: Response) => { res.sendFile(path.join(process.cwd(), 'public', 'uploader.html')); });
+
+
 app.use((req: Request, res: Response) => {
     if (req.accepts('html')) {
         const possible404 = [path.join(process.cwd(), 'public', '404.html'), path.join(__dirname, 'public', '404.html')];
