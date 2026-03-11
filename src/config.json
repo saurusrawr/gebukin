@@ -3,7 +3,9 @@
     "creator": "Saurus",
     "apiName": "kawaiiyumee",
     "description": "A free and reliable API service designed for modern application development. Built with Node.js and TypeScript, delivering fast performance, stable endpoints, and easy integration.",
-    "music": ["https://cdn.kawaiiyumee.web.id/bqg0ah.mp3"],
+    "music": [
+      "https://cdn.kawaiiyumee.web.id/bqg0ah.mp3"
+    ],
     "apiVersion": "v2.0",
     "visitors": "20",
     "favicon": "/src/saurus.jpg",
@@ -254,14 +256,22 @@
         ]
       },
       {
-  "name": "Fake Bank Jago",
-  "endpoint": "/api/maker/bangjago",
-  "filename": "bangjago",
-  "method": "GET",
-  "params": [
-    { "name": "nama", "required": true, "description": "Nama pemilik rekening" },
-    { "name": "saldo", "required": true, "description": "Nominal saldo" }
-  ]
+        "name": "Fake Bank Jago",
+        "endpoint": "/api/maker/bangjago",
+        "filename": "bangjago",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nama",
+            "required": true,
+            "description": "Nama pemilik rekening"
+          },
+          {
+            "name": "saldo",
+            "required": true,
+            "description": "Nominal saldo"
+          }
+        ]
       },
       {
         "name": "Fake Story",
@@ -300,18 +310,42 @@
         ]
       },
       {
-  "name": "Profile Card Generator",
-  "endpoint": "/api/maker/profilecard",
-  "filename": "profilecard",
-  "method": "GET",
-  "params": [
-    { "name": "nama", "required": true, "description": "Nama panjang" },
-    { "name": "nickname", "required": true, "description": "Nama panggilan" },
-    { "name": "tgl_lahir", "required": true, "description": "Tanggal lahir format YYYY-MM-DD" },
-    { "name": "deskripsi", "required": true, "description": "Deskripsi singkat" },
-    { "name": "hobi", "required": true, "description": "Hobi pisah koma (Gaming, Coding, dll)" },
-    { "name": "foto", "required": false, "description": "URL foto profil" }
-  ]
+        "name": "Profile Card Generator",
+        "endpoint": "/api/maker/profilecard",
+        "filename": "profilecard",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nama",
+            "required": true,
+            "description": "Nama panjang"
+          },
+          {
+            "name": "nickname",
+            "required": true,
+            "description": "Nama panggilan"
+          },
+          {
+            "name": "tgl_lahir",
+            "required": true,
+            "description": "Tanggal lahir format YYYY-MM-DD"
+          },
+          {
+            "name": "deskripsi",
+            "required": true,
+            "description": "Deskripsi singkat"
+          },
+          {
+            "name": "hobi",
+            "required": true,
+            "description": "Hobi pisah koma (Gaming, Coding, dll)"
+          },
+          {
+            "name": "foto",
+            "required": false,
+            "description": "URL foto profil"
+          }
+        ]
       },
       {
         "name": "Carbon Code",
@@ -330,6 +364,19 @@
             "description": "Judul gambar"
           }
         ]
+      },
+      {
+        "name": "Pak Ustadz Meme",
+        "endpoint": "/api/maker/pakustadz",
+        "filename": "pakustadz",
+        "method": "GET",
+        "params": [
+          {
+            "name": "teks",
+            "required": true,
+            "description": "Teks yang ditampilkan di meme"
+          }
+        ]
       }
     ],
     "edit": [
@@ -346,16 +393,24 @@
           }
         ]
       },
-  {
-    "name": "Nano Banana AI",
-    "endpoint": "/api/edit/nanobanana",
-    "filename": "nanobanana",
-    "method": "GET",
-    "params": [
-      { "name": "url", "required": true, "description": "URL gambar" },
-      { "name": "prompt", "required": true, "description": "Instruksi edit AI" }
-    ]
-  }
+      {
+        "name": "Nano Banana AI",
+        "endpoint": "/api/edit/nanobanana",
+        "filename": "nanobanana",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL gambar"
+          },
+          {
+            "name": "prompt",
+            "required": true,
+            "description": "Instruksi edit AI"
+          }
+        ]
+      }
     ],
     "random": [
       {
@@ -460,13 +515,18 @@
     ],
     "tools": [
       {
-  "name": "Tourl all files",
-  "endpoint": "/api/tools/tourl",
-  "filename": "cdnupliad",
-  "method": "POST",
-  "params": [
-    { "name": "file", "required": true, "type": "file", "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)" }
-  ]
+        "name": "Tourl all files",
+        "endpoint": "/api/tools/tourl",
+        "filename": "cdnupliad",
+        "method": "POST",
+        "params": [
+          {
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)"
+          }
+        ]
       },
       {
         "name": "Screenshot Web",
@@ -749,21 +809,52 @@
             "description": "Nama kota"
           }
         ]
+      },
+      {
+        "name": "WHOIS Domain",
+        "endpoint": "/api/tools/whois",
+        "filename": "whois",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "Nama domain (contoh: google.com)"
+          }
+        ]
+      },
+      {
+        "name": "Hitung Jarak Kota",
+        "endpoint": "/api/tools/hitungjarak",
+        "filename": "hitungjarak",
+        "method": "GET",
+        "params": [
+          {
+            "name": "kota1",
+            "required": true,
+            "description": "Kota asal"
+          },
+          {
+            "name": "kota2",
+            "required": true,
+            "description": "Kota tujuan"
+          }
+        ]
       }
     ],
     "download": [
       {
-  "name": "All in one Downloader",
-  "endpoint": "/api/download/aio",
-  "filename": "aio",
-  "method": "GET",
-  "params": [
-    {
-      "name": "url",
-      "required": true,
-      "description": "URL media (Instagram, TikTok, YouTube, Twitter, dll)"
-    }
-  ]
+        "name": "All in one Downloader",
+        "endpoint": "/api/download/aio",
+        "filename": "aio",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL media (Instagram, TikTok, YouTube, Twitter, dll)"
+          }
+        ]
       },
       {
         "name": "Facebook Downloader",
@@ -966,12 +1057,16 @@
       },
       {
         "name": "Cari Grup WhatsApp",
-  "endpoint": "/api/search/carigrpwa",
-  "filename": "carigrpwa",
-  "method": "GET",
-  "params": [
-    { "name": "q", "required": true, "description": "Kata kunci pencarian grup (contoh jb)" }
-  ]
+        "endpoint": "/api/search/carigrpwa",
+        "filename": "carigrpwa",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Kata kunci pencarian grup (contoh jb)"
+          }
+        ]
       }
     ],
     "berita": [
