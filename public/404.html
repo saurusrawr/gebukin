@@ -1,32 +1,375 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>404 - Page Not Found</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
-            overflow: hidden;
-            touch-action: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>404</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#07070c;font-family:'DM Mono',monospace;color:#f1f5f9}
+
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* center layout */
+.scene{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;pointer-events:none;
+}
+
+/* floating lottie */
+.lottie-float{
+  animation:floatY 4s ease-in-out infinite, popIn .9s cubic-bezier(.34,1.56,.64,1) both;
+  filter:drop-shadow(0 0 40px #8b5cf670) hue-rotate(240deg) saturate(1.3);
+  z-index:2;
+}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes popIn{from{opacity:0;transform:scale(.5) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+/* 404 big */
+.big404{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(7rem,22vw,13rem);
+  font-weight:800;
+  line-height:.85;
+  letter-spacing:-6px;
+  margin-top:-30px;
+  position:relative;
+  user-select:none;
+  animation:revealNum .8s .2s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes revealNum{from{opacity:0;transform:translateY(40px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* each digit individually */
+.d{
+  display:inline-block;
+  background:linear-gradient(160deg,#fff 0%,#c4b5fd 50%,#7c3aed 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px #8b5cf650);
+  animation:digitWobble 6s ease-in-out infinite;
+}
+.d:nth-child(1){animation-delay:0s}
+.d:nth-child(2){animation-delay:.4s;background:linear-gradient(160deg,#fff 0%,#f0abfc 50%,#a855f7 100%);-webkit-background-clip:text;background-clip:text}
+.d:nth-child(3){animation-delay:.8s}
+@keyframes digitWobble{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  20%{transform:translateY(-6px) rotate(-1deg)}
+  40%{transform:translateY(3px) rotate(1deg)}
+  60%{transform:translateY(-4px) rotate(-.5deg)}
+  80%{transform:translateY(2px) rotate(.5deg)}
+}
+
+/* glitch flicker */
+.big404::before{
+  content:'404';
+  position:absolute;inset:0;
+  font-family:'Syne',sans-serif;font-weight:800;
+  background:linear-gradient(160deg,#06b6d4,#3b82f6);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  clip-path:polygon(0 30%,100% 30%,100% 50%,0 50%);
+  opacity:0;
+  animation:glitchA 7s infinite;
+  pointer-events:none;
+}
+.big404::after{
+  content:'404';
+  position:absolute;inset:0;
+  font-family:'Syne',sans-serif;font-weight:800;
+  background:linear-gradient(160deg,#f43f5e,#fb7185);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  clip-path:polygon(0 55%,100% 55%,100% 72%,0 72%);
+  opacity:0;
+  animation:glitchB 7s infinite;
+  pointer-events:none;
+}
+@keyframes glitchA{
+  0%,88%,100%{opacity:0;transform:none}
+  89%{opacity:1;transform:translateX(-8px) skewX(-3deg)}
+  91%{opacity:1;transform:translateX(5px)}
+  93%{opacity:0}
+}
+@keyframes glitchB{
+  0%,88%,100%{opacity:0;transform:none}
+  90%{opacity:1;transform:translateX(8px) skewX(2deg)}
+  92%{opacity:1;transform:translateX(-4px)}
+  94%{opacity:0}
+}
+
+/* screen shake on glitch */
+@keyframes shake{
+  0%,95%,100%{transform:none}
+  96%{transform:translate(-2px,1px)}
+  97%{transform:translate(2px,-1px)}
+  98%{transform:translate(-1px,2px)}
+  99%{transform:translate(1px,-2px)}
+}
+.scene{animation:shake 7s infinite}
+
+/* pill */
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#ffffff08;border:1px solid #ffffff12;
+  padding:5px 14px;border-radius:999px;
+  font-size:.65rem;letter-spacing:.14em;color:#94a3b8;
+  margin-top:14px;
+  animation:fadeUp .5s .6s ease both;
+  backdrop-filter:blur(8px);
+}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:#f87171;box-shadow:0 0 8px #f87171;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+
+/* path text */
+.path-wrap{
+  margin-top:10px;
+  font-size:clamp(.72rem,2.2vw,.85rem);
+  color:#ffffff50;
+  animation:fadeUp .5s .75s ease both;
+  letter-spacing:.02em;
+  display:flex;align-items:center;gap:6px;
+}
+.path-wrap .pth{color:#c4b5fd;font-style:italic}
+.path-wrap .nf{color:#ffffff55}
+
+.hint{
+  margin-top:6px;
+  font-size:.62rem;color:#ffffff40;
+  letter-spacing:.06em;
+  animation:fadeUp .5s .9s ease both;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* floating particles via CSS */
+.p{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,#8b5cf6,transparent);
+  animation:particleDrift linear infinite;
+  opacity:0;
+}
+@keyframes particleDrift{
+  0%{opacity:0;transform:translateY(0) scale(0)}
+  10%{opacity:.6}
+  90%{opacity:.2}
+  100%{opacity:0;transform:translateY(-100vh) scale(1.5) rotate(360deg)}
+}
+</style>
 </head>
 <body>
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
-    
-    <dotlottie-wc 
-        src="https://lottie.host/2c82a741-8bd3-48d9-bcce-bbc8670e3e3e/dSN8796UGe.lottie" 
-        style="width: 300px; height: 300px;" 
-        autoplay 
-        loop>
-    </dotlottie-wc>
+
+<canvas id="cv"></canvas>
+
+<div class="scene">
+  <div class="lottie-float">
+    <dotlottie-wc src="https://lottie.host/2c82a741-8bd3-48d9-bcce-bbc8670e3e3e/dSN8796UGe.lottie"
+      style="width:180px;height:180px" autoplay loop></dotlottie-wc>
+  </div>
+
+  <div class="big404">
+    <span class="d">4</span><span class="d">0</span><span class="d">4</span>
+  </div>
+
+  <div class="pill">
+    <span class="pill-dot"></span>
+    PAGE NOT FOUND
+  </div>
+
+  <div class="path-wrap">
+    <span class="nf">→</span>
+    <span class="pth" id="pth">/???</span>
+    <span class="nf">not found</span>
+  </div>
+
+  <p class="hint">periksa apakah ada salah ketik</p>
+</div>
+
+<script>
+// path
+document.getElementById('pth').innerText = window.location.pathname;
+
+// === GLITCH SOUND (Web Audio API) ===
+let audioCtx = null;
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playGlitch(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  // layer 1: noise burst
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.08, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  // bandpass filter biar kedengeran kaya glitch
+  const bpf = audioCtx.createBiquadFilter();
+  bpf.type = 'bandpass';
+  bpf.frequency.setValueAtTime(800, now);
+  bpf.frequency.exponentialRampToValueAtTime(3200, now+0.06);
+  bpf.Q.value = 0.8;
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.18, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now+0.08);
+  src.connect(bpf); bpf.connect(gain); gain.connect(audioCtx.destination);
+  src.start(now); src.stop(now+0.08);
+
+  // layer 2: pitch drop
+  const osc = audioCtx.createOscillator();
+  const oGain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(220, now);
+  osc.frequency.exponentialRampToValueAtTime(55, now+0.12);
+  oGain.gain.setValueAtTime(0.08, now);
+  oGain.gain.exponentialRampToValueAtTime(0.001, now+0.12);
+  osc.connect(oGain); oGain.connect(audioCtx.destination);
+  osc.start(now); osc.stop(now+0.12);
+}
+
+// autoplay: init audio on first user interaction OR doc ready
+function tryAutoplay(){
+  initAudio();
+  // intro sound saat halaman load
+  setTimeout(()=>{
+    if(!audioCtx) return;
+    const now = audioCtx.currentTime;
+    // sweep noise intro
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate*0.3, audioCtx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length)*0.5;
+    const s = audioCtx.createBufferSource(); s.buffer=buf;
+    const f = audioCtx.createBiquadFilter(); f.type='bandpass';
+    f.frequency.setValueAtTime(200,now); f.frequency.exponentialRampToValueAtTime(4000,now+0.25);
+    f.Q.value=1.2;
+    const g = audioCtx.createGain(); g.gain.setValueAtTime(0.12,now); g.gain.exponentialRampToValueAtTime(0.001,now+0.3);
+    s.connect(f); f.connect(g); g.connect(audioCtx.destination);
+    s.start(now); s.stop(now+0.3);
+  }, 400);
+}
+
+// autoplay on any interaction
+['click','touchstart','keydown','scroll'].forEach(ev=>{
+  document.addEventListener(ev, ()=>{ initAudio(); tryAutoplay(); }, {once:true});
+});
+// try immediate (works if page loaded with prior interaction)
+document.addEventListener('DOMContentLoaded', ()=>{
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'running') tryAutoplay();
+    else audioCtx.resume().then(tryAutoplay).catch(()=>{});
+  }catch(e){}
+});
+
+// === CANVAS: aurora wave background ===
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W, H, t = 0;
+
+function resize(){
+  W = cv.width = window.innerWidth;
+  H = cv.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// aurora layers
+const layers = [
+  { color: '#8b5cf6', amp: .08, freq: .6, speed: .003, yOff: .55, alpha: .12 },
+  { color: '#a855f7', amp: .06, freq: .8, speed: .004, yOff: .60, alpha: .09 },
+  { color: '#7c3aed', amp: .10, freq: .5, speed: .002, yOff: .50, alpha: .08 },
+  { color: '#c084fc', amp: .05, freq: 1.0, speed: .005, yOff: .65, alpha: .06 },
+  { color: '#06b6d4', amp: .04, freq: .7, speed: .003, yOff: .70, alpha: .04 },
+];
+
+// stars
+const stars = Array.from({length:120}, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  r: Math.random() * 1.2 + .2,
+  a: Math.random(),
+  speed: Math.random() * .003 + .001,
+  phase: Math.random() * Math.PI * 2,
+}));
+
+function drawFrame(){
+  t += 1;
+  ctx.clearRect(0, 0, W, H);
+
+  // deep bg
+  const bg = ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,W*.8);
+  bg.addColorStop(0, '#0d0b18');
+  bg.addColorStop(1, '#07070c');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // stars twinkle
+  for(const s of stars){
+    const flicker = Math.sin(t * s.speed * 60 + s.phase) * .5 + .5;
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${s.a * flicker * .7})`;
+    ctx.fill();
+  }
+
+  // aurora waves
+  for(const l of layers){
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    for(let x = 0; x <= W; x += 4){
+      const xn = x / W;
+      const yn = l.yOff
+        + Math.sin(xn * Math.PI * 2 * l.freq + t * l.speed * 60) * l.amp
+        + Math.sin(xn * Math.PI * 3.3 * l.freq + t * l.speed * 40 + 1) * l.amp * .5;
+      ctx.lineTo(x, yn * H);
+    }
+    ctx.lineTo(W, H);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(0, l.yOff * H - l.amp * H, 0, H);
+    grad.addColorStop(0, l.color + Math.round(l.alpha * 255).toString(16).padStart(2,'0'));
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  // vignette
+  const vig = ctx.createRadialGradient(W*.5,H*.5,H*.2,W*.5,H*.5,H*.9);
+  vig.addColorStop(0,'transparent');
+  vig.addColorStop(1,'rgba(0,0,0,.6)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0,0,W,H);
+
+    // trigger sound saat glitch frame (tiap 7 detik, sync css animation)
+  if(t > 0 && Math.round(t * (60/1000)) % (7*60) === Math.round(7*60*0.89)){
+    playGlitch();
+  }
+  requestAnimationFrame(drawFrame);
+}
+drawFrame();
+
+// === floating particle spawner ===
+function spawnParticle(){
+  const p = document.createElement('div');
+  p.className = 'p';
+  const size = Math.random() * 6 + 2;
+  const colors = ['#8b5cf6','#a855f7','#c084fc','#7c3aed','#06b6d4'];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  p.style.cssText = `
+    width:${size}px;height:${size}px;
+    left:${Math.random()*100}vw;
+    bottom:${Math.random()*20}vh;
+    background:radial-gradient(circle,${color},transparent);
+    box-shadow:0 0 ${size*3}px ${color};
+    animation-duration:${Math.random()*8+6}s;
+    animation-delay:${Math.random()*2}s;
+  `;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(), 14000);
+}
+setInterval(spawnParticle, 600);
+for(let i=0;i<10;i++) setTimeout(spawnParticle, i*200);
+</script>
 </body>
 </html>
