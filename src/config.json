@@ -7,7 +7,7 @@
       "https://cdn.kawaiiyumee.web.id/CLBK.mp3"
     ],
     "apiVersion": "v2.0.0",
-    "visitors": "20",
+    "visitors": "36",
     "favicon": "/src/saurus.jpg",
     "thumbnail": "/src/thumbnail.jpg",
     "channelUrl": "https://whatsapp.com/channel/0029VbBloUfFXUuTiSvrzs2e",
@@ -588,24 +588,6 @@
             "name": "alias",
             "required": false,
             "description": "Custom Alias"
-          }
-        ]
-      },
-      {
-        "name": "Tiktok suntik views (percobaan)",
-        "endpoint": "/api/tools/tiktokviews",
-        "filename": "tiktokviews",
-        "method": "GET",
-        "params": [
-          {
-            "name": "link",
-            "required": true,
-            "description": "Link tiktok"
-          },
-          {
-            "name": "jumlah",
-            "required": true,
-            "description": "jumlh viesws"
           }
         ]
       },
