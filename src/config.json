@@ -1445,6 +1445,24 @@
             "description": "Kata kunci mimpi yang ingin ditafsirkan"
           }
         ]
+      },
+      {
+        "name": "Cek Zodiak",
+        "endpoint": "/api/primbon/zodiakcek",
+        "filename": "zodiak",
+        "method": "GET",
+        "params": [
+          {
+            "name": "tanggal",
+            "required": true,
+            "description": "Tanggal lahirmu"
+          },
+          {
+            "name": "bulan",
+            "required": true,
+            "description": "Bulan lahirmu"
+          }
+        ]
       }
     ],
     "provider": [
