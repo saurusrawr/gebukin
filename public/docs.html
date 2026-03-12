@@ -260,9 +260,17 @@
                             <div class="text-[9px] font-bold text-k-muted uppercase tracking-wider">Now Playing</div>
                             <div id="music-title" class="text-[11px] font-bold text-k-accent2 truncate">--</div>
                         </div>
-                        <button onclick="toggleMusic()" class="w-7 h-7 bg-k-accent hover:bg-k-accent2 rounded-lg flex items-center justify-center transition-all">
-                            <i id="music-play-icon" class="fa-solid fa-play text-white text-[9px]"></i>
-                        </button>
+                        <div class="flex items-center gap-1">
+                            <button id="music-prev-btn" onclick="prevSong()" class="hidden w-6 h-6 bg-k-bg border border-k-border hover:border-k-accent rounded-lg flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-backward-step text-k-muted text-[8px]"></i>
+                            </button>
+                            <button onclick="toggleMusic()" class="w-7 h-7 bg-k-accent hover:bg-k-accent2 rounded-lg flex items-center justify-center transition-all">
+                                <i id="music-play-icon" class="fa-solid fa-play text-white text-[9px]"></i>
+                            </button>
+                            <button id="music-next-btn" onclick="nextSong()" class="hidden w-6 h-6 bg-k-bg border border-k-border hover:border-k-accent rounded-lg flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-forward-step text-k-muted text-[8px]"></i>
+                            </button>
+                        </div>
                     </div>
                     <input type="range" id="music-progress" value="0" min="0" max="100" step="0.1"
                         oninput="seekMusic(this.value)"
@@ -569,9 +577,11 @@
                                 </div>`;
                             return `
                                 <div>
-                                    <label class="text-[9px] font-bold ${isKey?'text-k-pink':'text-k-muted'} uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-k-red">*</span>':''} ${isKey?'🔑':''}</label>
+                                    <label class="text-[9px] font-bold ${isKey?'text-k-pink':'text-k-muted'} uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-k-red">*</span>':'<span style="background:#2a2a3a;color:#64748b;padding:1px 5px;border-radius:4px;font-size:8px;margin-left:3px;">optional</span>'} ${isKey?'🔑':''}</label>
                                     <input type="${isKey?'password':'text'}" id="input-${id}-${p.name}" placeholder="${p.description||'Value...'}"
-                                        class="w-full bg-k-surface border ${isKey?'border-k-pink/40 focus:border-k-pink':'border-k-border focus:border-k-accent'} text-xs rounded-lg p-2 text-k-text focus:outline-none focus:ring-1 ${isKey?'focus:ring-k-pink/30':'focus:ring-k-accent/30'} transition-all placeholder:text-k-muted">
+                                        data-required="${p.required ? 'true' : 'false'}"
+                                        class="w-full bg-k-surface border ${isKey?'border-k-pink/40 focus:border-k-pink':'border-k-border focus:border-k-accent'} text-xs rounded-lg p-2 text-k-text focus:outline-none focus:ring-1 ${isKey?'focus:ring-k-pink/30':'focus:ring-k-accent/30'} transition-all placeholder:text-k-muted ${!p.required && !isKey ? 'opacity-70' : ''}"
+                                        style="${!p.required && !isKey ? 'background: #1e1e2a; color: #64748b;' : ''}">
                                 </div>`;
                         }).join('') + `</div>`;
                     }
@@ -627,9 +637,12 @@
                                     </div>
                                 </div>
                                 <div class="p-3 font-mono text-[11px] min-h-[80px] max-h-[360px] overflow-y-auto leading-relaxed">
-                                    <div class="flex items-center gap-2 mb-2 border-b border-k-border pb-2 text-[10px]">
-                                        <span class="text-k-green font-bold">❯</span>
-                                        <span id="curl-preview-${id}" class="text-k-cyan break-all font-mono">api.kawaiiyumee.web.id${route.endpoint}</span>
+                                    <div class="flex items-center gap-2 mb-2 border-b border-k-border pb-2 text-[10px] group/curl">
+                                        <span class="text-k-green font-bold shrink-0">❯</span>
+                                        <span id="curl-preview-${id}" class="text-k-cyan break-all font-mono flex-1 cursor-text select-text">api.kawaiiyumee.web.id${route.endpoint}</span>
+                                        <button onclick="copyCurl('${id}')" class="shrink-0 w-5 h-5 flex items-center justify-center rounded text-k-border hover:text-k-cyan transition-colors opacity-0 group-hover/curl:opacity-100" title="Copy URL">
+                                            <i class="fa-regular fa-copy text-[9px]"></i>
+                                        </button>
                                     </div>
                                     <div id="output-${id}" class="text-k-muted break-all whitespace-pre-wrap"></div>
                                 </div>
@@ -654,14 +667,19 @@
         function updateCurlPreview(id) {
             const preview = document.getElementById('curl-preview-' + id);
             if(!preview) return;
-            const baseUrl = preview.innerText.split('?')[0];
+            const baseUrl = preview.getAttribute('data-base') || preview.innerText.split('?')[0];
+            preview.setAttribute('data-base', baseUrl);
             const inputs = document.querySelectorAll('[id^="input-' + id + '-"]');
             const params = [];
             inputs.forEach(i => {
                 if(i.type === 'file') return;
                 const name = i.id.split('input-' + id + '-')[1];
                 if(name === 'apikey') return;
-                params.push(name + '=' + (i.value || '<' + name + '>'));
+                const required = i.getAttribute('data-required') === 'true';
+                const val = i.value;
+                if(val) params.push(name + '=' + val);
+                else if(required) params.push(name + '=<' + name + '>');
+                else params.push(name + '=');
             });
             preview.innerText = baseUrl + (params.length ? '?' + params.join('&') : '');
         }
@@ -682,6 +700,11 @@
             if(b.classList.contains('hidden')) {
                 b.classList.remove('hidden'); i.classList.remove('fa-plus'); i.classList.add('fa-minus','text-k-accent','rotate-45');
             } else { b.classList.add('hidden'); i.classList.remove('fa-minus','text-k-accent','rotate-45'); i.classList.add('fa-plus'); }
+        };
+
+        window.copyCurl = (id) => {
+            const el = document.getElementById('curl-preview-' + id);
+            if(el) { navigator.clipboard.writeText(el.innerText); messeg("URL COPIED 📋"); }
         };
 
         window.copy = (txt) => { navigator.clipboard.writeText(window.location.origin + txt); messeg("URL COPIED 📋"); };
@@ -772,8 +795,15 @@
         let musicAudio=null, musicPlaying=false, musicList=[], musicIndex=0;
         function initMusic(config) {
             const songs = config?.settings?.music; if(!songs?.length) return;
-            musicList = Array.isArray(songs) ? songs : [songs]; loadSong(0);
+            musicList = Array.isArray(songs) ? songs : [songs];
+            loadSong(0);
+            if(musicList.length > 1) {
+                document.getElementById('music-prev-btn').classList.remove('hidden');
+                document.getElementById('music-next-btn').classList.remove('hidden');
+            }
         }
+        window.prevSong = () => { loadSong(musicIndex - 1 < 0 ? musicList.length - 1 : musicIndex - 1); if(musicPlaying) musicAudio.play().catch(()=>{}); };
+        window.nextSong = () => { loadSong(musicIndex + 1); if(musicPlaying) musicAudio.play().catch(()=>{}); };
         function loadSong(idx) {
             if(!musicList.length) return; musicIndex = idx % musicList.length;
             const song = musicList[musicIndex];
