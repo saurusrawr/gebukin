@@ -55,7 +55,8 @@
     "user-agents": "^1.1.607",
     "yt-search": "^2.13.1",
     "saurus-assets": "latest",
-    "archiver": "^7.0.1"
+    "archiver": "^7.0.1",
+    "tar": "^6.2.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -70,6 +71,8 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/nodemailer": "^6.4.17",
     "@types/qrcode": "^1.5.6",
-    "@types/randomstring": "^1.1.5"
+    "@types/randomstring": "^1.1.5",
+    "@types/tar": "^6.1.13",
+    "@types/archiver": "^6.0.3"
   }
 }
