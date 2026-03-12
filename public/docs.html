@@ -4,859 +4,634 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KawaiiYumee | Documents</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                        sans: ['"Quicksand"', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                        sans: ['"Space Grotesk"', 'sans-serif'],
                     },
                     colors: {
-                        'fmn-blue': '#F9A8D4',
-                        'fmn-dark': '#EC4899',
-                        'fmn-purple': '#F472B6',
-                        'fmn-bg': '#FFF0F6',
-                        'term-bg': '#1e1e1e', 
-                        'term-text': '#d4d4d4',
-                        'success-glow': '#10b981',
-                        'error-glow': '#ef4444',
-                    },
-                    boxShadow: {
-                        'soft': '4px 4px 10px rgba(249, 168, 212, 0.4)',
-                        'glow-success': '0 0 15px rgba(16, 185, 129, 0.5)',
-                        'glow-error': '0 0 15px rgba(239, 68, 68, 0.5)',
-                        'neon': '0 0 20px rgba(249, 168, 212, 0.6)',
+                        'k-bg': '#0a0a0f',
+                        'k-surface': '#111118',
+                        'k-card': '#16161f',
+                        'k-border': '#2a2a3a',
+                        'k-accent': '#7c3aed',
+                        'k-accent2': '#a855f7',
+                        'k-pink': '#ec4899',
+                        'k-cyan': '#06b6d4',
+                        'k-green': '#10b981',
+                        'k-red': '#ef4444',
+                        'k-yellow': '#f59e0b',
+                        'k-text': '#e2e8f0',
+                        'k-muted': '#64748b',
                     },
                     animation: {
                         'blink': 'blink 1s step-end infinite',
-                        'slide-down': 'slideDown 0.3s ease-out forwards',
-                        'marquee': 'marquee 15s linear infinite',
-                        'slide-in-right': 'slideInRight 0.5s ease-out forwards',
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-up': 'fadeUp 0.5s ease both',
+                        'slide-right': 'slideRight 0.4s ease both',
+                        'marquee': 'marquee 18s linear infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
-                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
-                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        blink: { '0%,100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        fadeUp: { '0%': { opacity: '0', transform: 'translateY(16px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideRight: { '0%': { opacity: '0', transform: 'translateX(-12px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
                         marquee: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-150%)' } },
-                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
                     },
                 }
             }
         }
     </script>
     <style>
-        html, body {
-            max-width: 100vw;
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { max-width: 100vw; overflow-x: hidden; background: #0a0a0f; }
 
-        #fixed-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -50;
-            background-color: #FFF0F6;
-            background-image: url('https://c.termai.cc/i181/aGwK.png'), url('https://c.termai.cc/i155/wbV.jpg');
-            background-position: bottom right, center center;
-            background-size: 85% auto, cover;
-            background-repeat: no-repeat;
-            opacity: 0.8;
-        }
-        @media (max-width: 768px) {
-            #fixed-bg { background-size: 110% auto, cover; }
-        }
-
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #F9A8D4; border-radius: 4px; border: 2px solid #fff; }
-        
-        .json-key { color: #f87171; font-weight: bold; }
-        .json-string { color: #a3e635; }
-        .json-number { color: #60a5fa; font-weight: bold; }
-        .json-boolean { color: #c084fc; font-style: italic; }
-        .json-null { color: #94a3b8; }
-        
-        /* Removed CRT Text Shadow and Lines */
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border: none; border-radius: 2px; }
-        
-        /* Removed .terminal-scan animation */
+        ::-webkit-scrollbar-thumb { background: #7c3aed55; border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7c3aed; }
 
-        /* Music Player Progress */
-        #music-progress { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; outline: none; }
-        #music-progress::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #EC4899; cursor: pointer; box-shadow: 0 0 4px rgba(236,72,153,0.5); }
-        #music-progress::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #EC4899; cursor: pointer; border: none; }
-        @keyframes spin-note { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .music-spinning { animation: spin-note 2s linear infinite; }
-        /* ===== MAINTENANCE POPUP ===== */
-        #maintenance-overlay {
-            position: fixed; inset: 0; z-index: 9999;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-        #maintenance-overlay.show {
-            opacity: 1; pointer-events: all;
-        }
-        #maintenance-box {
-            background: #fff;
-            border-radius: 20px;
-            padding: 2rem 2.5rem;
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 2px #F9A8D4;
-            transform: scale(0.8) translateY(30px);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
-            opacity: 0;
-        }
-        #maintenance-overlay.show #maintenance-box {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
-        .maintenance-icon {
-            font-size: 3.5rem;
-            animation: wrench-spin 2s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes wrench-spin {
-            0%, 100% { transform: rotate(-15deg); }
-            50% { transform: rotate(15deg); }
-        }
-        .maintenance-pulse {
-            display: inline-block;
-            width: 10px; height: 10px;
-            background: #f59e0b;
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse-dot 1.2s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-        }
-        /* ===== END MAINTENANCE POPUP ===== */
-
-        .response-area {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: top center;
-        }
-        
-        .response-area.showing {
-            animation: slideInRight 0.5s ease-out, fadeInUp 0.6s ease-out;
-        }
-        
-        .response-area.success {
-            border-color: #10b981 !important;
-        }
-        
-        .response-area.error {
-            border-color: #ef4444 !important;
-        }
-        
-        .json-key, .json-string, .json-number, .json-boolean, .json-null {
-            transition: all 0.3s ease;
-        }
-        
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        
-        .status-success {
-            background-color: #10b981;
-            box-shadow: 0 0 10px #10b981;
-            animation: blink 1.5s infinite;
-        }
-        
-        .status-error {
-            background-color: #ef4444;
-            box-shadow: 0 0 10px #ef4444;
-            animation: blink 1.5s infinite;
-        }
-        
-        .status-waiting {
-            background-color: #f59e0b;
-            box-shadow: 0 0 10px #f59e0b;
-            animation: blink 1.5s infinite;
-        }
-
-        /* --- SOFT BUTTON CSS START --- */
-        .soft-btn {
-            --button-raise-level: 6px;
-            --press-inset: 3px;
-            --press-compensated: 0px;
-            --button-hover-pressure: 1.5;
-            --transform-speed: 160ms;
-            --radius: 12px;
-            --glare-rgb: 255, 255, 255;
-            --glare-alpha: 0.2;
-            --glare-width: 20;
-
-            position: relative;
-            border: none;
-            background: transparent;
-            padding: 0;
-            cursor: pointer;
-            user-select: none;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-            display: block;
-        }
-
-        .soft-btn__wrapper {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-        }
-
-        /* Side wall */
-        .soft-btn__wrapper::before {
+        /* noise overlay */
+        body::before {
             content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: calc(100% - var(--button-raise-level));
-            background: var(--side-color);
-            border-radius: var(--radius);
-            z-index: 1;
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.5;
         }
 
-        /* Face */
+        /* grid bg */
+        body::after {
+            content: '';
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .glow-purple { box-shadow: 0 0 30px rgba(124,58,237,0.25), 0 0 60px rgba(124,58,237,0.1); }
+        .glow-cyan { box-shadow: 0 0 20px rgba(6,182,212,0.2); }
+
+        /* json syntax */
+        .json-key { color: #c084fc; font-weight: 600; }
+        .json-string { color: #86efac; }
+        .json-number { color: #67e8f9; font-weight: 600; }
+        .json-boolean { color: #fda4af; font-style: italic; }
+        .json-null { color: #94a3b8; }
+
+        /* soft button */
+        .soft-btn {
+            --raise: 5px; --radius: 10px;
+            position: relative; border: none; background: transparent;
+            padding: 0; cursor: pointer; user-select: none; outline: none;
+            -webkit-tap-highlight-color: transparent; display: block;
+        }
+        .soft-btn__wrapper { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; }
+        .soft-btn__wrapper::before {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+            height: calc(100% - var(--raise));
+            background: #4c1d95; border-radius: var(--radius); z-index: 1;
+        }
         .soft-btn__content {
-            position: relative;
-            width: 100%;
-            height: calc(100% - var(--button-raise-level));
-            background: var(--surface-color);
-            color: var(--text-color);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: translateY(0);
-            transition: transform var(--transform-speed) ease-out;
-            will-change: transform;
-            backface-visibility: hidden;
-            transform-origin: center;
-            z-index: 2;
-            border: var(--border-width) solid var(--border-color);
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+            position: relative; width: 100%; height: calc(100% - var(--raise));
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: #fff; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            transform: translateY(0); transition: transform 160ms ease-out;
+            will-change: transform; z-index: 2;
+            border: 1px solid rgba(255,255,255,0.15);
         }
+        .soft-btn__inner { display: inline-flex; align-items: center; justify-content: center; gap: 8px; z-index: 4; width: 100%; height: 100%; pointer-events: none; }
+        .soft-btn--middle .soft-btn__content { transform: translateY(1.5px); }
+        .soft-btn--left .soft-btn__content { transform: skewY(-1.5deg); }
+        .soft-btn--right .soft-btn__content { transform: skewY(1.5deg); }
+        .soft-btn--active .soft-btn__content { transform: translateY(var(--raise)); transition: transform 120ms ease-out; }
 
-        .soft-btn__inner {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            z-index: 4;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        /* Hover deformation */
-        .soft-btn--middle .soft-btn__content { transform: translateY(calc(1px * var(--button-hover-pressure))); }
-        .soft-btn--left .soft-btn__content { transform: skewY(calc(-1deg * var(--button-hover-pressure))); }
-        .soft-btn--right .soft-btn__content { transform: skewY(calc(1deg * var(--button-hover-pressure))); }
-
-        /* Pressed */
-        .soft-btn--active .soft-btn__content {
-            transform: translateY(var(--press-inset));
-            transition: transform calc(var(--transform-speed) * 0.8) ease-out;
-        }
-        
-        .soft-btn--active.soft-btn--left .soft-btn__content {
-            transform: skewY(calc(-1deg * var(--button-hover-pressure))) translateY(var(--press-inset));
-        }
-        
-        .soft-btn--active.soft-btn--right .soft-btn__content {
-            transform: skewY(calc(1deg * var(--button-hover-pressure))) translateY(var(--press-inset));
-        }
-
-        /* LAVENDER VARIANT */
-        .variant-lavender {
-            --surface-color: #f9a8d4;
-            --side-color: #ec4899;
-            --text-color: #831843;
-            --border-color: #db2777;
-            --border-width: 2px;
-        }
-        /* --- SOFT BUTTON CSS END --- */
-
-        /* --- LOGIKA OUTLINE BERPUTAR --- */
-        @keyframes outlineSpin {
-            100% { transform: rotate(360deg); }
-        }
-
-        .category-btn {
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            transition: background-color 0.3s;
-        }
-
+        /* category spin */
+        @keyframes spinBorder { 100% { transform: rotate(360deg); } }
+        .category-btn { position: relative; z-index: 1; overflow: hidden; transition: background 0.3s; }
         .category-btn.animating { border-color: transparent !important; }
-
         .category-btn.animating::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent 0%, #F9A8D4 25%, transparent 50%, #F472B6 75%, transparent 100%);
-            z-index: -2; animation: outlineSpin 0.5s linear infinite;
+            background: conic-gradient(transparent 0%, #7c3aed 25%, transparent 50%, #a855f7 75%, transparent 100%);
+            z-index: -2; animation: spinBorder 0.5s linear infinite;
         }
-
         .category-btn.animating::after {
-            content: ''; position: absolute; inset: 3px; background: white; border-radius: 0.6rem; z-index: -1;
+            content: ''; position: absolute; inset: 3px; background: #16161f; border-radius: 10px; z-index: -1;
         }
 
+        /* maintenance */
+        #maintenance-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #maintenance-overlay.show { opacity: 1; pointer-events: all; }
+        #maintenance-box {
+            background: #16161f; border: 1px solid #7c3aed55;
+            border-radius: 20px; padding: 2.5rem; max-width: 400px; width: 90%;
+            text-align: center; box-shadow: 0 0 60px rgba(124,58,237,0.3);
+            transform: scale(0.85) translateY(20px); opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
+        }
+        #maintenance-overlay.show #maintenance-box { transform: scale(1) translateY(0); opacity: 1; }
+        @keyframes wrenchSpin { 0%,100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+        .maintenance-icon { font-size: 3rem; animation: wrenchSpin 2s ease-in-out infinite; display: inline-block; }
+        @keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
+        .maintenance-pulse { display: inline-block; width: 8px; height: 8px; background: #f59e0b; border-radius: 50%; margin-right: 6px; animation: pulseDot 1.2s ease-in-out infinite; }
+
+        .response-area { transition: all 0.3s ease; }
+        .response-area.success { border-color: #10b981 !important; }
+        .response-area.error { border-color: #ef4444 !important; }
+        .status-indicator { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .status-success { background: #10b981; box-shadow: 0 0 8px #10b981; animation: blink 1.5s infinite; }
+        .status-error { background: #ef4444; box-shadow: 0 0 8px #ef4444; animation: blink 1.5s infinite; }
+        .status-waiting { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; animation: blink 1.5s infinite; }
+
+        /* music progress */
+        #music-progress { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; outline: none; }
+        #music-progress::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: #a855f7; cursor: pointer; }
+        @keyframes spinNote { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .music-spinning { animation: spinNote 2s linear infinite; }
+
+        /* hero image */
+        .hero-img-wrap { position: relative; }
+        .hero-img-wrap::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, #0a0a0f 100%);
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="text-slate-700 min-h-screen flex flex-col font-sans selection:bg-fmn-blue selection:text-white">
-    
-    <div id="fixed-bg"></div>
+<body class="text-k-text min-h-screen flex flex-col font-sans relative z-[1]">
 
-    <nav class="border-b border-fmn-blue/50 bg-white/95 backdrop-blur-sm sticky top-0 z-[60] shadow-sm w-full">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4 justify-between">
+    <!-- HERO IMAGE -->
+    <div class="hero-img-wrap w-full" style="max-height: 340px; overflow: hidden;">
+        <img src="https://cdn.kawaiiyumee.web.id/ggfjm7.jpg" alt="KawaiiYumee Banner"
+            class="w-full object-cover object-top animate-float"
+            style="max-height: 340px; filter: brightness(0.75) saturate(1.2);">
+    </div>
+
+    <!-- NAV -->
+    <nav class="sticky top-0 z-[60] bg-k-surface/90 backdrop-blur-md border-b border-k-border w-full">
+        <div class="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4 justify-between">
             <div class="flex items-center gap-3 shrink-0">
-                <a href="/" class="w-10 h-10 bg-fmn-blue text-white flex items-center justify-center rounded-full hover:bg-fmn-dark hover:scale-105 transition-all shadow-md cursor-pointer border border-fmn-dark/20">
-                    <i class="fa-solid fa-arrow-left"></i>
+                <a href="/" class="w-8 h-8 rounded-lg bg-k-border hover:bg-k-accent transition-all flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-arrow-left text-k-muted"></i>
                 </a>
                 <div>
-                    <h1 id="nav-title" class="font-bold text-xl tracking-tight text-fmn-dark uppercase">KawaiiYumee</h1>
-                    <span class="text-[10px] font-bold text-fmn-purple tracking-widest">SAURUS FOR YOU</span>
+                    <h1 id="nav-title" class="font-bold text-base tracking-tight text-k-text">KawaiiYumee</h1>
+                    <span class="text-[9px] font-mono text-k-accent tracking-widest uppercase">API Documentation</span>
                 </div>
             </div>
 
-            <div class="hidden md:flex flex-1 max-w-xl mx-auto overflow-hidden h-8 bg-gradient-to-r from-fmn-blue to-fmn-purple rounded-full flex items-center relative shadow-inner mx-4">
-                <div id="running-text" class="text-white text-xs font-mono font-bold uppercase tracking-widest px-4 whitespace-nowrap animate-marquee inline-block min-w-full">
+            <div class="hidden md:flex flex-1 max-w-md mx-4 overflow-hidden h-7 bg-k-card border border-k-border rounded-full items-center relative">
+                <div id="running-text" class="text-k-muted text-[10px] font-mono uppercase tracking-widest px-4 whitespace-nowrap animate-marquee inline-block min-w-full">
                     SYSTEM ONLINE • WAITING FOR CONFIG...
                 </div>
             </div>
 
-            <a href="https://github.com/SaurusAraAra" target="_blank" class="w-10 h-10 border border-fmn-blue/50 bg-white text-fmn-dark hover:bg-fmn-blue hover:text-white flex items-center justify-center rounded-full shadow-sm transition-all">
-                <i class="fa-brands fa-github text-xl"></i>
+            <a href="https://github.com/SaurusAraAra" target="_blank"
+                class="w-8 h-8 rounded-lg bg-k-card border border-k-border hover:border-k-accent hover:text-k-accent transition-all flex items-center justify-center text-k-muted">
+                <i class="fa-brands fa-github text-base"></i>
             </a>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid lg:grid-cols-12 gap-8 items-start relative z-10 overflow-hidden">
-        
-        <aside class="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-6 h-fit z-40 w-full max-w-full">
-            
-            <div class="bg-term-bg border-2 border-slate-600 shadow-xl rounded-lg overflow-hidden flex flex-col h-[420px] group relative font-mono text-xs">
-                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center gap-2 border-b border-gray-700 select-none">
+    <!-- MAIN -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid lg:grid-cols-12 gap-8 items-start relative z-10">
+
+        <!-- SIDEBAR -->
+        <aside class="lg:col-span-4 lg:sticky lg:top-20 flex flex-col gap-4 h-fit z-40">
+
+            <!-- terminal -->
+            <div class="bg-k-card border border-k-border rounded-xl overflow-hidden flex flex-col h-[380px] font-mono text-xs glow-purple">
+                <div class="bg-k-surface px-3 py-2 flex items-center gap-2 border-b border-k-border select-none">
                     <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-k-red/80"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-k-yellow/80"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-k-green/80"></div>
                     </div>
-                    <span class="text-[10px] text-gray-400 font-bold ml-2">node &mdash; 80x24</span>
+                    <span class="text-[10px] text-k-muted font-bold ml-1">zsh — kawaiiyumee</span>
                 </div>
-                
-                <div id="term-logs" class="p-3 text-gray-300 overflow-y-auto flex-1 custom-scrollbar space-y-1 leading-relaxed"></div>
-                
-                <div id="term-input-line" class="hidden px-3 pb-2 pt-1 border-t border-gray-700 bg-term-bg">
-                    <span class="text-green-500 font-bold mr-1">root@saurus:~/KawaiiYumee$</span>
-                    <span class="inline-block w-2 h-4 bg-gray-400 align-middle animate-blink"></span>
+                <div id="term-logs" class="p-3 text-k-muted overflow-y-auto flex-1 space-y-0.5 leading-relaxed"></div>
+                <div id="term-input-line" class="hidden px-3 pb-2 pt-1 border-t border-k-border">
+                    <span class="text-k-green font-bold mr-1">❯</span>
+                    <span class="inline-block w-2 h-[14px] bg-k-accent align-middle animate-blink rounded-sm"></span>
                 </div>
             </div>
 
-            <div class="relative group">
-                <input type="text" id="search-input" placeholder="Search Endpoint..." 
-                    class="w-full h-12 border-2 border-fmn-blue/60 px-5 pl-12 font-bold text-sm text-slate-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-fmn-blue/50 focus:border-fmn-dark transition-all placeholder:text-slate-400 bg-white/90 backdrop-blur hover:shadow-neon hover:border-fmn-blue">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-fmn-blue"></i>
+            <!-- search -->
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="Cari endpoint..."
+                    class="w-full h-10 bg-k-card border border-k-border rounded-xl px-4 pl-10 text-sm text-k-text placeholder:text-k-muted focus:outline-none focus:border-k-accent transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-k-muted text-sm"></i>
             </div>
 
-            <div class="bg-white/90 backdrop-blur-sm border-2 border-white p-5 shadow-soft rounded-2xl relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-20 h-20 bg-fmn-blue/10 rounded-full blur-xl"></div>
-                <div class="space-y-3 relative z-10">
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>TIME (WIB)</span>
-                        <span id="server-time" class="text-fmn-dark font-mono">--:--:--</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-bold bg-fmn-bg p-3 rounded-xl text-slate-600 border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <span>DATE</span>
-                        <span id="server-date" class="font-mono">--/--/----</span>
-                    </div>
-                    <!-- Music Player -->
-                    <div id="music-player" class="bg-fmn-bg p-3 rounded-xl border border-fmn-blue/10 hover:shadow-neon transition-all duration-300">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-7 h-7 bg-fmn-dark rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-                                <i id="music-note-icon" class="fa-solid fa-music text-white text-[10px]"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">NOW PLAYING</div>
-                                <div id="music-title" class="text-[11px] font-bold text-fmn-dark truncate">--</div>
-                            </div>
-                            <button id="music-toggle" onclick="toggleMusic()" class="w-7 h-7 bg-fmn-dark hover:bg-fmn-purple rounded-full flex items-center justify-center transition-all shadow-md flex-shrink-0">
-                                <i id="music-play-icon" class="fa-solid fa-play text-white text-[9px]"></i>
-                            </button>
+            <!-- info panel -->
+            <div class="bg-k-card border border-k-border rounded-xl p-4 space-y-3">
+                <div class="flex justify-between items-center text-xs font-mono">
+                    <span class="text-k-muted uppercase tracking-wider">WIB</span>
+                    <span id="server-time" class="text-k-cyan font-bold">--:--:--</span>
+                </div>
+                <div class="h-px bg-k-border"></div>
+                <div class="flex justify-between items-center text-xs font-mono">
+                    <span class="text-k-muted uppercase tracking-wider">Date</span>
+                    <span id="server-date" class="text-k-text text-[11px]">--/--/----</span>
+                </div>
+                <div class="h-px bg-k-border"></div>
+                <!-- musik -->
+                <div id="music-player">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-7 h-7 bg-k-accent rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i id="music-note-icon" class="fa-solid fa-music text-white text-[9px]"></i>
                         </div>
-                        <input type="range" id="music-progress" value="0" min="0" max="100" step="0.1"
-                            oninput="seekMusic(this.value)"
-                            class="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                            style="background: linear-gradient(to right, #EC4899 0%, #F9A8D4 0%); accent-color: #EC4899;">
-                        <div class="flex justify-between text-[9px] font-mono text-slate-400 mt-1">
-                            <span id="music-current">0:00</span>
-                            <span id="music-duration">0:00</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[9px] font-bold text-k-muted uppercase tracking-wider">Now Playing</div>
+                            <div id="music-title" class="text-[11px] font-bold text-k-accent2 truncate">--</div>
                         </div>
+                        <button onclick="toggleMusic()" class="w-7 h-7 bg-k-accent hover:bg-k-accent2 rounded-lg flex items-center justify-center transition-all">
+                            <i id="music-play-icon" class="fa-solid fa-play text-white text-[9px]"></i>
+                        </button>
+                    </div>
+                    <input type="range" id="music-progress" value="0" min="0" max="100" step="0.1"
+                        oninput="seekMusic(this.value)"
+                        class="w-full cursor-pointer"
+                        style="background: linear-gradient(to right, #7c3aed 0%, #2a2a3a 0%);">
+                    <div class="flex justify-between text-[9px] font-mono text-k-muted mt-1">
+                        <span id="music-current">0:00</span>
+                        <span id="music-duration">0:00</span>
                     </div>
                 </div>
             </div>
+
+            <!-- stats mini -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-k-card border border-k-border rounded-xl p-3 text-center">
+                    <div class="text-lg font-bold text-k-accent" id="stat-endpoints">0</div>
+                    <div class="text-[9px] text-k-muted uppercase tracking-wider mt-0.5">Endpoints</div>
+                </div>
+                <div class="bg-k-card border border-k-border rounded-xl p-3 text-center">
+                    <div class="text-lg font-bold text-k-cyan" id="stat-visitors">0</div>
+                    <div class="text-[9px] text-k-muted uppercase tracking-wider mt-0.5">Visitors</div>
+                </div>
+                <div class="bg-k-card border border-k-border rounded-xl p-3 text-center">
+                    <div class="text-lg font-bold text-k-pink" id="stat-version">v0</div>
+                    <div class="text-[9px] text-k-muted uppercase tracking-wider mt-0.5">Version</div>
+                </div>
+            </div>
+
         </aside>
 
-        <section class="lg:col-span-8 min-h-[50vh] w-full max-w-full">
-            <div id="api-container" class="space-y-4 opacity-0 translate-y-4 transition-all duration-700 w-full"></div>
-            
-            <div id="no-results" class="hidden flex-col items-center justify-center py-20 text-center opacity-70">
-                <i class="fa-solid fa-box-open text-5xl mb-3 text-fmn-blue"></i>
-                <p class="font-bold text-lg text-slate-400">No Data Found</p>
+        <!-- API LIST -->
+        <section class="lg:col-span-8 min-h-[50vh]">
+            <div id="api-container" class="space-y-3 opacity-0 translate-y-4 transition-all duration-700"></div>
+            <div id="no-results" class="hidden flex-col items-center justify-center py-20 text-center">
+                <i class="fa-solid fa-circle-xmark text-5xl mb-3 text-k-border"></i>
+                <p class="text-k-muted font-bold">Ga nemu endpoint ini bestie 😭</p>
             </div>
         </section>
 
     </main>
 
-    <!-- WhatsApp Float Button -->
+    <!-- WA FLOAT -->
     <a id="wa-float-btn" href="https://wa.me/62895393336779" target="_blank"
-        class="fixed bottom-6 right-6 z-[200] opacity-0 scale-0 transition-all duration-500 ease-out flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-xl hover:bg-[#1ebe5a] hover:scale-110 active:scale-95 group"
-        style="box-shadow: 0 4px 20px rgba(37,211,102,0.5);">
+        class="fixed bottom-6 right-6 z-[200] opacity-0 scale-0 transition-all duration-500 flex items-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-full shadow-xl hover:scale-110 active:scale-95 group"
+        style="box-shadow: 0 4px 20px rgba(37,211,102,0.4);">
         <i class="fa-brands fa-whatsapp text-xl"></i>
-        <span class="text-xs font-bold tracking-wide max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 whitespace-nowrap">Hubungi Owner</span>
+        <span class="text-xs font-bold tracking-wide max-w-0 overflow-hidden group-hover:max-w-[100px] transition-all duration-300 whitespace-nowrap">Hubungi Owner</span>
     </a>
 
+    <!-- TOAST -->
     <div id="custom-toast" class="fixed bottom-20 right-6 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
-        <div class="bg-white text-slate-700 px-5 py-3 font-bold text-sm shadow-xl rounded-xl flex items-center gap-3 border-2 border-fmn-blue animate-slide-in-right">
-            <div class="w-6 h-6 bg-fmn-blue text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
-            <span id="toast-message">SUCCESS</span>
+        <div class="bg-k-card text-k-text px-4 py-3 font-bold text-xs shadow-xl rounded-xl flex items-center gap-3 border border-k-accent/40">
+            <div class="w-5 h-5 bg-k-accent text-white rounded-lg flex items-center justify-center">
+                <i class="fa-solid fa-check text-[9px]"></i>
+            </div>
+            <span id="toast-message">COPIED</span>
+        </div>
+    </div>
+
+    <!-- MAINTENANCE -->
+    <div id="maintenance-overlay">
+        <div id="maintenance-box">
+            <div class="maintenance-icon mb-4">🔧</div>
+            <h2 class="text-xl font-bold text-k-text mb-2">Lagi Maintenance</h2>
+            <p class="text-sm text-k-muted mb-4">API lagi down sementara, sabar ya bestie 😭</p>
+            <div class="flex items-center justify-center gap-2 text-xs text-k-yellow font-bold">
+                <span class="maintenance-pulse"></span> SEDANG DIPERBAIKI
+            </div>
+            <button onclick="closeMaintenancePopup()" class="mt-6 px-6 py-2 bg-k-accent hover:bg-k-accent2 text-white text-xs font-bold rounded-lg transition-all">
+                Tutup
+            </button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', init);
-        let globalConfig = null;
-        let toastTimeout;
+        let globalConfig = null, toastTimeout;
 
-        function isMobileDevice() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+        function isMobile() { return /Android|iPhone|iPad/i.test(navigator.userAgent); }
 
         async function init() {
-            if (isMobileDevice()) document.body.classList.add('is-mobile');
-            if (document.getElementById('term-logs')) {
-                try {
-                    const response = await fetch('/config');
-                    globalConfig = await response.json();
-                    setUi(globalConfig);
-                    loadEnd(globalConfig.tags);
-                    startWIBClock();
-                    await KawaiiYumee(globalConfig);
-                    loadReminder();
-                    setSearch();
-                } catch (e) {
-                    document.getElementById('term-logs').innerHTML = `<span class="text-red-400 font-bold px-1">SYSTEM FAILURE</span><br>${e.message}`;
-                }
+            try {
+                const res = await fetch('/config');
+                globalConfig = await res.json();
+                setUi(globalConfig);
+                loadEnd(globalConfig.tags);
+                startClock();
+                await bootSequence(globalConfig);
+                loadReminder();
+                setSearch();
+            } catch(e) {
+                document.getElementById('term-logs').innerHTML = `<span class="text-k-red">SYSTEM FAILURE: ${e.message}</span>`;
             }
         }
 
-        // --- BUTTON PHYSICS LOGIC START ---
         function initSoftButtons() {
-            const buttons = document.querySelectorAll('.soft-btn');
-
-            buttons.forEach(btn => {
-                const handlePointer = (e) => {
-                    if (e.type === 'pointerleave' || e.type === 'pointercancel' || e.type === 'pointerup') {
-                        btn.classList.remove('soft-btn--active', 'soft-btn--left', 'soft-btn--right', 'soft-btn--middle');
+            document.querySelectorAll('.soft-btn').forEach(btn => {
+                const handle = (e) => {
+                    if (['pointerleave','pointercancel','pointerup'].includes(e.type)) {
+                        btn.classList.remove('soft-btn--active','soft-btn--left','soft-btn--right','soft-btn--middle');
                         try { btn.releasePointerCapture(e.pointerId); } catch(err){}
                         return;
                     }
-
                     const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const w = rect.width;
-
-                    // Set capture on down
-                    if(e.type === 'pointerdown') {
-                        btn.classList.add('soft-btn--active');
-                        try { btn.setPointerCapture(e.pointerId); } catch(err){}
-                    }
-
-                    // Calculate direction
-                    btn.classList.remove('soft-btn--left', 'soft-btn--right', 'soft-btn--middle');
+                    const x = e.clientX - rect.left, w = rect.width;
+                    if (e.type === 'pointerdown') { btn.classList.add('soft-btn--active'); try { btn.setPointerCapture(e.pointerId); } catch(err){} }
+                    btn.classList.remove('soft-btn--left','soft-btn--right','soft-btn--middle');
                     if (x < w * 0.33) btn.classList.add('soft-btn--left');
                     else if (x > w * 0.66) btn.classList.add('soft-btn--right');
                     else btn.classList.add('soft-btn--middle');
                 };
-
-                btn.addEventListener('pointerdown', handlePointer);
-                btn.addEventListener('pointermove', (e) => {
-                    if(btn.classList.contains('soft-btn--active')) handlePointer(e);
-                });
-                btn.addEventListener('pointerup', handlePointer);
-                btn.addEventListener('pointerleave', handlePointer);
-                btn.addEventListener('pointercancel', handlePointer);
+                ['pointerdown','pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, handle));
+                btn.addEventListener('pointermove', e => { if(btn.classList.contains('soft-btn--active')) handle(e); });
             });
         }
-        // --- BUTTON PHYSICS LOGIC END ---
 
         function messeg(msg) {
             const toast = document.getElementById('custom-toast');
-            const msgBox = document.getElementById('toast-message');
-            if(!toast || !msgBox) return;
-            msgBox.innerText = msg;
-            toast.classList.remove('translate-y-32', 'opacity-0');
-            toast.classList.add('animate-fade-in-up');
-            
-            if (toastTimeout) clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => { 
-                toast.classList.add('translate-y-32', 'opacity-0');
-                toast.classList.remove('animate-fade-in-up');
-            }, 3000);
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-32','opacity-0');
+            if(toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.add('translate-y-32','opacity-0'), 3000);
         }
 
-        function startWIBClock() {
+        function startClock() {
             const timeEl = document.getElementById('server-time');
             const dateEl = document.getElementById('server-date');
-            updateTime(); setInterval(updateTime, 1000);
-            function updateTime() {
+            const update = () => {
                 const now = new Date();
-                if(timeEl) {
-                    timeEl.innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour12: false});
-                }
-                if(dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric'});
-            }
+                if(timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false });
+                if(dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric' });
+            };
+            update(); setInterval(update, 1000);
         }
 
         async function loadReminder() {
             try {
-                const req = await fetch('../src/reminder.json');
-                const data = await req.json();
-                if(data?.message) {
-                    const runningText = document.getElementById('running-text');
-                    runningText.innerText = data.message.toUpperCase();
-                }
-            } catch (e) {}
+                const res = await fetch('../src/reminder.json');
+                const data = await res.json();
+                if(data?.message) document.getElementById('running-text').innerText = data.message.toUpperCase();
+            } catch(e) {}
         }
 
-        function terminalLog(message, type = 'info') {
+        function termLog(msg, type='info') {
             const logs = document.getElementById('term-logs');
             if(!logs) return;
             const line = document.createElement('div');
-            
-            let color = "text-gray-300";
-            if(type === 'error') color = "text-red-400";
-            else if(type === 'success') color = "text-green-400";
-            else if(type === 'warn') color = "text-yellow-400";
-            else if(type === 'cmd') color = "text-white font-bold";
-            else if(type === 'system') color = "text-gray-500";
-            
-            // Removed animate-slide-in-right for static linux feel
-            line.className = `${color} break-all`;
-            line.innerHTML = message;
+            const colors = { error:'text-k-red', success:'text-k-green', warn:'text-k-yellow', cmd:'text-white font-bold', system:'text-k-border' };
+            line.className = (colors[type] || 'text-k-muted') + ' break-all leading-relaxed';
+            line.innerHTML = msg;
             logs.appendChild(line);
             logs.scrollTop = logs.scrollHeight;
         }
 
-        async function KawaiiYumee(config) {
+        async function bootSequence(config) {
             const logs = document.getElementById('term-logs');
-            if(!logs) return;
-            
-            // --- TYPING ANIMATION FOR CMD ---
             const cmdLine = document.createElement('div');
-            cmdLine.className = 'text-gray-300 break-all';
-            cmdLine.innerHTML = '<span class="text-green-500">root@saurus:~/KawaiiYumee$</span> ';
-            
-            const typeSpan = document.createElement('span');
-            typeSpan.className = 'text-white font-bold';
-            cmdLine.appendChild(typeSpan);
-            logs.appendChild(cmdLine);
-
-            const commandText = "npm run dev";
-            for(let i=0; i < commandText.length; i++) {
-                typeSpan.textContent += commandText.charAt(i);
-                await new Promise(r => setTimeout(r, 80)); // Typing delay
-            }
-            // ---------------------------------
-
-            await new Promise(r => setTimeout(r, 600));
-
-            const ver = config.settings.apiVersion || '1.0.0';
-            initMusic(config);
-            terminalLog(`> KawaiiYumee-api@${ver} dev`, 'system');
-            terminalLog(`> ts-node src/index.ts`, 'system');
-            await new Promise(r => setTimeout(r, 800));
-            terminalLog(``, 'system'); 
-
-            terminalLog(`[INFO] Starting Server Instance...`, 'info');
-            await new Promise(r => setTimeout(r, 400));
-            terminalLog(`[INFO] Environment: Production`, 'info');
-            terminalLog(`[DB] Connected to MongoDB Atlas`, 'success');
-            await new Promise(r => setTimeout(r, 400));
-
-            const allRoutes = [];
-            for (const cat in config.tags) {
-                config.tags[cat].forEach(r => allRoutes.push({cat, ...r}));
-            }
-
-            for(const route of allRoutes) {
-                const methodColor = route.method === 'GET' ? 'text-pink-400' : route.method === 'POST' ? 'text-green-400' : 'text-yellow-400';
-                terminalLog(`[+] <span class="${methodColor}">${route.method}</span> ${route.endpoint} <span class="text-gray-500">✓</span>`, 'info');
-                await new Promise(r => setTimeout(r, 20)); 
-            }
-            
+            cmdLine.className = 'text-k-muted break-all leading-relaxed';
+            cmdLine.innerHTML = '<span class="text-k-green font-bold">❯</span> ';
+            const typeSpan = document.createElement('span'); typeSpan.className = 'text-k-text font-bold';
+            cmdLine.appendChild(typeSpan); logs.appendChild(cmdLine);
+            for(const ch of 'npm run dev') { typeSpan.textContent += ch; await new Promise(r => setTimeout(r, 75)); }
             await new Promise(r => setTimeout(r, 500));
-            terminalLog(``, 'system');
-            terminalLog(`[✓] Server running on https://api.kawaiiyumee.web.id`, 'success');
-            terminalLog(`[WATCH] Watching...`, 'warn');
-            
-            const container = document.getElementById('api-container');
-            if(container) {
-                container.classList.remove('opacity-0', 'translate-y-4');
-                container.classList.add('animate-fade-in-up');
-            }
-            document.getElementById('term-input-line').classList.remove('hidden');
-
-            // Tampilkan tombol WhatsApp setelah load selesai
+            const ver = config.settings?.apiVersion || '1.0.0';
+            initMusic(config);
+            termLog(`> KawaiiYumee@${ver} dev`, 'system');
+            termLog(`> ts-node index.ts`, 'system');
+            await new Promise(r => setTimeout(r, 600));
+            termLog(`<span class="text-k-muted">[INFO]</span> Starting server...`, 'info');
+            await new Promise(r => setTimeout(r, 300));
+            termLog(`<span class="text-k-muted">[INFO]</span> Environment: Production`, 'info');
+            termLog(`<span class="text-k-green">[DB]</span> MongoDB connected ✓`, 'success');
             await new Promise(r => setTimeout(r, 400));
-            const waBtn = document.getElementById('wa-float-btn');
-            if (waBtn) {
-                waBtn.classList.remove('opacity-0', 'scale-0');
-                waBtn.classList.add('opacity-100', 'scale-100');
+            const allRoutes = [];
+            for(const cat in config.tags) config.tags[cat].forEach(r => allRoutes.push({cat,...r}));
+            for(const route of allRoutes) {
+                const mc = route.method==='GET' ? 'text-k-cyan' : route.method==='POST' ? 'text-k-green' : 'text-k-yellow';
+                termLog(`<span class="text-k-muted">[+]</span> <span class="${mc}">${route.method}</span> <span class="text-k-text">${route.endpoint}</span>`, 'info');
+                await new Promise(r => setTimeout(r, 15));
             }
+            await new Promise(r => setTimeout(r, 400));
+            termLog(`<span class="text-k-green font-bold">[✓] Running → https://api.kawaiiyumee.web.id</span>`, 'success');
+            termLog(`<span class="text-k-yellow">[WATCH] Listening...</span>`, 'warn');
+            document.getElementById('api-container').classList.remove('opacity-0','translate-y-4');
+            document.getElementById('api-container').classList.add('animate-fade-up');
+            document.getElementById('term-input-line').classList.remove('hidden');
+            await new Promise(r => setTimeout(r, 300));
+            const wa = document.getElementById('wa-float-btn');
+            if(wa) { wa.classList.remove('opacity-0','scale-0'); wa.classList.add('opacity-100','scale-100'); }
         }
 
         function setUi(config) {
             const s = config.settings;
-            if(document.getElementById('nav-title')) {
-                document.getElementById('nav-title').innerText = s.apiName || 'API';
-            }
-            if(document.getElementById('stat-visitors')) {
-                document.getElementById('stat-visitors').innerText = s.visitors || '1';
-                animateCounter('stat-visitors', 0, parseInt(s.visitors) || 1, 2000);
-            }
-            if (s.favicon) {
-                let link = document.querySelector("link[rel~='icon']") || document.createElement('link');
-                link.rel = 'icon'; link.href = s.favicon;
-                document.head.appendChild(link);
+            if(s?.apiName) document.getElementById('nav-title').innerText = s.apiName;
+            if(s?.visitors) { document.getElementById('stat-visitors').innerText = s.visitors; counter('stat-visitors', 0, parseInt(s.visitors)||1, 2000); }
+            if(s?.apiVersion) document.getElementById('stat-version').innerText = 'v' + s.apiVersion;
+            if(s?.favicon) { let lnk = document.querySelector("link[rel~='icon']")||document.createElement('link'); lnk.rel='icon'; lnk.href=s.favicon; document.head.appendChild(lnk); }
+            // hitung total endpoint
+            if(config.tags) {
+                let total = 0;
+                for(const cat in config.tags) total += config.tags[cat].length;
+                counter('stat-endpoints', 0, total, 2000);
             }
         }
 
-        function animateCounter(elementId, start, end, duration) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                element.innerText = value;
-                
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
+        function counter(id, start, end, dur) {
+            const el = document.getElementById(id); if(!el) return;
+            let t = null;
+            const step = (ts) => {
+                if(!t) t = ts;
+                const prog = Math.min((ts-t)/dur, 1);
+                el.innerText = Math.floor(prog*(end-start)+start);
+                if(prog < 1) requestAnimationFrame(step);
             };
-            window.requestAnimationFrame(step);
+            requestAnimationFrame(step);
         }
 
         function setSearch() {
             const input = document.getElementById('search-input');
-            const noResults = document.getElementById('no-results');
+            const noRes = document.getElementById('no-results');
             if(!input) return;
-
             input.addEventListener('input', (e) => {
                 const val = e.target.value.toLowerCase();
-                
-                if (val === '') {
-                    document.querySelectorAll('.api-section').forEach(section => {
-                        section.classList.remove('hidden'); 
-                        section.querySelector('.api-section-grid').classList.add('hidden'); 
-                        section.querySelector('.cat-arrow').classList.remove('rotate-180'); 
-                        section.querySelectorAll('.api-card-wrapper').forEach(c => c.classList.remove('hidden')); 
+                if(!val) {
+                    document.querySelectorAll('.api-section').forEach(s => {
+                        s.classList.remove('hidden');
+                        s.querySelector('.api-section-grid').classList.add('hidden');
+                        s.querySelector('.cat-arrow').classList.remove('rotate-180');
+                        s.querySelectorAll('.api-card-wrapper').forEach(c => c.classList.remove('hidden'));
                     });
-                    if(noResults) noResults.classList.add('hidden');
+                    noRes?.classList.add('hidden');
                     return;
                 }
-
-                let anyVisible = false;
-                document.querySelectorAll('.api-section').forEach(section => {
-                    const grid = section.querySelector('.api-section-grid');
-                    const arrow = section.querySelector('.cat-arrow');
-                    
+                let any = false;
+                document.querySelectorAll('.api-section').forEach(s => {
                     let match = 0;
-                    section.querySelectorAll('.api-card-wrapper').forEach(card => {
-                        const txt = card.getAttribute('data-search').toLowerCase();
-                        if (txt.includes(val)) { 
-                            card.classList.remove('hidden');
-                            card.classList.add('animate-slide-in-right');
-                            setTimeout(() => card.classList.remove('animate-slide-in-right'), 500);
-                            match++; 
-                        } else { 
-                            card.classList.add('hidden'); 
-                        }
+                    s.querySelectorAll('.api-card-wrapper').forEach(c => {
+                        const hit = c.getAttribute('data-search').toLowerCase().includes(val);
+                        c.classList.toggle('hidden', !hit);
+                        if(hit) match++;
                     });
-
-                    if (match > 0) {
-                        section.classList.remove('hidden');
-                        grid.classList.remove('hidden'); 
-                        grid.classList.add('animate-fade-in-up');
-                        arrow.classList.add('rotate-180');
-                        anyVisible = true;
-                    } else {
-                        section.classList.add('hidden');
-                    }
+                    if(match > 0) {
+                        s.classList.remove('hidden');
+                        s.querySelector('.api-section-grid').classList.remove('hidden');
+                        s.querySelector('.cat-arrow').classList.add('rotate-180');
+                        any = true;
+                    } else { s.classList.add('hidden'); }
                 });
-
-                if(noResults) {
-                    noResults.classList.toggle('hidden', anyVisible);
-                    noResults.classList.toggle('flex', !anyVisible);
-                    if(!anyVisible) {
-                        noResults.classList.add('animate-fade-in-up');
-                    }
-                }
+                if(noRes) { noRes.classList.toggle('hidden', any); noRes.classList.toggle('flex', !any); }
             });
         }
 
         function loadEnd(tags) {
             const container = document.getElementById('api-container');
-            if(!container) return;
             container.innerHTML = '';
-
-            for (const [cat, routes] of Object.entries(tags)) {
-                const catId = `cat-${cat.replace(/\s+/g, '-')}`;
+            for(const [cat, routes] of Object.entries(tags)) {
+                const catId = `cat-${cat.replace(/\s+/g,'-')}`;
                 const section = document.createElement('div');
-                section.className = "api-section w-full animate-fade-in-up";
-                section.style.animationDelay = `${Object.keys(tags).indexOf(cat) * 0.1}s`;
-                
+                section.className = 'api-section animate-fade-up';
+
+                // icon per kategori
+                const icons = { search:'fa-magnifying-glass', random:'fa-shuffle', stalker:'fa-user-secret', tools:'fa-wrench', primbon:'fa-star', downloader:'fa-download', maker:'fa-palette' };
+                const icon = icons[cat.toLowerCase()] || 'fa-folder';
+
                 section.innerHTML = `
-                    <button id="btn-${catId}" onclick="toggleCategory('${catId}')" class="category-btn w-full flex items-center justify-between bg-white text-slate-700 p-4 rounded-xl shadow-sm border-2 border-fmn-blue hover:bg-slate-50 transition-all duration-300 group mb-3">
-                        <div class="relative z-10 flex items-center gap-4 w-full">
-                            <div class="w-10 h-10 bg-slate-100 text-fmn-blue rounded-lg flex items-center justify-center text-lg group-hover:bg-fmn-blue group-hover:text-white transition-colors border-2 border-fmn-purple">
-                                <i class="fa-solid fa-folder"></i>
+                    <button id="btn-${catId}" onclick="toggleCat('${catId}')" class="category-btn w-full flex items-center justify-between bg-k-card border border-k-border p-3.5 rounded-xl hover:border-k-accent/50 transition-all mb-2 group">
+                        <div class="relative z-10 flex items-center gap-3 w-full">
+                            <div class="w-9 h-9 bg-k-accent/10 text-k-accent rounded-lg flex items-center justify-center border border-k-accent/20 group-hover:bg-k-accent group-hover:text-white transition-all">
+                                <i class="fa-solid ${icon} text-sm"></i>
                             </div>
-                            <h2 class="text-lg font-bold tracking-wide text-fmn-dark flex-1 text-left">${cat}</h2>
-                            
-                            <div class="flex items-center gap-3">
-                                <span class="text-[10px] font-mono bg-fmn-dark text-white px-2 py-1 rounded-md font-bold">${routes.length} API</span>
-                                <i id="arrow-${catId}" class="cat-arrow fa-solid fa-chevron-down transition-transform duration-300 text-fmn-blue"></i>
+                            <span class="text-sm font-bold text-k-text capitalize flex-1 text-left tracking-wide">${cat}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-mono bg-k-accent/20 text-k-accent px-2 py-0.5 rounded-md">${routes.length}</span>
+                                <i id="arrow-${catId}" class="cat-arrow fa-solid fa-chevron-down text-k-muted text-xs transition-transform duration-300"></i>
                             </div>
                         </div>
                     </button>
-                    <div id="grid-${catId}" class="api-section-grid grid grid-cols-1 gap-1 hidden mb-6 pl-2 w-full"></div>
+                    <div id="grid-${catId}" class="api-section-grid space-y-1.5 hidden mb-4 pl-1"></div>
                 `;
-                
+
                 const grid = section.querySelector('.api-section-grid');
-                
                 routes.forEach((route, idx) => {
-                    const id = `${cat}-${idx}`.replace(/\s+/g, '-');
-                    const methodColor = route.method === 'GET' ? 'bg-pink-500' : route.method === 'POST' ? 'bg-emerald-500' : 'bg-rose-500';
-                    
-                    let inputs = '';
+                    const id = `${cat}-${idx}`.replace(/\s+/g,'-');
+                    const mColors = { GET:'bg-k-cyan/20 text-k-cyan border-k-cyan/30', POST:'bg-k-green/20 text-k-green border-k-green/30', DELETE:'bg-k-red/20 text-k-red border-k-red/30' };
+                    const mStyle = mColors[route.method] || 'bg-k-muted/20 text-k-muted border-k-muted/30';
+
                     let copyUrl = route.endpoint;
-                    if (route.method === 'GET' && route.params && route.params.length > 0) {
-                        const paramsList = route.params.map(p => `${p.name}=`).join('&');
-                        copyUrl = `${route.endpoint}?${paramsList}`;
-                    }
+                    if(route.method==='GET' && route.params?.length) copyUrl += '?' + route.params.map(p=>`${p.name}=`).join('&');
 
-                    const allParams = [...(route.params || [])];
-                    if (route.needpremium) {
-                        allParams.push({ name: 'apikey', required: true, description: 'API Key Premium 🔑' });
-                    }
+                    const allParams = [...(route.params||[])];
+                    if(route.needpremium) allParams.push({ name:'apikey', required:true, description:'API Key Premium 🔑' });
 
-                    if (allParams.length) {
-                        inputs = `<div class="bg-fmn-bg/50 p-4 border-y border-fmn-blue/20 grid gap-3 w-full animate-fade-in-up">` + 
-                        allParams.map(p => {
-                            const isFile = p.type === 'file' || p.name.toLowerCase().includes('file') || p.name.toLowerCase().includes('foto') || p.name.toLowerCase().includes('image') || p.name.toLowerCase().includes('gambar');
-                            if (isFile) {
-                                return `
-                        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''} <span class="text-fmn-purple">[FILE]</span></label>
-                            <input type="file" id="input-${id}-${p.name}" 
-                                accept="${p.accept || '*/*'}"
-                                class="w-full min-w-0 border border-slate-300 p-2 text-xs rounded-lg focus:border-fmn-blue focus:ring-1 focus:ring-fmn-blue focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-fmn-blue file:text-white hover:file:bg-fmn-dark cursor-pointer">
-                        </div>`;
-                            }
-                            const isApiKey = p.name === 'apikey';
+                    let inputs = '';
+                    if(allParams.length) {
+                        inputs = `<div class="px-3 pb-3 grid gap-2">` + allParams.map(p => {
+                            const isFile = p.type==='file' || /file|foto|image|gambar/i.test(p.name);
+                            const isKey = p.name === 'apikey';
+                            if(isFile) return `
+                                <div>
+                                    <label class="text-[9px] font-bold text-k-muted uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-k-red">*</span>':''} <span class="text-k-accent">[FILE]</span></label>
+                                    <input type="file" id="input-${id}-${p.name}" accept="${p.accept||'*/*'}"
+                                        class="w-full bg-k-surface border border-k-border text-xs rounded-lg p-2 text-k-text cursor-pointer focus:border-k-accent focus:outline-none transition-all
+                                        file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-bold file:bg-k-accent file:text-white hover:file:bg-k-accent2">
+                                </div>`;
                             return `
-                        <div class="min-w-0 transform transition-all duration-300 hover:scale-[1.02]">
-                            <label class="text-[10px] font-bold ${isApiKey ? 'text-pink-500' : 'text-slate-500'} uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-red-400">*</span>':''} ${isApiKey ? '<span class="text-pink-400">🔑</span>' : ''}</label>
-                            <input type="${isApiKey ? 'password' : 'text'}" id="input-${id}-${p.name}" 
-                                placeholder="${p.description ? p.description : 'Value...'}" 
-                                class="w-full min-w-0 border ${isApiKey ? 'border-pink-300 focus:border-pink-500 focus:ring-pink-300' : 'border-slate-300 focus:border-fmn-blue focus:ring-fmn-blue'} p-2 text-xs rounded-lg focus:ring-1 focus:outline-none bg-white shadow-sm max-w-full transition-all hover:shadow-neon">
-                        </div>`;
+                                <div>
+                                    <label class="text-[9px] font-bold ${isKey?'text-k-pink':'text-k-muted'} uppercase tracking-wider mb-1 block">${p.name} ${p.required?'<span class="text-k-red">*</span>':''} ${isKey?'🔑':''}</label>
+                                    <input type="${isKey?'password':'text'}" id="input-${id}-${p.name}" placeholder="${p.description||'Value...'}"
+                                        class="w-full bg-k-surface border ${isKey?'border-k-pink/40 focus:border-k-pink':'border-k-border focus:border-k-accent'} text-xs rounded-lg p-2 text-k-text focus:outline-none focus:ring-1 ${isKey?'focus:ring-k-pink/30':'focus:ring-k-accent/30'} transition-all placeholder:text-k-muted">
+                                </div>`;
                         }).join('') + `</div>`;
                     }
 
                     const card = document.createElement('div');
-                    card.className = 'api-card-wrapper w-full bg-white border border-slate-300 rounded-lg hover:border-fmn-blue transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md';
+                    card.className = 'api-card-wrapper bg-k-card border border-k-border rounded-xl overflow-hidden hover:border-k-accent/40 transition-all duration-200';
                     card.setAttribute('data-search', `${route.name} ${route.endpoint} ${cat}`);
-                    
                     card.innerHTML = `
-                        <div class="p-2 cursor-pointer select-none hover:bg-slate-50 transition-colors" onclick="toggle('${id}')">
-                            <div class="flex justify-between items-center gap-3">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <span class="px-2.5 py-1 text-[10px] font-bold text-white ${methodColor} rounded-md font-mono tracking-wide w-14 text-center shadow-sm border border-black/10 shrink-0">${route.method}</span>
+                        <div class="px-3 py-2.5 cursor-pointer select-none hover:bg-k-surface/50 transition-colors" onclick="toggle('${id}')">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5 overflow-hidden">
+                                    <span class="px-2 py-0.5 text-[10px] font-bold font-mono border rounded-md w-12 text-center shrink-0 ${mStyle}">${route.method}</span>
                                     <div class="flex flex-col min-w-0">
-                                        <code class="font-bold text-xs sm:text-sm truncate font-mono text-slate-700 hover:text-fmn-dark transition-colors">${route.endpoint}</code>
-                                        <span class="text-[10px] text-slate-500 mt-0.5 font-bold truncate">${route.name}</span>
+                                        <code class="font-mono text-xs text-k-text truncate">${route.endpoint}</code>
+                                        <span class="text-[10px] text-k-muted truncate">${route.name}</span>
                                     </div>
                                 </div>
-                                <i id="icon-${id}" class="fa-solid fa-plus text-[10px] text-slate-400 transition-transform duration-300 shrink-0"></i>
+                                <i id="icon-${id}" class="fa-solid fa-plus text-[10px] text-k-border shrink-0 transition-transform duration-300"></i>
                             </div>
                         </div>
-                        
-                        <div id="body-${id}" class="hidden animate-slide-down w-full">
+                        <div id="body-${id}" class="hidden border-t border-k-border">
                             ${inputs}
-                            <div class="p-4 flex gap-3 bg-white w-full items-center">
-                                
-                                <button id="btn-exec-${id}" onclick="testReq(this, '${route.endpoint}', '${route.method}', '${id}')" class="soft-btn variant-lavender flex-1 h-10 w-full">
+                            <div class="p-3 flex gap-2">
+                                <button id="btn-exec-${id}" onclick="testReq(this,'${route.endpoint}','${route.method}','${id}')" class="soft-btn flex-1 h-9">
                                     <span class="soft-btn__wrapper">
                                         <span class="soft-btn__content">
-                                            <span class="soft-btn__inner text-xs font-bold tracking-widest">
-                                                <i class="fa-solid fa-bolt"></i> EXECUTE
+                                            <span class="soft-btn__inner text-[11px] font-bold tracking-widest">
+                                                <i class="fa-solid fa-bolt text-[10px]"></i> EXECUTE
                                             </span>
                                         </span>
                                     </span>
                                 </button>
-
-                                <button onclick="copy('${copyUrl}')" class="px-4 h-10 border border-slate-300 bg-white hover:bg-slate-50 text-slate-600 rounded-lg transition-all shadow-sm hover:shadow-neon transform hover:scale-110" title="Copy Full URL"><i class="fa-regular fa-copy"></i></button>
+                                <button onclick="copy('${copyUrl}')" class="w-9 h-9 bg-k-surface border border-k-border rounded-lg hover:border-k-accent text-k-muted hover:text-k-accent transition-all flex items-center justify-center text-xs" title="Copy URL">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
                             </div>
-
-                            <div id="res-area-${id}" class="response-area hidden mx-4 mb-4 rounded-lg overflow-hidden bg-[#1e1e1e] border border-slate-600 shadow-inner relative max-w-[calc(100%-2rem)]">
-                                <div class="bg-[#2d2d2d] px-3 py-2 flex items-center justify-between border-b border-gray-700">
+                            <div id="res-area-${id}" class="response-area hidden mx-3 mb-3 rounded-lg overflow-hidden bg-[#0d0d14] border border-k-border">
+                                <div class="bg-k-surface px-3 py-1.5 flex items-center justify-between border-b border-k-border">
                                     <div class="flex gap-1.5">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                                        <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                        <div class="w-2 h-2 rounded-full bg-k-red/60"></div>
+                                        <div class="w-2 h-2 rounded-full bg-k-yellow/60"></div>
+                                        <div class="w-2 h-2 rounded-full bg-k-green/60"></div>
                                     </div>
-                                    <div class="flex items-center gap-3">
+                                    <div class="flex items-center gap-2">
                                         <div id="status-indicator-${id}" class="status-indicator status-waiting"></div>
-                                        <span id="status-${id}" class="text-[10px] font-mono font-bold text-slate-500">IDLE</span>
-                                        <span id="time-${id}" class="text-[10px] font-mono text-slate-500">0ms</span>
+                                        <span id="status-${id}" class="text-[10px] font-mono text-k-muted">IDLE</span>
+                                        <span id="time-${id}" class="text-[10px] font-mono text-k-muted">0ms</span>
                                     </div>
-                                    <div class="flex gap-2">
-                                         <a id="dl-btn-${id}" class="hidden text-slate-500 hover:text-white cursor-pointer transform hover:scale-125 transition-transform"><i class="fa-solid fa-download text-[10px]"></i></a>
-                                         <button onclick="copyRes('${id}')" class="text-slate-500 hover:text-white transform hover:scale-125 transition-transform"><i class="fa-regular fa-clone text-[10px]"></i></button>
-                                         <button onclick="reset('${id}')" class="text-slate-500 hover:text-red-400 transform hover:scale-125 transition-transform"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                                    <div class="flex gap-1.5">
+                                        <a id="dl-btn-${id}" class="hidden w-6 h-6 flex items-center justify-center rounded text-k-muted hover:text-k-text cursor-pointer transition-colors"><i class="fa-solid fa-download text-[9px]"></i></a>
+                                        <button onclick="copyRes('${id}')" class="w-6 h-6 flex items-center justify-center rounded text-k-muted hover:text-k-text transition-colors"><i class="fa-regular fa-clone text-[9px]"></i></button>
+                                        <button onclick="reset('${id}')" class="w-6 h-6 flex items-center justify-center rounded text-k-muted hover:text-k-red transition-colors"><i class="fa-solid fa-xmark text-[9px]"></i></button>
                                     </div>
                                 </div>
-                                <div class="p-3 font-mono text-[11px] min-h-[100px] max-h-[400px] overflow-y-auto custom-scrollbar bg-[#1e1e1e] break-all whitespace-pre-wrap">
-                                    <div class="flex items-center gap-2 mb-2 text-slate-500 select-none border-b border-gray-800 pb-2 flex-wrap animate-slide-in-right">
-                                        <span class="text-green-500 font-bold">➜</span>
-                                        <span class="text-pink-400">~</span>
-                                        <span class="text-gray-400 break-all">curl -X ${route.method} ${route.endpoint}</span>
+                                <div class="p-3 font-mono text-[11px] min-h-[80px] max-h-[360px] overflow-y-auto leading-relaxed">
+                                    <div class="flex items-center gap-2 mb-2 text-k-muted border-b border-k-border pb-2 text-[10px]">
+                                        <span class="text-k-green font-bold">❯</span>
+                                        <span class="text-k-muted break-all">curl -X ${route.method} ${route.endpoint}</span>
                                     </div>
-                                    <div id="output-${id}" class="text-gray-300 break-all whitespace-pre-wrap leading-relaxed"></div>
+                                    <div id="output-${id}" class="text-k-muted break-all whitespace-pre-wrap"></div>
                                 </div>
                             </div>
                         </div>`;
@@ -864,359 +639,159 @@
                 });
                 container.appendChild(section);
             }
-            
             initSoftButtons();
         }
 
-        window.toggleCategory = (catId) => {
+        window.toggleCat = (catId) => {
             const grid = document.getElementById(`grid-${catId}`);
             const arrow = document.getElementById(`arrow-${catId}`);
             const btn = document.getElementById(`btn-${catId}`);
-            
-            if(btn) {
-                btn.classList.add('animating');
-                setTimeout(() => { btn.classList.remove('animating'); }, 500);
-            }
-
-            if(grid.classList.contains('hidden')) { 
-                grid.classList.remove('hidden'); 
-                grid.classList.add('animate-fade-in-up');
-                arrow.classList.add('rotate-180');
-            } else { 
-                grid.classList.add('hidden'); 
-                arrow.classList.remove('rotate-180');
-            }
+            if(btn) { btn.classList.add('animating'); setTimeout(() => btn.classList.remove('animating'), 500); }
+            if(grid.classList.contains('hidden')) {
+                grid.classList.remove('hidden'); grid.classList.add('animate-fade-up'); arrow.classList.add('rotate-180');
+            } else { grid.classList.add('hidden'); arrow.classList.remove('rotate-180'); }
         };
-        
+
         window.toggle = (id) => {
             const b = document.getElementById(`body-${id}`);
             const i = document.getElementById(`icon-${id}`);
-            if (b.classList.contains('hidden')) { 
-                b.classList.remove('hidden'); 
-                b.classList.add('animate-slide-down');
-                i.classList.remove('fa-plus');
-                i.classList.add('fa-minus', 'text-fmn-blue');
-                i.classList.add('rotate-180');
-            } else { 
-                b.classList.add('hidden'); 
-                i.classList.remove('fa-minus', 'text-fmn-blue', 'rotate-180');
-                i.classList.add('fa-plus');
-            }
+            if(b.classList.contains('hidden')) {
+                b.classList.remove('hidden'); i.classList.remove('fa-plus'); i.classList.add('fa-minus','text-k-accent','rotate-45');
+            } else { b.classList.add('hidden'); i.classList.remove('fa-minus','text-k-accent','rotate-45'); i.classList.add('fa-plus'); }
         };
-        
-        window.copy = (txt) => { 
-            navigator.clipboard.writeText(window.location.origin + txt); 
-            messeg("URL COPIED"); 
-        };
-        
-        window.copyRes = (id) => { 
-            const out = document.getElementById(`output-${id}`); 
-            if (out.innerText) { 
-                navigator.clipboard.writeText(out.innerText); 
-                messeg("RESPONSE COPIED"); 
-            }
-        };
-        
-        window.reset = (id) => { 
-            const resArea = document.getElementById(`res-area-${id}`);
-            resArea.classList.remove('show', 'success', 'error', 'showing');
-            resArea.classList.add('hidden');
-            document.getElementById(`output-${id}`).innerHTML = ''; 
-            const statusIndicator = document.getElementById(`status-indicator-${id}`);
-            statusIndicator.className = 'status-indicator status-waiting';
+
+        window.copy = (txt) => { navigator.clipboard.writeText(window.location.origin + txt); messeg("URL COPIED 📋"); };
+        window.copyRes = (id) => { const out = document.getElementById(`output-${id}`); if(out.innerText) { navigator.clipboard.writeText(out.innerText); messeg("RESPONSE COPIED 📋"); } };
+        window.reset = (id) => {
+            const ra = document.getElementById(`res-area-${id}`);
+            ra.classList.add('hidden'); ra.classList.remove('success','error');
+            document.getElementById(`output-${id}`).innerHTML = '';
+            document.getElementById(`status-indicator-${id}`).className = 'status-indicator status-waiting';
         };
 
         window.testReq = async (btn, url, method, id) => {
-            if (btn.disabled) return;
+            if(btn.disabled) return;
             const out = document.getElementById(`output-${id}`);
             const status = document.getElementById(`status-${id}`);
             const time = document.getElementById(`time-${id}`);
             const dlBtn = document.getElementById(`dl-btn-${id}`);
             const resArea = document.getElementById(`res-area-${id}`);
-            const statusIndicator = document.getElementById(`status-indicator-${id}`);
-            
+            const si = document.getElementById(`status-indicator-${id}`);
             const btnInner = btn.querySelector('.soft-btn__inner');
-            const originalBtnText = btnInner.innerHTML;
-            btn.disabled = true; 
-            btnInner.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> PROCESSING';
+            const orig = btnInner.innerHTML;
+            btn.disabled = true;
+            btnInner.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> LOADING';
+            resArea.classList.remove('hidden','success','error');
+            si.className = 'status-indicator status-waiting';
+            status.innerText = 'RUNNING...'; status.className = 'text-[10px] font-mono text-k-yellow';
+            out.innerHTML = '<span class="text-k-muted italic">Connecting...</span>';
 
-            resArea.classList.remove('hidden', 'success', 'error');
-            resArea.classList.add('show', 'showing');
-            statusIndicator.className = 'status-indicator status-waiting';
-            status.innerText = 'RUNNING...'; 
-            status.className = 'text-[10px] font-mono font-bold text-yellow-500';
-            out.innerHTML = '<span class="text-slate-500 italic">Establishing connection...</span>';
-            
-            const params = {};
-            let hasFile = false;
-            const formData = new FormData();
-
-            document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => { 
-                const paramName = i.id.split(`input-${id}-`)[1];
-                if (i.type === 'file') {
-                    if (i.files && i.files.length > 0) {
-                        hasFile = true;
-                        formData.append(paramName, i.files[0], i.files[0].name);
-                        i.classList.add('border-green-400', 'bg-green-50');
-                        setTimeout(() => { i.classList.remove('border-green-400', 'bg-green-50'); }, 1000);
-                    }
-                } else if (i.value) {
-                    params[paramName] = i.value;
-                    i.classList.add('border-green-400', 'bg-green-50');
-                    setTimeout(() => { i.classList.remove('border-green-400', 'bg-green-50'); }, 1000);
-                }
+            const params = {}; let hasFile = false; const fd = new FormData();
+            document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => {
+                const name = i.id.split(`input-${id}-`)[1];
+                if(i.type==='file') { if(i.files?.length) { hasFile = true; fd.append(name, i.files[0], i.files[0].name); } }
+                else if(i.value) params[name] = i.value;
             });
 
-            // apikey masuk sebagai query param juga supaya backend bisa baca
-            const apikeyInput = document.getElementById(`input-${id}-apikey`);
-            const apikeyVal = apikeyInput?.value?.trim();
-
+            const apikey = document.getElementById(`input-${id}-apikey`)?.value?.trim();
             let fetchUrl = url;
-            if (method === 'GET') {
-                if (Object.keys(params).length) fetchUrl += '?' + new URLSearchParams(params);
-            } else if (apikeyVal) {
-                // tambah apikey sebagai query param untuk POST
-                fetchUrl += '?apikey=' + encodeURIComponent(apikeyVal);
-            }
+            if(method==='GET') { if(Object.keys(params).length) fetchUrl += '?' + new URLSearchParams(params); }
+            else if(apikey) fetchUrl += '?apikey=' + encodeURIComponent(apikey);
 
             let opts;
-            if (method === 'GET') {
-                opts = { method };
-            } else if (hasFile) {
-                // multipart/form-data — jangan set Content-Type, browser isi boundary otomatis
-                // params teks masuk ke formData juga
-                Object.entries(params).forEach(([k, v]) => { 
-                    if (k !== 'apikey') formData.append(k, v); 
-                });
-                opts = { method, body: formData };
-            } else {
-                // POST tanpa file — kirim sebagai JSON, exclude apikey dari body (sudah di query)
-                const bodyParams = Object.fromEntries(Object.entries(params).filter(([k]) => k !== 'apikey'));
-                opts = { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyParams) };
-            }
-            
-            terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
+            if(method==='GET') opts = { method };
+            else if(hasFile) { Object.entries(params).forEach(([k,v]) => { if(k!=='apikey') fd.append(k,v); }); opts = { method, body: fd }; }
+            else { const body = Object.fromEntries(Object.entries(params).filter(([k]) => k!=='apikey')); opts = { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }; }
 
-            let startTime = Date.now();
+            const start = Date.now();
             try {
                 const req = await fetch(fetchUrl, opts);
-                const duration = Date.now() - startTime;
-                
-                animateCounter(`time-${id}`, 0, duration, 500);
-                
-                if (req.ok) {
-                    statusIndicator.className = 'status-indicator status-success';
-                    status.innerText = `${req.status} ${req.statusText}`;
-                    status.className = 'text-[10px] font-mono font-bold text-green-500';
-                    resArea.classList.add('success');
-                } else {
-                    statusIndicator.className = 'status-indicator status-error';
-                    status.innerText = `${req.status} ${req.statusText}`;
-                    status.className = 'text-[10px] font-mono font-bold text-red-500';
-                    resArea.classList.add('error');
-                }
-
-                terminalLog(`RES: [${req.status}] ${fetchUrl}`, req.ok ? 'success' : 'error');
-
+                const dur = Date.now() - start;
+                counter(`time-${id}`, 0, dur, 400);
+                if(req.ok) { si.className='status-indicator status-success'; status.innerText=`${req.status} OK`; status.className='text-[10px] font-mono text-k-green'; resArea.classList.add('success'); }
+                else { si.className='status-indicator status-error'; status.innerText=`${req.status} ERR`; status.className='text-[10px] font-mono text-k-red'; resArea.classList.add('error'); }
                 const type = req.headers.get('content-type');
-                if (type?.includes('json')) {
+                if(type?.includes('json')) {
                     const json = await req.json();
-                    out.innerHTML = syntaxHighlight(json);
-                    out.querySelectorAll('.json-key, .json-string, .json-number, .json-boolean, .json-null').forEach((el, idx) => {
-                        el.style.animationDelay = `${idx * 0.05}s`;
-                        el.classList.add('animate-slide-in-right');
-                    });
-                } else if (type?.startsWith('image')) {
+                    out.innerHTML = syntaxHL(json);
+                } else if(type?.startsWith('image')) {
                     const blob = await req.blob();
-                    const urlObj = URL.createObjectURL(blob);
-                    dlBtn.href = urlObj; 
-                    dlBtn.download = `img-${Date.now()}.jpg`; 
-                    dlBtn.classList.remove('hidden');
-                    out.innerHTML = `<div class="flex justify-center p-2 animate-fade-in-up">
-                                        <img src="${urlObj}" class="max-w-full rounded border border-gray-700 max-h-[300px] transform transition-all duration-500 hover:scale-105">
-                                     </div>`;
-                } else if (type?.includes('text/html')) {
+                    const u = URL.createObjectURL(blob);
+                    dlBtn.href = u; dlBtn.download = `img-${Date.now()}.jpg`; dlBtn.classList.remove('hidden');
+                    out.innerHTML = `<div class="flex justify-center p-2"><img src="${u}" class="max-w-full rounded-lg max-h-[280px]"></div>`;
+                } else if(type?.includes('text/html')) {
                     const html = await req.text();
-                    const blob = new Blob([html], { type: 'text/html' });
-                    const blobUrl = URL.createObjectURL(blob);
-                    out.innerHTML = `<div class="w-full rounded overflow-hidden border border-gray-600" style="height:420px;">
-                        <iframe src="${blobUrl}"
-                            class="w-full h-full bg-white"
-                            sandbox="allow-scripts allow-same-origin"
-                            style="border:none;">
-                        </iframe>
-                    </div>`;
+                    const blob = new Blob([html], {type:'text/html'});
+                    out.innerHTML = `<iframe src="${URL.createObjectURL(blob)}" class="w-full rounded-lg bg-white" style="height:360px;border:none;" sandbox="allow-scripts allow-same-origin"></iframe>`;
                 } else {
-                    const text = await req.text();
-                    typewriterEffect(`output-${id}`, text, 10);
+                    out.innerText = await req.text();
                 }
-            } catch (err) {
-                const duration = Date.now() - startTime;
-                time.innerText = `${duration}ms`;
-                statusIndicator.className = 'status-indicator status-error';
-                terminalLog(`ERR: ${err.message}`, 'error');
-                status.innerText = 'ERROR'; 
-                status.className = 'text-[10px] font-mono font-bold text-red-500';
-                resArea.classList.add('error');
-                out.innerHTML = `<span class="text-red-500">${err.message}</span>`;
-            } finally {
-                btn.disabled = false; 
-                btnInner.innerHTML = originalBtnText;
-            }
+            } catch(err) {
+                si.className='status-indicator status-error'; status.innerText='ERROR'; status.className='text-[10px] font-mono text-k-red'; resArea.classList.add('error');
+                out.innerHTML = `<span class="text-k-red">${err.message}</span>`;
+            } finally { btn.disabled=false; btnInner.innerHTML=orig; }
         };
 
-        function typewriterEffect(elementId, text, speed = 20) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = '';
-            let i = 0;
-            
-            function typeWriter() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, speed);
-                }
-            }
-            typeWriter();
+        function syntaxHL(json) {
+            if(typeof json != 'string') json = JSON.stringify(json, undefined, 2);
+            return json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+                    let cls = 'json-number';
+                    if(/^"/.test(m)) { if(/:$/.test(m)) cls='json-key'; else cls='json-string'; }
+                    else if(/true|false/.test(m)) cls='json-boolean';
+                    else if(/null/.test(m)) cls='json-null';
+                    return `<span class="${cls}">${m}</span>`;
+                });
         }
 
-        function syntaxHighlight(json) {
-            if (typeof json != 'string') json = JSON.stringify(json, undefined, 2);
-            return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) cls = 'json-key';
-                    else cls = 'json-string';
-                } else if (/true|false/.test(match)) cls = 'json-boolean';
-                else if (/null/.test(match)) cls = 'json-null';
-                return `<span class="${cls}">${match}</span>`;
-            });
-        }
-
-
-        /* ===== MUSIC PLAYER ===== */
-        let musicAudio = null;
-        let musicPlaying = false;
-        let musicList = [];
-        let musicIndex = 0;
-
+        /* music */
+        let musicAudio=null, musicPlaying=false, musicList=[], musicIndex=0;
         function initMusic(config) {
-            const songs = config?.settings?.music;
-            if (!songs || songs.length === 0) return;
-            musicList = Array.isArray(songs) ? songs : [songs];
-            loadSong(0);
+            const songs = config?.settings?.music; if(!songs?.length) return;
+            musicList = Array.isArray(songs) ? songs : [songs]; loadSong(0);
         }
-
-        function loadSong(index) {
-            if (!musicList.length) return;
-            musicIndex = index % musicList.length;
+        function loadSong(idx) {
+            if(!musicList.length) return; musicIndex = idx % musicList.length;
             const song = musicList[musicIndex];
-
-            if (musicAudio) {
-                musicAudio.pause();
-                musicAudio.removeEventListener('timeupdate', onTimeUpdate);
-                musicAudio.removeEventListener('ended', onSongEnd);
-            }
-
-            musicAudio = new Audio(typeof song === 'string' ? song : song.url);
+            if(musicAudio) { musicAudio.pause(); musicAudio.removeEventListener('timeupdate', onTime); musicAudio.removeEventListener('ended', onEnd); }
+            musicAudio = new Audio(typeof song==='string' ? song : song.url);
             musicAudio.volume = 0.7;
-            musicAudio.addEventListener('timeupdate', onTimeUpdate);
-            musicAudio.addEventListener('ended', onSongEnd);
-            musicAudio.addEventListener('loadedmetadata', () => {
-                document.getElementById('music-duration').textContent = formatTime(musicAudio.duration);
-            });
-
-            const title = typeof song === 'string' 
-                ? decodeURIComponent(song.split('/').pop().replace(/\.[^.]+$/, '').replace(/-|_/g, ' '))
-                : (song.title || 'Unknown');
+            musicAudio.addEventListener('timeupdate', onTime);
+            musicAudio.addEventListener('ended', onEnd);
+            musicAudio.addEventListener('loadedmetadata', () => { document.getElementById('music-duration').textContent = fmtTime(musicAudio.duration); });
+            const title = typeof song==='string' ? decodeURIComponent(song.split('/').pop().replace(/\.[^.]+$/,'').replace(/-|_/g,' ')) : (song.title||'Unknown');
             document.getElementById('music-title').textContent = title;
         }
-
-        function onTimeUpdate() {
-            if (!musicAudio || !musicAudio.duration) return;
+        function onTime() {
+            if(!musicAudio?.duration) return;
             const pct = (musicAudio.currentTime / musicAudio.duration) * 100;
             const bar = document.getElementById('music-progress');
-            bar.value = pct;
-            bar.style.background = `linear-gradient(to right, #EC4899 ${pct}%, #F9A8D4 ${pct}%)`;
-            document.getElementById('music-current').textContent = formatTime(musicAudio.currentTime);
+            bar.value = pct; bar.style.background = `linear-gradient(to right, #7c3aed ${pct}%, #2a2a3a ${pct}%)`;
+            document.getElementById('music-current').textContent = fmtTime(musicAudio.currentTime);
         }
+        function onEnd() { loadSong(musicIndex+1); if(musicPlaying) musicAudio.play().catch(()=>{}); }
+        window.toggleMusic = () => {
+            if(!musicAudio) return;
+            if(musicPlaying) { musicAudio.pause(); musicPlaying=false; document.getElementById('music-play-icon').className='fa-solid fa-play text-white text-[9px]'; document.getElementById('music-note-icon').classList.remove('music-spinning'); }
+            else { musicAudio.play().then(() => { musicPlaying=true; document.getElementById('music-play-icon').className='fa-solid fa-pause text-white text-[9px]'; document.getElementById('music-note-icon').classList.add('music-spinning'); }).catch(()=>{}); }
+        };
+        window.seekMusic = (v) => { if(musicAudio?.duration) musicAudio.currentTime = (v/100)*musicAudio.duration; };
+        function fmtTime(s) { if(isNaN(s)) return '0:00'; return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
-        function onSongEnd() {
-            loadSong(musicIndex + 1);
-            if (musicPlaying) musicAudio.play().catch(() => {});
-        }
-
-        window.toggleMusic = function() {
-            if (!musicAudio) return;
-            if (musicPlaying) {
-                musicAudio.pause();
-                musicPlaying = false;
-                document.getElementById('music-play-icon').className = 'fa-solid fa-play text-white text-[9px]';
-                document.getElementById('music-note-icon').classList.remove('music-spinning');
-            } else {
-                musicAudio.play().then(() => {
-                    musicPlaying = true;
-                    document.getElementById('music-play-icon').className = 'fa-solid fa-pause text-white text-[9px]';
-                    document.getElementById('music-note-icon').classList.add('music-spinning');
-                }).catch(() => {});
-            }
-        }
-
-        window.seekMusic = function(val) {
-            if (!musicAudio || !musicAudio.duration) return;
-            musicAudio.currentTime = (val / 100) * musicAudio.duration;
-        }
-
-        function formatTime(sec) {
-            if (isNaN(sec)) return '0:00';
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-        /* ===== END MUSIC PLAYER ===== */
-        /* ===== MAINTENANCE CHECKER ===== */
-        const MAINTENANCE_URL = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt';
-        let userClosedMaintenance = false;
-
-        async function checkMaintenanceStatus() {
+        /* maintenance */
+        const MAINT_URL = 'https://raw.githubusercontent.com/saurusrawr/saurusdb/refs/heads/main/database-api.txt';
+        let userClosed = false;
+        async function checkMaint() {
             try {
-                const res = await fetch(MAINTENANCE_URL + '?t=' + Date.now(), {
-                    cache: 'no-store',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
-                const text = (await res.text()).trim().toLowerCase();
-                if (text === 'off') {
-                    showMaintenancePopup();
-                } else {
-                    hideMaintenancePopup();
-                    userClosedMaintenance = false;
-                }
-            } catch (e) {
-                // gagal fetch = anggap on
-            }
+                const res = await fetch(MAINT_URL + '?t=' + Date.now(), { cache:'no-store' });
+                const txt = (await res.text()).trim().toLowerCase();
+                if(txt==='off') showMaint(); else { hideMaint(); userClosed=false; }
+            } catch(e) {}
         }
-
-        function showMaintenancePopup() {
-            if (userClosedMaintenance) return;
-            document.getElementById('maintenance-overlay').classList.add('show');
-        }
-
-        function hideMaintenancePopup() {
-            document.getElementById('maintenance-overlay').classList.remove('show');
-        }
-
-        window.closeMaintenancePopup = function() {
-            userClosedMaintenance = true;
-            hideMaintenancePopup();
-        }
-
-        // cek pertama kali
-        checkMaintenanceStatus();
-        // poll setiap 30 detik
-        setInterval(checkMaintenanceStatus, 10000);
-        /* ===== END MAINTENANCE CHECKER ===== */
-
+        function showMaint() { if(!userClosed) document.getElementById('maintenance-overlay').classList.add('show'); }
+        function hideMaint() { document.getElementById('maintenance-overlay').classList.remove('show'); }
+        window.closeMaintenancePopup = () => { userClosed=true; hideMaint(); };
+        checkMaint(); setInterval(checkMaint, 10000);
     </script>
 </body>
 </html>
