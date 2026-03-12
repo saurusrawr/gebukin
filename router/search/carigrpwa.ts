@@ -1,112 +1,116 @@
 import { Request, Response } from 'express'
 import axios from 'axios'
 import * as cheerio from 'cheerio'
-import { transpile } from 'sauruslord-makanan-pemrograman'
 
-// kode ditulis pake bahasa makanan, nanti ditranspile jadi js
-const kode_makanan = `
-nasi header_dapur = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Accept': 'text/html, */*; q=0.01',
-  'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8',
-  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-  'X-Requested-With': 'XMLHttpRequest',
-  'Origin': 'https://groupsor.link',
-  'Referer': 'https://groupsor.link/'
+async function ambil_sesi_groupsor(): Promise<string> {
+  const { headers } = await axios.get('https://groupsor.link/', {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-User': '?1'
+    },
+    maxRedirects: 5,
+    withCredentials: true
+  })
+
+  const cookie_mentah = headers['set-cookie']
+  if (!cookie_mentah) return ''
+  return cookie_mentah.map((c: string) => c.split(';')[0]).join('; ')
 }
 
-tunggu_matang masak cari_grup_sawit(nasi_goreng, halaman_soto = 0) {
-  nasi slug_ketupat = nasi_goreng.trim().toLowerCase().replace(/\\s+/g, '-')
+async function cari_grup(pencarian: string, halaman: number = 0, sesi: string = '') {
+  const slug_pencarian = pencarian.trim().toLowerCase().replace(/\s+/g, '-')
 
-  nasi { data: isian_lontong } = tiriskan axios_instance.post(
-    'https://groupsor.link/group/searchmore/' + slug_ketupat,
-    'group_no=' + halaman_soto,
-    { headers: header_dapur }
+  const { data: hasil_html } = await axios.post(
+    `https://groupsor.link/group/searchmore/${slug_pencarian}`,
+    `group_no=${halaman}`,
+    {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html, */*; q=0.01',
+        'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Origin': 'https://groupsor.link',
+        'Referer': `https://groupsor.link/group/search?keyword=${encodeURIComponent(pencarian)}`,
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'Connection': 'keep-alive',
+        'Cookie': sesi
+      }
+    }
   )
 
-  kalo_lapar (!isian_lontong || isian_lontong.trim() === '') hidangkan []
+  if (!hasil_html || hasil_html.trim() === '') return []
 
-  nasi $ = cheerio_instance.load(isian_lontong)
-  nasi daftar_ketupat = []
+  const $ = cheerio.load(hasil_html)
+  const daftar_grup: any[] = []
 
-  $('.maindiv').each((_, butiran_tempe) => {
-    nasi el = $(butiran_tempe)
+  $('.maindiv').each((_, item) => {
+    const el = $(item)
 
-    nasi nama = el.find('a[href*="/group/invite/"] span').last().text().trim()
-    nasi tautan_join = el.find('a.joinbtn[href*="/group/join/"]').first().attr('href')?.trim()
-    nasi tautan_invite = el.find('a[href*="/group/invite/"]').first().attr('href')?.trim()
-    nasi gambar = el.find('img.image').first().attr('src') || kehabisan
-    nasi kategori = el.find('a[href*="/group/category/"]').first().text().trim()
-    nasi negara = el.find('a[href*="/group/country/"]').first().text().trim()
-    nasi deskripsi_raw = el.find('p.descri').first().text().trim()
-    nasi deskripsi = deskripsi_raw.replace(/\\s*\\.\\.\\.\\s*$/, '').trim()
+    const nama_grup = el.find('a[href*="/group/invite/"] span').last().text().trim()
+    const link_join = el.find('a.joinbtn[href*="/group/join/"]').first().attr('href')?.trim()
+    const link_invite = el.find('a[href*="/group/invite/"]').first().attr('href')?.trim()
+    const foto_grup = el.find('img.image').first().attr('src') || null
+    const kategori = el.find('a[href*="/group/category/"]').first().text().trim()
+    const negara = el.find('a[href*="/group/country/"]').first().text().trim()
+    const deskripsi = el.find('p.descri').first().text().trim().replace(/\s*\.\.\.\s*$/, '').trim()
 
-    kalo_lapar (!nama || !tautan_invite) hidangkan
+    if (!nama_grup || !link_invite) return
 
-    daftar_ketupat.push({
-      name: nama,
-      link: tautan_invite,
-      join: tautan_join || tautan_invite,
-      image: gambar,
-      category: kategori || '-',
-      country: negara || '-',
-      description: deskripsi || '-'
+    daftar_grup.push({
+      nama: nama_grup,
+      link: link_invite,
+      link_join: link_join || link_invite,
+      foto: foto_grup,
+      kategori: kategori || '-',
+      negara: negara || '-',
+      deskripsi: deskripsi || '-'
     })
   })
 
-  hidangkan daftar_ketupat
+  return daftar_grup
 }
-
-tunggu_matang masak jalankan_cari(nasi_goreng) {
-  nasi tumpukan_rendang = []
-  mie halaman_soto = 0
-
-  selagi_mendidih (tumpukan_rendang.length < 10) {
-    nasi isian_opor = tiriskan cari_grup_sawit(nasi_goreng, halaman_soto)
-    kalo_lapar (!isian_opor.length) matikan_api
-    tumpukan_rendang.push(...isian_opor)
-    halaman_soto++
-  }
-
-  hidangkan tumpukan_rendang.slice(0, 10)
-}
-`
-
-// transpile bahasa makanan → javascript
-const kode_js = transpile(kode_makanan)
-
-// inject dependency axios & cheerio ke scope eval
-const axios_instance = axios
-const cheerio_instance = cheerio
-
-// jalankan kode hasil transpile
-const { cari_grup_sawit, jalankan_cari } = eval(`
-  (function(axios_instance, cheerio_instance) {
-    ${kode_js}
-    return { cari_grup_sawit, jalankan_cari }
-  })(axios_instance, cheerio_instance)
-`)
 
 export default async function cariGrpWaHandler(req: Request, res: Response) {
-  const nasi_goreng = req.query.q as string
+  const pencarian = req.query.q as string
 
-  if (!nasi_goreng) {
+  if (!pencarian) {
     return res.status(400).json({
       status: false,
-      message: 'query wajib diisi kocak 😹'
+      message: 'kasih keyword pencarian nya bestie 😭'
     })
   }
 
   try {
-    const tumpukan_rendang = await jalankan_cari(nasi_goreng)
+    const sesi = await ambil_sesi_groupsor()
+    const semua_grup: any[] = []
+    let halaman = 0
 
-    if (!tumpukan_rendang.length) {
+    while (semua_grup.length < 10) {
+      const hasil = await cari_grup(pencarian, halaman, sesi)
+      if (!hasil.length) break
+      semua_grup.push(...hasil)
+      halaman++
+    }
+
+    if (!semua_grup.length) {
       return res.json({ status: false, message: 'ga nemu grup, coba keyword lain' })
     }
 
-    return res.json({ status: true, result: tumpukan_rendang })
+    return res.json({ status: true, result: semua_grup.slice(0, 10) })
 
-  } catch (kesalahan_pecel: any) {
-    res.status(500).json({ status: false, message: kesalahan_pecel.message })
+  } catch (error: any) {
+    res.status(500).json({ status: false, message: error.message })
   }
 }
