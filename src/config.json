@@ -4,7 +4,8 @@
     "apiName": "kawaiiyumee",
     "description": "A free and reliable API service designed for modern application development. Built with Node.js and TypeScript, delivering fast performance, stable endpoints, and easy integration.",
     "music": [
-      "https://cdn.kawaiiyumee.web.id/CLBK.mp3"
+      "https://cdn.kawaiiyumee.web.id/CLBK.mp3",
+      "https://cdn.kawaiiyumee.web.id/u3amhp.mp3"
     ],
     "apiVersion": "v2.0.0",
     "visitors": "36",
@@ -945,6 +946,19 @@
             "name": "url",
             "required": true,
             "description": "GitHub URL (repo, file, gist)"
+          }
+        ]
+      },
+      {
+        "name": "Npm Downloader",
+        "endpoint": "/api/download/npmdl",
+        "filename": "npm",
+        "method": "GET",
+        "params": [
+          {
+            "name": "package",
+            "required": true,
+            "description": "Nama Package Di NPMny"
           }
         ]
       }
