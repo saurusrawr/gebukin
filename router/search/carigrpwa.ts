@@ -58,19 +58,19 @@ async function cari_grup(pencarian: string): Promise<any[]> {
       const el = $(item)
 
       const nama_grup = el.find('a[href*="/group/invite/"] span').last().text().trim()
-      const link_join = el.find('a.joinbtn[href*="/group/join/"]').first().attr('href')?.trim()
-      const link_invite = el.find('a[href*="/group/invite/"]').first().attr('href')?.trim()
+      const link_invite_raw = el.find('a[href*="/group/invite/"]').first().attr('href')?.trim()
+      const id_grup = link_invite_raw?.split('/').pop()
+      const link_grup = id_grup ? `https://chat.whatsapp.com/${id_grup}` : null
       const foto_grup = el.find('img.image').first().attr('src') || null
       const kategori = el.find('a[href*="/group/category/"]').first().text().trim()
       const negara = el.find('a[href*="/group/country/"]').first().text().trim()
       const deskripsi = el.find('p.descri').first().text().trim().replace(/\s*\.\.\.\s*$/, '').trim()
 
-      if (!nama_grup || !link_invite) return
+      if (!nama_grup || !link_grup) return
 
       daftar_grup.push({
         nama: nama_grup,
-        link: link_invite,
-        link_join: link_join || link_invite,
+        link: link_grup,
         foto: foto_grup,
         kategori: kategori || '-',
         negara: negara || '-',
