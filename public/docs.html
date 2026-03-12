@@ -424,32 +424,32 @@
             cmdLine.innerHTML = '<span class="text-k-green font-bold">❯</span> ';
             const typeSpan = document.createElement('span'); typeSpan.className = 'text-k-text font-bold';
             cmdLine.appendChild(typeSpan); logs.appendChild(cmdLine);
-            for(const ch of 'npm run dev') { typeSpan.textContent += ch; await new Promise(r => setTimeout(r, 75)); }
-            await new Promise(r => setTimeout(r, 500));
+            for(const ch of 'npm run dev') { typeSpan.textContent += ch; await new Promise(r => setTimeout(r, 8)); }
+            await new Promise(r => setTimeout(r, 80));
             const ver = config.settings?.apiVersion || '1.0.0';
             initMusic(config);
             termLog(`> KawaiiYumee@${ver} dev`, 'system');
             termLog(`> ts-node index.ts`, 'system');
-            await new Promise(r => setTimeout(r, 600));
+            await new Promise(r => setTimeout(r, 100));
             termLog(`<span class="text-k-muted">[INFO]</span> Starting server...`, 'info');
-            await new Promise(r => setTimeout(r, 300));
+            await new Promise(r => setTimeout(r, 30));
             termLog(`<span class="text-k-muted">[INFO]</span> Environment: Production`, 'info');
             termLog(`<span class="text-k-green">[DB]</span> MongoDB connected ✓`, 'success');
-            await new Promise(r => setTimeout(r, 400));
+            await new Promise(r => setTimeout(r, 50));
             const allRoutes = [];
             for(const cat in config.tags) config.tags[cat].forEach(r => allRoutes.push({cat,...r}));
             for(const route of allRoutes) {
                 const mc = route.method==='GET' ? 'text-k-cyan' : route.method==='POST' ? 'text-k-green' : 'text-k-yellow';
                 termLog(`<span class="text-k-muted">[+]</span> <span class="${mc}">${route.method}</span> <span class="text-k-text">${route.endpoint}</span>`, 'info');
-                await new Promise(r => setTimeout(r, 15));
+                await new Promise(r => setTimeout(r, 3));
             }
-            await new Promise(r => setTimeout(r, 400));
+            await new Promise(r => setTimeout(r, 50));
             termLog(`<span class="text-k-green font-bold">[✓] Running → https://api.kawaiiyumee.web.id</span>`, 'success');
             termLog(`<span class="text-k-yellow">[WATCH] Listening...</span>`, 'warn');
             document.getElementById('api-container').classList.remove('opacity-0','translate-y-4');
             document.getElementById('api-container').classList.add('animate-fade-up');
             document.getElementById('term-input-line').classList.remove('hidden');
-            await new Promise(r => setTimeout(r, 300));
+            await new Promise(r => setTimeout(r, 50));
             const wa = document.getElementById('wa-float-btn');
             if(wa) { wa.classList.remove('opacity-0','scale-0'); wa.classList.add('opacity-100','scale-100'); }
         }
@@ -627,9 +627,9 @@
                                     </div>
                                 </div>
                                 <div class="p-3 font-mono text-[11px] min-h-[80px] max-h-[360px] overflow-y-auto leading-relaxed">
-                                    <div class="flex items-center gap-2 mb-2 text-k-muted border-b border-k-border pb-2 text-[10px]">
+                                    <div class="flex items-center gap-2 mb-2 border-b border-k-border pb-2 text-[10px]">
                                         <span class="text-k-green font-bold">❯</span>
-                                        <span class="text-k-muted break-all">curl -X ${route.method} ${route.endpoint}</span>
+                                        <span id="curl-preview-${id}" class="text-k-cyan break-all font-mono">api.kawaiiyumee.web.id${route.endpoint}</span>
                                     </div>
                                     <div id="output-${id}" class="text-k-muted break-all whitespace-pre-wrap"></div>
                                 </div>
@@ -640,6 +640,30 @@
                 container.appendChild(section);
             }
             initSoftButtons();
+            // update curl preview realtime
+            document.querySelectorAll('[id^="input-"]').forEach(input => {
+                input.addEventListener('input', () => {
+                    const parts = input.id.split('-');
+                    // cari id card dari prefix
+                    const cardId = parts.slice(1, parts.length - 1).join('-');
+                    updateCurlPreview(cardId);
+                });
+            });
+        }
+
+        function updateCurlPreview(id) {
+            const preview = document.getElementById('curl-preview-' + id);
+            if(!preview) return;
+            const baseUrl = preview.innerText.split('?')[0];
+            const inputs = document.querySelectorAll('[id^="input-' + id + '-"]');
+            const params = [];
+            inputs.forEach(i => {
+                if(i.type === 'file') return;
+                const name = i.id.split('input-' + id + '-')[1];
+                if(name === 'apikey') return;
+                params.push(name + '=' + (i.value || '<' + name + '>'));
+            });
+            preview.innerText = baseUrl + (params.length ? '?' + params.join('&') : '');
         }
 
         window.toggleCat = (catId) => {
