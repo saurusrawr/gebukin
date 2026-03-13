@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>404</title>
+<title>404 - Not Found</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#07070c;font-family:'DM Mono',monospace;color:#f1f5f9}
@@ -16,26 +15,21 @@ canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 .scene{
   position:fixed;inset:0;z-index:10;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:0;pointer-events:none;
+  gap:16px;pointer-events:none;
+  padding:20px;
 }
 
-/* floating lottie */
-.lottie-float{
-  animation:floatY 4s ease-in-out infinite, popIn .9s cubic-bezier(.34,1.56,.64,1) both;
-  filter:drop-shadow(0 0 40px #8b5cf670) hue-rotate(240deg) saturate(1.3);
-  z-index:2;
-}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 @keyframes popIn{from{opacity:0;transform:scale(.5) translateY(30px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
 /* 404 big */
 .big404{
+  max-width:90vw;overflow:hidden;
   font-family:'Syne',sans-serif;
-  font-size:clamp(7rem,22vw,13rem);
+  font-size:clamp(5rem,15vw,9rem);
   font-weight:800;
   line-height:.85;
-  letter-spacing:-6px;
-  margin-top:-30px;
+  letter-spacing:-2px;
   position:relative;
   user-select:none;
   animation:revealNum .8s .2s cubic-bezier(.16,1,.3,1) both;
@@ -161,11 +155,6 @@ canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 <canvas id="cv"></canvas>
 
 <div class="scene">
-  <div class="lottie-float">
-    <dotlottie-wc src="https://lottie.host/2c82a741-8bd3-48d9-bcce-bbc8670e3e3e/dSN8796UGe.lottie"
-      style="width:180px;height:180px" autoplay loop></dotlottie-wc>
-  </div>
-
   <div class="big404">
     <span class="d">4</span><span class="d">0</span><span class="d">4</span>
   </div>
@@ -181,7 +170,7 @@ canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
     <span class="nf">not found</span>
   </div>
 
-  <p class="hint">periksa apakah ada salah ketik</p>
+  <p class="hint">periksa apakah ada kesalahan ketik</p>
 </div>
 
 <script>
@@ -195,37 +184,104 @@ function initAudio(){
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
+// === DESERT WIND — looping ambient ===
+let windNode = null;
+let windGain = null;
+function startWind(){
+  if(!audioCtx || windNode) return;
+  if(audioCtx.state !== 'running'){ audioCtx.resume().then(startWind); return; }
+  const len = audioCtx.sampleRate * 4;
+  const buf = audioCtx.createBuffer(2, len, audioCtx.sampleRate);
+  for(let ch=0;ch<2;ch++){
+    const d = buf.getChannelData(ch);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<len;i++){
+      const wh = Math.random()*2-1;
+      // pink noise filter (Voss algorithm)
+      b0=.99886*b0+wh*.0555179; b1=.99332*b1+wh*.0750759;
+      b2=.96900*b2+wh*.1538520; b3=.86650*b3+wh*.3104856;
+      b4=.55000*b4+wh*.5329522; b5=-.7616*b5-wh*.0168980;
+      const pink = (b0+b1+b2+b3+b4+b5+b6+wh*.5362)*0.11;
+      b6 = wh*0.115926;
+      // slow amplitude modulation — gusts
+      const t = i/audioCtx.sampleRate;
+      const gust = 0.4 + 0.6*(
+        Math.sin(t*0.3)*0.3 +
+        Math.sin(t*0.13+1.2)*0.25 +
+        Math.sin(t*0.07+2.4)*0.2 +
+        Math.random()*0.02
+      );
+      d[i] = pink * gust * 0.7;
+    }
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf; src.loop = true;
+  // lowpass — angin bukan hiss
+  const lpf = audioCtx.createBiquadFilter();
+  lpf.type='lowpass'; lpf.frequency.value=900; lpf.Q.value=0.5;
+  // highpass cut rumble
+  const hpf = audioCtx.createBiquadFilter();
+  hpf.type='highpass'; hpf.frequency.value=80;
+  windGain = audioCtx.createGain();
+  windGain.gain.setValueAtTime(0,audioCtx.currentTime);
+  windGain.gain.linearRampToValueAtTime(0.6, audioCtx.currentTime+3);
+  src.connect(hpf); hpf.connect(lpf); lpf.connect(windGain); windGain.connect(audioCtx.destination);
+  src.start();
+  windNode = src;
+}
+
 function playGlitch(){
   if(!audioCtx) return;
   const now = audioCtx.currentTime;
-  // layer 1: noise burst
-  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.08, audioCtx.sampleRate);
-  const data = buf.getChannelData(0);
-  for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
-  const src = audioCtx.createBufferSource();
-  src.buffer = buf;
-  // bandpass filter biar kedengeran kaya glitch
-  const bpf = audioCtx.createBiquadFilter();
-  bpf.type = 'bandpass';
-  bpf.frequency.setValueAtTime(800, now);
-  bpf.frequency.exponentialRampToValueAtTime(3200, now+0.06);
-  bpf.Q.value = 0.8;
-  const gain = audioCtx.createGain();
-  gain.gain.setValueAtTime(0.18, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now+0.08);
-  src.connect(bpf); bpf.connect(gain); gain.connect(audioCtx.destination);
-  src.start(now); src.stop(now+0.08);
 
-  // layer 2: pitch drop
+  // layer 1: noise burst KERAS
+  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate*0.15, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1-i/data.length);
+  const src = audioCtx.createBufferSource(); src.buffer=buf;
+  const bpf = audioCtx.createBiquadFilter();
+  bpf.type='bandpass';
+  bpf.frequency.setValueAtTime(400,now);
+  bpf.frequency.exponentialRampToValueAtTime(5000,now+0.1);
+  bpf.Q.value=0.5;
+  const g1 = audioCtx.createGain();
+  g1.gain.setValueAtTime(0.7,now);
+  g1.gain.exponentialRampToValueAtTime(0.001,now+0.15);
+  src.connect(bpf); bpf.connect(g1); g1.connect(audioCtx.destination);
+  src.start(now); src.stop(now+0.15);
+
+  // layer 2: distorted saw drop
   const osc = audioCtx.createOscillator();
-  const oGain = audioCtx.createGain();
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(220, now);
-  osc.frequency.exponentialRampToValueAtTime(55, now+0.12);
-  oGain.gain.setValueAtTime(0.08, now);
-  oGain.gain.exponentialRampToValueAtTime(0.001, now+0.12);
-  osc.connect(oGain); oGain.connect(audioCtx.destination);
-  osc.start(now); osc.stop(now+0.12);
+  osc.type='sawtooth';
+  osc.frequency.setValueAtTime(440,now);
+  osc.frequency.exponentialRampToValueAtTime(40,now+0.2);
+  const dist = audioCtx.createWaveShaper();
+  const curve = new Float32Array(256);
+  for(let i=0;i<256;i++){const x=i*2/256-1; curve[i]=x<0?-1:1;}
+  dist.curve=curve;
+  const g2 = audioCtx.createGain();
+  g2.gain.setValueAtTime(0.5,now);
+  g2.gain.exponentialRampToValueAtTime(0.001,now+0.2);
+  osc.connect(dist); dist.connect(g2); g2.connect(audioCtx.destination);
+  osc.start(now); osc.stop(now+0.2);
+
+  // layer 3: high zap
+  const osc2 = audioCtx.createOscillator();
+  osc2.type='square';
+  osc2.frequency.setValueAtTime(2200,now);
+  osc2.frequency.exponentialRampToValueAtTime(100,now+0.08);
+  const g3 = audioCtx.createGain();
+  g3.gain.setValueAtTime(0.35,now);
+  g3.gain.exponentialRampToValueAtTime(0.001,now+0.08);
+  osc2.connect(g3); g3.connect(audioCtx.destination);
+  osc2.start(now); osc2.stop(now+0.08);
+
+  // ducking wind saat glitch
+  if(windGain){
+    windGain.gain.setValueAtTime(windGain.gain.value, now);
+    windGain.gain.linearRampToValueAtTime(0.05, now+0.05);
+    windGain.gain.linearRampToValueAtTime(0.6, now+0.4);
+  }
 }
 
 // autoplay: init audio on first user interaction OR doc ready
@@ -249,18 +305,31 @@ function tryAutoplay(){
   }, 400);
 }
 
-// autoplay on any interaction
-['click','touchstart','keydown','scroll'].forEach(ev=>{
-  document.addEventListener(ev, ()=>{ initAudio(); tryAutoplay(); }, {once:true});
+// init audio on first interaction
+function ensureAudio(){
+  if(audioCtx){
+    audioCtx.resume().then(()=>{
+      startWind();
+      if(!windNode) startWind();
+    }).catch(()=>{});
+    return;
+  }
+  initAudio();
+  tryAutoplay();
+}
+['click','touchstart','keydown','scroll','pointerdown'].forEach(ev=>{
+  document.addEventListener(ev, ensureAudio, {once:true});
 });
-// try immediate (works if page loaded with prior interaction)
-document.addEventListener('DOMContentLoaded', ()=>{
-  try{
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if(audioCtx.state === 'running') tryAutoplay();
-    else audioCtx.resume().then(tryAutoplay).catch(()=>{});
-  }catch(e){}
-});
+// coba langsung
+try{
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state==='running') tryAutoplay();
+  else{
+    // resume on first gesture
+    document.addEventListener('click', ()=>audioCtx.resume().then(tryAutoplay), {once:true});
+    document.addEventListener('touchstart', ()=>audioCtx.resume().then(tryAutoplay), {once:true});
+  }
+}catch(e){}
 
 // === CANVAS: aurora wave background ===
 const cv = document.getElementById('cv');
@@ -293,7 +362,8 @@ const stars = Array.from({length:120}, () => ({
   phase: Math.random() * Math.PI * 2,
 }));
 
-function drawFrame(){
+let lastGlitch = -7000;
+function drawFrame(timestamp){
   t += 1;
   ctx.clearRect(0, 0, W, H);
 
@@ -342,12 +412,14 @@ function drawFrame(){
   ctx.fillRect(0,0,W,H);
 
     // trigger sound saat glitch frame (tiap 7 detik, sync css animation)
-  if(t > 0 && Math.round(t * (60/1000)) % (7*60) === Math.round(7*60*0.89)){
+  // glitch sound sync tiap 7 detik
+  if(timestamp && timestamp - lastGlitch > 7000){
+    lastGlitch = timestamp;
     playGlitch();
   }
   requestAnimationFrame(drawFrame);
 }
-drawFrame();
+requestAnimationFrame(drawFrame);
 
 // === floating particle spawner ===
 function spawnParticle(){
