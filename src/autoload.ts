@@ -5,6 +5,7 @@ import { Application, Request, Response, NextFunction } from 'express'
 import * as fs from 'fs'
 import * as path from 'path'
 import axios from 'axios'
+import TelegramBot from 'node-telegram-bot-api'
 
 let regRouter = new Set<string>()
 let currentConfig: any = null
@@ -21,25 +22,27 @@ const TELEGRAM_CHAT_ID = '-1003641120736'
 // ========================
 // IP BLOCK
 // ========================
-const BLOCK_FILE = '/tmp/blocked_ips.json'
 let blockedIPs: Set<string> = new Set()
 let maintenanceOverride: boolean | null = null
 
-function loadBlockedIPs() {
+async function loadBlockedIPs() {
   try {
-    const raw = fs.readFileSync(BLOCK_FILE, 'utf-8')
+    const raw = await githubGet('blockedip.json')
     blockedIPs = new Set(JSON.parse(raw))
-    console.log(`[Block] Loaded ${blockedIPs.size} blocked IPs`)
+    console.log(`[Block] Loaded ${blockedIPs.size} blocked IPs from GitHub`)
   } catch {
     blockedIPs = new Set()
+    console.log('[Block] blockedip.json belum ada, mulai kosong')
   }
 }
 
-function saveBlockedIPs() {
-  fs.writeFileSync(BLOCK_FILE, JSON.stringify([...blockedIPs]), 'utf-8')
+async function saveBlockedIPs() {
+  try {
+    await githubUpdate('blockedip.json', JSON.stringify([...blockedIPs], null, 2), '[bot] update blocked IPs')
+  } catch (e: any) {
+    console.error('[Block] Gagal simpan ke GitHub:', e.message)
+  }
 }
-
-loadBlockedIPs()
 
 // ========================
 // SPAM DETECTION
@@ -92,21 +95,32 @@ async function githubGet(filePath: string): Promise<string> {
   return String(data).trim()
 }
 
+async function githubGetSha(filePath: string): Promise<string | null> {
+  try {
+    const { data } = await axios.get(
+      `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
+      {
+        headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' },
+        timeout: 5000,
+      }
+    )
+    return data.sha || null
+  } catch {
+    return null // file belum ada di repo
+  }
+}
+
 async function githubUpdate(filePath: string, content: string, commitMsg: string) {
-  const { data: meta } = await axios.get(
-    `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
-    {
-      headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' },
-      timeout: 5000,
-    }
-  )
+  const sha = await githubGetSha(filePath)
+  const body: any = {
+    message: commitMsg,
+    content: Buffer.from(content).toString('base64'),
+  }
+  if (sha) body.sha = sha // ada sha = update, ga ada = create baru otomatis
+
   await axios.put(
     `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
-    {
-      message: commitMsg,
-      content: Buffer.from(content).toString('base64'),
-      sha: meta.sha,
-    },
+    body,
     {
       headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: 'application/vnd.github.v3+json' },
       timeout: 5000,
@@ -309,9 +323,9 @@ ${respStr}
 /* =======================
    PREMIUM KEYS
 ======================= */
-async function getPremiumKeys(): Promise<string[]> {
+async function getPremiumKeys(forceRefresh = false): Promise<string[]> {
   const now = Date.now()
-  if (premiumKeys.length > 0 && now - premiumKeyLastFetch < PREMIUM_KEY_CACHE_TTL) return premiumKeys
+  if (!forceRefresh && premiumKeys.length > 0 && now - premiumKeyLastFetch < PREMIUM_KEY_CACHE_TTL) return premiumKeys
   try {
     const raw = await githubGet('apikeyprem.json')
     const parsed = JSON.parse(raw)
@@ -321,7 +335,10 @@ async function getPremiumKeys(): Promise<string[]> {
       console.log(`[Premium] Keys loaded: ${premiumKeys.length} keys`)
     }
   } catch {
-    console.error('[Premium] Failed to fetch premium keys')
+    // file belum ada di github, init kosong
+    if (premiumKeys.length === 0) {
+      console.log('[Premium] apikeyprem.json belum ada, mulai kosong')
+    }
   }
   return premiumKeys
 }
@@ -346,7 +363,7 @@ async function checkMaintenance(): Promise<string> {
 /* =======================
    ADMIN BOT
 ======================= */
-export function initAdminBot() {
+export async function initAdminBot() {
   const ADMIN_IDS = (process.env.TELEGRAM_ADMIN_IDS || '').split(',').map(Number).filter(Boolean)
 
   if (!ADMIN_IDS.length) {
@@ -354,27 +371,31 @@ export function initAdminBot() {
     return
   }
 
-  let offset = 0
+  const token = await getTelegramToken()
+  const bot = new TelegramBot(token, { polling: true })
 
-  async function reply(token: string, chatId: string, text: string, extra?: object) {
+  console.log('[Bot] Admin bot aktif (node-telegram-bot-api)')
+
+  function isAdmin(id: number) { return ADMIN_IDS.includes(id) }
+
+  async function reply(chatId: string | number, text: string, extra?: TelegramBot.SendMessageOptions) {
+    await bot.sendMessage(chatId, text, { parse_mode: 'HTML', ...extra }).catch(() => {})
+  }
+
+  // fallback axios reply untuk sendTelegram notif (tetap ada)
+  async function replyAxios(chatId: string, text: string, extra?: object) {
     await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
       chat_id: chatId, text, parse_mode: 'HTML', ...extra
     }, { timeout: 5000 }).catch(() => {})
   }
 
-  async function answerCallback(token: string, callbackId: string, text: string) {
-    await axios.post(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
-      callback_query_id: callbackId, text, show_alert: true
-    }, { timeout: 5000 }).catch(() => {})
-  }
-
-  async function handleBotCommand(token: string, chatId: string, text: string) {
+  async function handleBotCommand(chatId: string | number, text: string) {
     const apiDomain = currentConfig?.settings?.domain || 'api.kawaiiyumee.web.id'
 
     // /start
     if (text === '/start') {
       const maintStatus = await checkMaintenance()
-      return reply(token, chatId, [
+      return reply(chatId, [
         '👾 <b>KawaiiYumee Admin Panel</b>',
         `🌐 <code>${apiDomain}</code>`,
         '',
@@ -391,6 +412,7 @@ export function initAdminBot() {
         '📊 <b>INFO</b>',
         '  /status — status server',
         '  /spamlist — lihat IP spam aktif',
+        '  /testapi &lt;endpoint&gt; — test hit endpoint API','
         '',
         '🔑 <b>PREMIUM KEYS</b>',
         '  /addkeyprem &lt;key&gt; — tambah key premium',
@@ -421,15 +443,15 @@ export function initAdminBot() {
     if (blockMatch) {
       const ip = blockMatch[1].trim()
       if (!/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
-        return reply(token, chatId, '❌ Format IP tidak valid bestie 😭\nContoh: <code>/blockip 123.456.789.0</code>')
+        return reply(chatId, '❌ Format IP tidak valid bestie 😭\nContoh: <code>/blockip 123.456.789.0</code>')
       }
       if (blockedIPs.has(ip)) {
-        return reply(token, chatId, `⚠️ IP <code>${ip}</code> sudah ada di daftar blokir.`)
+        return reply(chatId, `⚠️ IP <code>${ip}</code> sudah ada di daftar blokir.`)
       }
       blockedIPs.add(ip)
       saveBlockedIPs()
       const ipInfo = await getIpInfo(ip)
-      return reply(token, chatId,
+      return reply(chatId,
         `✅ IP <code>${ip}</code> berhasil diblokir.\n\n🏳️ ${ipInfo.country} | 🏙️ ${ipInfo.city} | 📡 ${ipInfo.isp}`,
         { reply_markup: { inline_keyboard: [[{ text: '🔓 Unblock', callback_data: `unblock:${ip}` }]] } }
       )
@@ -440,27 +462,27 @@ export function initAdminBot() {
     if (unblockMatch) {
       const ip = unblockMatch[1].trim()
       if (!blockedIPs.has(ip)) {
-        return reply(token, chatId, `⚠️ IP <code>${ip}</code> tidak ada di daftar blokir.`)
+        return reply(chatId, `⚠️ IP <code>${ip}</code> tidak ada di daftar blokir.`)
       }
       blockedIPs.delete(ip)
       spamMap.delete(ip)
       saveBlockedIPs()
-      return reply(token, chatId, `✅ IP <code>${ip}</code> berhasil diunblokir.`)
+      return reply(chatId, `✅ IP <code>${ip}</code> berhasil diunblokir.`)
     }
 
     // /listip
     if (text === '/listip') {
-      if (blockedIPs.size === 0) return reply(token, chatId, '📭 Belum ada IP yang diblokir.')
+      if (blockedIPs.size === 0) return reply(chatId, '📭 Belum ada IP yang diblokir.')
       const list = [...blockedIPs].map((ip, i) => `${i + 1}. <code>${ip}</code>`).join('\n')
-      return reply(token, chatId, `🚫 <b>IP Terblokir (${blockedIPs.size}):</b>\n\n${list}`)
+      return reply(chatId, `🚫 <b>IP Terblokir (${blockedIPs.size}):</b>\n\n${list}`)
     }
 
     // /spamlist
     if (text === '/spamlist') {
       const active = [...spamMap.entries()].filter(([, v]) => v.count >= 5)
-      if (!active.length) return reply(token, chatId, '✅ Tidak ada aktivitas spam saat ini.')
+      if (!active.length) return reply(chatId, '✅ Tidak ada aktivitas spam saat ini.')
       const list = active.map(([ip, v]) => `• <code>${ip}</code> — ${v.count} req${blockedIPs.has(ip) ? ' 🚫 BLOCKED' : ''}`).join('\n')
-      return reply(token, chatId, `⚠️ <b>Aktivitas Mencurigakan:</b>\n\n${list}`)
+      return reply(chatId, `⚠️ <b>Aktivitas Mencurigakan:</b>\n\n${list}`)
     }
 
     // /setmaintenance
@@ -470,10 +492,10 @@ export function initAdminBot() {
       try {
         await githubUpdate('database-api.txt', mode, `[bot] set maintenance ${mode}`)
         maintenanceOverride = null
-        return reply(token, chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n✅ GitHub updated.`)
+        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n✅ GitHub updated.`)
       } catch (e: any) {
         maintenanceOverride = mode === 'on'
-        return reply(token, chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n⚠️ GitHub gagal, override lokal aktif.`)
+        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n⚠️ GitHub gagal, override lokal aktif.`)
       }
     }
 
@@ -481,18 +503,18 @@ export function initAdminBot() {
     const addKeyMatch = text.match(/^\/addkeyprem (.+)/)
     if (addKeyMatch) {
       const newKey = addKeyMatch[1].trim()
-      const keys = await getPremiumKeys()
+      const keys = await getPremiumKeys(true)
       if (keys.includes(newKey)) {
-        return reply(token, chatId, `⚠️ Key <code>${newKey}</code> sudah ada bestie 😭`)
+        return reply(chatId, `⚠️ Key <code>${newKey}</code> sudah ada bestie 😭`)
       }
       keys.push(newKey)
       try {
         await githubUpdate('apikeyprem.json', JSON.stringify(keys, null, 2), `[bot] add premium key`)
         premiumKeys = keys
         premiumKeyLastFetch = Date.now()
-        return reply(token, chatId, `✅ Key <code>${newKey}</code> berhasil ditambahkan!\n🔑 Total keys: <b>${keys.length}</b>`)
+        return reply(chatId, `✅ Key <code>${newKey}</code> berhasil ditambahkan!\n🔑 Total keys: <b>${keys.length}</b>`)
       } catch (e: any) {
-        return reply(token, chatId, `❌ Gagal update GitHub: ${e.message}`)
+        return reply(chatId, `❌ Gagal update GitHub: ${e.message}`)
       }
     }
 
@@ -500,47 +522,83 @@ export function initAdminBot() {
     const delKeyMatch = text.match(/^\/delkeyprem (.+)/)
     if (delKeyMatch) {
       const delKey = delKeyMatch[1].trim()
-      const keys = await getPremiumKeys()
+      const keys = await getPremiumKeys(true)
       if (!keys.includes(delKey)) {
-        return reply(token, chatId, `⚠️ Key <code>${delKey}</code> tidak ditemukan bestie 😭`)
+        return reply(chatId, `⚠️ Key <code>${delKey}</code> tidak ditemukan bestie 😭`)
       }
       const updated = keys.filter(k => k !== delKey)
       try {
         await githubUpdate('apikeyprem.json', JSON.stringify(updated, null, 2), `[bot] delete premium key`)
         premiumKeys = updated
         premiumKeyLastFetch = Date.now()
-        return reply(token, chatId, `✅ Key <code>${delKey}</code> berhasil dihapus!\n🔑 Total keys: <b>${updated.length}</b>`)
+        return reply(chatId, `✅ Key <code>${delKey}</code> berhasil dihapus!\n🔑 Total keys: <b>${updated.length}</b>`)
       } catch (e: any) {
-        return reply(token, chatId, `❌ Gagal update GitHub: ${e.message}`)
+        return reply(chatId, `❌ Gagal update GitHub: ${e.message}`)
       }
     }
 
     // /listkeyprem
     if (text === '/listkeyprem') {
-      const keys = await getPremiumKeys()
-      if (!keys.length) return reply(token, chatId, '📭 Belum ada premium key.')
+      const keys = await getPremiumKeys(true)
+      if (!keys.length) return reply(chatId, '📭 Belum ada premium key.')
       const list = keys.map((k, i) => `${i + 1}. <code>${k}</code>`).join('\n')
-      return reply(token, chatId, `🔑 <b>Premium Keys (${keys.length}):</b>\n\n${list}`)
+      return reply(chatId, `🔑 <b>Premium Keys (${keys.length}):</b>\n\n${list}`)
+    }
+
+    // /testapi
+    const testMatch = text.match(/^\/testapi (.+)/)
+    if (testMatch) {
+      const endpoint = testMatch[1].trim().replace(/^\//, '')
+      const apiDomain2 = currentConfig?.settings?.domain || 'api.kawaiiyumee.web.id'
+      const testUrl = `https://${apiDomain2}/${endpoint}`
+      await reply(chatId, `⏳ Mencoba endpoint: <code>${testUrl}</code>...`)
+      try {
+        const start = Date.now()
+        const res = await axios.get(testUrl, { timeout: 10000, validateStatus: () => true })
+        const ms = Date.now() - start
+        const code = res.status
+        const codeEmoji = code >= 500 ? '🔴' : code >= 400 ? '🟡' : '🟢'
+        const bodyStr = JSON.stringify(res.data)
+        const preview = bodyStr.length > 500 ? bodyStr.substring(0, 500) + '...' : bodyStr
+        return reply(chatId, [
+          `${codeEmoji} <b>Test API Result</b>`,
+          `━━━━━━━━━━━━━━━━━━━━`,
+          `🔗 URL: <code>${testUrl}</code>`,
+          `📊 Status: <b>${code}</b>`,
+          `⏱️ Response time: <b>${ms}ms</b>`,
+          ``,
+          `📤 <b>Response:</b>`,
+          `<code>${preview}</code>`,
+        ].join('\n'), {
+          reply_markup: {
+            inline_keyboard: [[
+              { text: '🌐 Buka di Browser', url: testUrl }
+            ]]
+          }
+        })
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal hit endpoint: <code>${e.message}</code>`)
+      }
     }
 
     // /status
     if (text === '/status') {
       const maintStatus = await checkMaintenance()
       const spamActive = [...spamMap.values()].filter(v => v.count >= 5).length
-      return reply(token, chatId, [
+      return reply(chatId, [
         '📊 <b>Server Status</b>',
         '━━━━━━━━━━━━━━━━━━━━',
         `🔧 Maintenance: ${maintStatus === 'on' ? 'ON 🟡' : 'OFF 🟢'}`,
         `🚫 Blocked IPs: ${blockedIPs.size}`,
         `⚠️ IP Spam Aktif: ${spamActive}`,
-        `⏱️ Uptime: ${Math.floor(process.uptime() / 3600)}j ${Math.floor((process.uptime() % 3600) / 60)}m`,
+        `⏱️ Uptime: ${process.uptime() < 3600 ? Math.floor(process.uptime() / 60) + 'm' : Math.floor(process.uptime() / 3600) + 'j ' + Math.floor((process.uptime() % 3600) / 60) + 'm'}`,
         `🔑 Override lokal: ${maintenanceOverride !== null ? (maintenanceOverride ? 'ON' : 'OFF') : 'tidak aktif'}`,
         `🔑 Premium keys: ${premiumKeys.length}`,
       ].join('\n'))
     }
   }
 
-  async function handleCallbackQuery(token: string, callbackId: string, chatId: string, data: string, fromId: number) {
+  async function handleCallbackQuery(callbackId: string, chatId: string | number, data: string, fromId: number) {
     if (!ADMIN_IDS.includes(fromId)) return
 
     // block:ip
@@ -548,7 +606,7 @@ export function initAdminBot() {
     if (blockCb) {
       const ip = blockCb[1]
       if (blockedIPs.has(ip)) {
-        return answerCallback(token, callbackId, `IP ${ip} sudah diblokir sebelumnya.`)
+        await bot.answerCallbackQuery(callbackId, { text: `IP ${ip} sudah diblokir sebelumnya.` })
       }
       blockedIPs.add(ip)
       saveBlockedIPs()
@@ -563,7 +621,7 @@ export function initAdminBot() {
       blockedIPs.delete(ip)
       spamMap.delete(ip)
       saveBlockedIPs()
-      return answerCallback(token, callbackId, `✅ IP ${ip} berhasil diunblokir!`)
+      await bot.answerCallbackQuery(callbackId, { text: `✅ IP ${ip} berhasil diunblokir!` })
     }
 
     // maint:on/off
@@ -576,43 +634,23 @@ export function initAdminBot() {
       } catch {
         maintenanceOverride = mode === 'on'
       }
-      return answerCallback(token, callbackId, `Maintenance ${mode === 'on' ? 'dinyalakan' : 'dimatikan'}!`)
+      await bot.answerCallbackQuery(callbackId, { text: `Maintenance ${mode === 'on' ? 'dinyalakan' : 'dimatikan'}!` })
     }
   }
 
-  async function pollUpdates() {
-    try {
-      const token = await getTelegramToken()
-      const { data } = await axios.get(`https://api.telegram.org/bot${token}/getUpdates`, {
-        params: { offset, timeout: 30, allowed_updates: ['message', 'callback_query'] },
-        timeout: 35000,
-      })
+  bot.on('message', async (msg) => {
+    if (!msg.text || !isAdmin(msg.from!.id)) return
+    await handleBotCommand(msg.chat.id, msg.text.trim())
+  })
 
-      for (const update of data.result || []) {
-        offset = update.update_id + 1
+  bot.on('callback_query', async (cb) => {
+    if (!isAdmin(cb.from.id)) return
+    await handleCallbackQuery(cb.id, cb.message!.chat.id, cb.data!, cb.from.id)
+  })
 
-        // callback query (tombol inline)
-        if (update.callback_query) {
-          const cb = update.callback_query
-          if (ADMIN_IDS.includes(cb.from?.id)) {
-            await handleCallbackQuery(token, cb.id, String(cb.message?.chat?.id), cb.data, cb.from.id)
-          }
-          continue
-        }
-
-        const msg = update.message
-        if (!msg?.text) continue
-        if (!ADMIN_IDS.includes(msg.from?.id)) continue
-        await handleBotCommand(token, String(msg.chat.id), msg.text.trim())
-      }
-    } catch (e: any) {
-      if (!e.message?.includes('timeout')) console.error('[Bot] Poll error:', e.message)
-    }
-    setTimeout(pollUpdates, 1000)
-  }
-
-  pollUpdates()
-  console.log('[Bot] Admin bot aktif (long polling)')
+  bot.on('polling_error', (err) => {
+    console.error('[Bot] Polling error:', err.message)
+  })
 }
 
 /* =======================
@@ -625,7 +663,8 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
   console.log('[✓] Auto Load Activated')
 
   getPremiumKeys().catch(() => {})
-  initAdminBot()
+  loadBlockedIPs().catch(() => {})
+  initAdminBot().catch((e) => console.error('[Bot] Init error:', e))
 
   loadRouter(app, config)
 
