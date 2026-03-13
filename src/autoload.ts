@@ -381,18 +381,27 @@ async function checkMaintenance(): Promise<string> {
 ======================= */
 export async function initAdminBot() {
   const ADMIN_IDS = (process.env.TELEGRAM_ADMIN_IDS || '').split(',').map(Number).filter(Boolean)
+  const noAdminRestrict = ADMIN_IDS.length === 0
 
-  if (!ADMIN_IDS.length) {
-    console.warn('[Bot] TELEGRAM_ADMIN_IDS kosong, admin bot tidak aktif')
-    return
+  if (noAdminRestrict) {
+    console.warn('[Bot] TELEGRAM_ADMIN_IDS kosong — semua user bisa akses bot! Set env untuk keamanan.')
+  } else {
+    console.log(`[Bot] Admin IDs terdaftar: ${ADMIN_IDS.join(', ')}`)
   }
 
   const token = await getTelegramToken()
-  const bot = new TelegramBot(token, { polling: true })
+  if (!token) {
+    console.error('[Bot] Token kosong, bot tidak bisa jalan')
+    return
+  }
 
+  const bot = new TelegramBot(token, { polling: true })
   console.log('[Bot] Admin bot aktif (node-telegram-bot-api)')
 
-  function isAdmin(id: number) { return ADMIN_IDS.includes(id) }
+  function isAdmin(id: number) {
+    if (noAdminRestrict) return true
+    return ADMIN_IDS.includes(id)
+  }
 
   async function reply(chatId: string | number, text: string, extra?: TelegramBot.SendMessageOptions & { _chatType?: string }) {
     const chatType = extra?._chatType || 'private'
@@ -657,7 +666,12 @@ export async function initAdminBot() {
   }
 
   bot.on('message', async (msg) => {
-    if (!msg.text || !isAdmin(msg.from!.id)) return
+    console.log(`[Bot] Pesan masuk dari ID: ${msg.from?.id}, text: ${msg.text}`)
+    if (!msg.text) return
+    if (!isAdmin(msg.from!.id)) {
+      console.log(`[Bot] ID ${msg.from?.id} bukan admin, diabaikan`)
+      return
+    }
     await handleBotCommand(msg.chat.id, msg.text.trim())
   })
 
