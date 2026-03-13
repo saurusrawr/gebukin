@@ -20,6 +20,22 @@ let telegramToken: string = ''
 const TELEGRAM_CHAT_ID = '-1003641120736'
 
 // ========================
+// MENU EFFECTS
+// ========================
+const menuEffects = [
+  '5104841245755180586', // 🔥
+  '5107584321108051014', // ❤️
+  '5159385139981059251', // 🎺
+  '5046509860389126442'  // 👍
+]
+
+function effectMsg(chatType: string): object {
+  if (chatType !== 'private') return {}
+  const effect = menuEffects[Math.floor(Math.random() * menuEffects.length)]
+  return effect ? { message_effect_id: effect } : {}
+}
+
+// ========================
 // IP BLOCK
 // ========================
 let blockedIPs: Set<string> = new Set()
@@ -178,7 +194,7 @@ Ketik /unblockip ${ip} untuk membuka blokir.`
   await sendTelegram(msg, {
     reply_markup: {
       inline_keyboard: [[
-        { text: '🔓 Unblock IP ini', callback_data: `unblock:${ip}` }
+        { text: '🔓 Unblock IP ini', callback_data: `unblock:${ip}`, style: 'success' }
       ]]
     }
   })
@@ -378,8 +394,10 @@ export async function initAdminBot() {
 
   function isAdmin(id: number) { return ADMIN_IDS.includes(id) }
 
-  async function reply(chatId: string | number, text: string, extra?: TelegramBot.SendMessageOptions) {
-    await bot.sendMessage(chatId, text, { parse_mode: 'HTML', ...extra }).catch(() => {})
+  async function reply(chatId: string | number, text: string, extra?: TelegramBot.SendMessageOptions & { _chatType?: string }) {
+    const chatType = extra?._chatType || 'private'
+    const { _chatType, ...cleanExtra } = extra || {}
+    await bot.sendMessage(chatId, text, { parse_mode: 'HTML', ...effectMsg(chatType), ...cleanExtra } as any).catch(() => {})
   }
 
   // fallback axios reply untuk sendTelegram notif (tetap ada)
@@ -412,7 +430,7 @@ export async function initAdminBot() {
         '📊 <b>INFO</b>',
         '  /status — status server',
         '  /spamlist — lihat IP spam aktif',
-        '  /testapi &lt;endpoint&gt; — test hit endpoint API','
+        '  /testapi &lt;endpoint&gt; — test hit endpoint API',
         '',
         '🔑 <b>PREMIUM KEYS</b>',
         '  /addkeyprem &lt;key&gt; — tambah key premium',
@@ -427,11 +445,11 @@ export async function initAdminBot() {
         reply_markup: {
           inline_keyboard: [
             [
-              { text: '🌐 Buka Docs', url: `https://${apiDomain}/docs` },
-              { text: '📊 Stats', url: `https://${apiDomain}/stats` },
+              { text: '🌐 Buka Docs', url: `https://${apiDomain}/docs`, style: 'primary' },
+              { text: '📊 Stats', url: `https://${apiDomain}/stats`, style: 'primary' },
             ],
             [
-              { text: maintStatus === 'on' ? '🟢 Matiin Maintenance' : '🟡 Nyalain Maintenance', callback_data: `maint:${maintStatus === 'on' ? 'off' : 'on'}` }
+              { text: maintStatus === 'on' ? '🟢 Matiin Maintenance' : '🟡 Nyalain Maintenance', callback_data: `maint:${maintStatus === 'on' ? 'off' : 'on'}`, style: maintStatus === 'on' ? 'success' : 'danger' }
             ]
           ]
         }
@@ -453,7 +471,7 @@ export async function initAdminBot() {
       const ipInfo = await getIpInfo(ip)
       return reply(chatId,
         `✅ IP <code>${ip}</code> berhasil diblokir.\n\n🏳️ ${ipInfo.country} | 🏙️ ${ipInfo.city} | 📡 ${ipInfo.isp}`,
-        { reply_markup: { inline_keyboard: [[{ text: '🔓 Unblock', callback_data: `unblock:${ip}` }]] } }
+        { reply_markup: { inline_keyboard: [[{ text: '🔓 Unblock', callback_data: `unblock:${ip}`, style: 'success' }]] } }
       )
     }
 
@@ -572,7 +590,7 @@ export async function initAdminBot() {
         ].join('\n'), {
           reply_markup: {
             inline_keyboard: [[
-              { text: '🌐 Buka di Browser', url: testUrl }
+              { text: '🌐 Buka di Browser', url: testUrl, style: 'primary' }
             ]]
           }
         })
