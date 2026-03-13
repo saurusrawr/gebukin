@@ -401,7 +401,7 @@
         "method": "GET",
         "params": [
           {
-            "name": "url",
+            "name": "foto",
             "required": true,
             "description": "URL gambar"
           },
