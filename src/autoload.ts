@@ -628,7 +628,7 @@ export async function initAdminBot() {
       }
       blockedIPs.add(ip)
       saveBlockedIPs()
-      await answerCallback(token, callbackId, `✅ IP ${ip} berhasil diblokir!`)
+      await bot.answerCallbackQuery(callbackId, { text: `✅ IP ${ip} berhasil diblokir!` })
       return
     }
 
