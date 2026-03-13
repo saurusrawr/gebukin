@@ -8,7 +8,7 @@
       "https://cdn.kawaiiyumee.web.id/u3amhp.mp3"
     ],
     "apiVersion": "v2.0.0",
-    "visitors": "36",
+    "visitors": "63",
     "favicon": "/src/saurus.jpg",
     "thumbnail": "/src/thumbnail.jpg",
     "channelUrl": "https://whatsapp.com/channel/0029VbBloUfFXUuTiSvrzs2e",
@@ -1560,6 +1560,115 @@
             "name": "q",
             "required": true,
             "description": "Judul drama yang ingin dicari"
+          }
+        ]
+      }
+    ],
+    "pterodactyl": [
+      {
+        "name": "Create Panel",
+        "endpoint": "/api/pterodactyl/createpanel",
+        "filename": "createpanel",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "URL domain panel pterodactyl"
+          },
+          {
+            "name": "plta",
+            "required": true,
+            "description": "Application API Key pterodactyl"
+          },
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username user yang akan dibuat"
+          },
+          {
+            "name": "disk",
+            "required": true,
+            "description": "Kapasitas disk server (MB)"
+          },
+          {
+            "name": "cpu",
+            "required": true,
+            "description": "Kapasitas CPU server (%)"
+          },
+          {
+            "name": "ram",
+            "required": true,
+            "description": "Kapasitas RAM server (MB)"
+          }
+        ]
+      },
+      {
+        "name": "Create Admin Panel",
+        "endpoint": "/api/pterodactyl/createadminpanel",
+        "filename": "createadminpanel",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "URL domain panel pterodactyl"
+          },
+          {
+            "name": "plta",
+            "required": true,
+            "description": "Application API Key pterodactyl"
+          },
+          {
+            "name": "username",
+            "required": true,
+            "description": "Username admin yang akan dibuat"
+          }
+        ]
+      },
+      {
+        "name": "List Server",
+        "endpoint": "/api/pterodactyl/listserver",
+        "filename": "listserver",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "URL domain panel pterodactyl"
+          },
+          {
+            "name": "plta",
+            "required": true,
+            "description": "Application API Key pterodactyl"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "description": "Halaman yang ingin ditampilkan (optional, default page 1)"
+          }
+        ]
+      },
+      {
+        "name": "List User",
+        "endpoint": "/api/pterodactyl/listuser",
+        "filename": "listuser",
+        "method": "GET",
+        "params": [
+          {
+            "name": "domain",
+            "required": true,
+            "description": "URL domain panel pterodactyl"
+          },
+          {
+            "name": "plta",
+            "required": true,
+            "description": "Application API Key pterodactyl"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "description": "Halaman yang ingin ditampilkan (optional, default page 1)"
           }
         ]
       }
