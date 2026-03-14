@@ -106,6 +106,8 @@ async function githubGet(filePath: string): Promise<string> {
         'Cache-Control': 'no-cache',
       },
       timeout: 5000,
+      // paksa responseType text biar axios ga auto-parse jadi object
+      responseType: 'text',
     }
   )
   return String(data).trim()
@@ -387,6 +389,7 @@ async function checkMaintenance(): Promise<string> {
 async function getBroadcast(): Promise<{ foto: string, teks: string, tanggal: string, munculkan: string }> {
   try {
     const raw = await githubGet('broadcast.json')
+    console.log('[Broadcast] Raw dari GitHub:', raw.substring(0, 200))
     const parsed = JSON.parse(raw)
     return {
       foto: parsed.foto || '-',
@@ -394,8 +397,8 @@ async function getBroadcast(): Promise<{ foto: string, teks: string, tanggal: st
       tanggal: parsed.tanggal || '',
       munculkan: parsed.munculkan || 'no',
     }
-  } catch {
-    // belum ada file, return default
+  } catch (e: any) {
+    console.error('[Broadcast] Gagal baca broadcast.json:', e.message)
     return { foto: '-', teks: '', tanggal: '', munculkan: 'no' }
   }
 }
