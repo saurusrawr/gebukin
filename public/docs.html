@@ -464,8 +464,9 @@
                 const data = await res.json();
                 if(!data?.teks) return;
 
-                // kalau munculkan: "no" — skip
-                if((data.munculkan || 'no').toLowerCase() !== 'yes') return;
+        // kalau munculkan: "no" / "off" — skip
+        const munculkan = (data.munculkan || 'no').toLowerCase()
+        if (munculkan !== 'yes' && munculkan !== 'on') return;
 
                 // cek udah pernah liat broadcast ini belum (key = tanggal)
                 const seenKey = BC_KEY + '_' + (data.tanggal || 'nodate');
@@ -655,7 +656,7 @@
                     let inputs = '';
                     if(allParams.length) {
                         inputs = `<div class="px-3 pb-3 grid gap-2">` + allParams.map(p => {
-                            const isFile = p.type==='file' || /file|foto|image|gambar/i.test(p.name);
+                            const isFile = p.type === 'file';
                             const isKey = p.name === 'apikey';
                             if(isFile) return `
                                 <div>
