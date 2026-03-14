@@ -50,7 +50,7 @@ function wrap_teks(ctx: any, teks: string, max_width: number): string[] {
 
 // tulis teks di tengah area tertentu
 function tulis_teks(ctx: any, teks: string, cx: number, cy: number, max_w: number) {
-  let ukuran = 52
+  let ukuran = 72
   let baris: string[] = []
 
   // cari ukuran font yg pas, bombardiro
@@ -86,8 +86,8 @@ async function bikin_meme(teks1: string, teks2: string): Promise<Buffer> {
 
   // P6: (882, 313) → teks1 — area kanan atas (drake nolak)
   // P7: (896, 879) → teks2 — area kanan bawah (drake setuju)
-  tulis_teks(ctx, teks1, 840, 270, 420)
-  tulis_teks(ctx, teks2, 840, 810, 420)
+  tulis_teks(ctx, teks1, 815, 270, 480)
+  tulis_teks(ctx, teks2, 815, 810, 480)
 
   return await kanvas.encode("png")
 }
