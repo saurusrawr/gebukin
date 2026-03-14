@@ -18,36 +18,46 @@ async function getKata(): Promise<string[]> {
   return kataCache
 }
 
-// GET /api/tools/sambungkata?huruf=n&min=3&max=8&limit=20
 export default async (req: Request, res: Response) => {
   try {
-    const { huruf, min, max, limit } = req.query as Record<string, string>
+    const { huruf, akhiran, min, max, limit } = req.query as Record<string, string>
 
     if (!huruf) return res.status(400).json({ status: false, message: 'Parameter huruf wajib diisi 😭 Contoh: huruf=n' })
 
-    const hurufBersih = huruf.trim().toLowerCase()
-    if (!/^[a-z]$/.test(hurufBersih)) {
-      return res.status(400).json({ status: false, message: 'Huruf harus 1 karakter a-z 😭' })
+    const awalan = huruf.trim().toLowerCase()
+    if (!/^[a-z]$/.test(awalan)) {
+      return res.status(400).json({ status: false, message: 'Huruf awalan harus 1 karakter a-z 😭' })
     }
 
-    const minLen   = min   ? Math.max(1, parseInt(min))        : 2
-    const maxLen   = max   ? Math.min(20, parseInt(max))       : 15
-    const limitNum = limit ? Math.min(100, parseInt(limit))    : 20
+    // akhiran opsional — kalau diisi validasi juga
+    let akhiranBersih: string | null = null
+    if (akhiran && akhiran.trim()) {
+      akhiranBersih = akhiran.trim().toLowerCase()
+      if (!/^[a-z]$/.test(akhiranBersih)) {
+        return res.status(400).json({ status: false, message: 'Huruf akhiran harus 1 karakter a-z 😭' })
+      }
+    }
+
+    const minLen   = min   ? Math.max(1, parseInt(min))     : 2
+    const maxLen   = max   ? Math.min(20, parseInt(max))    : 15
+    const limitNum = limit ? Math.min(100, parseInt(limit)) : 20
 
     const kamus = await getKata()
 
-    const hasil = kamus.filter(k =>
-      k.startsWith(hurufBersih) &&
-      k.length >= minLen &&
-      k.length <= maxLen
-    )
+    const hasil = kamus.filter(k => {
+      if (!k.startsWith(awalan)) return false
+      if (k.length < minLen || k.length > maxLen) return false
+      if (akhiranBersih && k[k.length - 1] !== akhiranBersih) return false
+      return true
+    })
 
     const sample = hasil.sort(() => Math.random() - 0.5).slice(0, limitNum)
 
     return res.json({
       status: true,
       result: {
-        huruf: hurufBersih.toUpperCase(),
+        awalan: awalan.toUpperCase(),
+        akhiran: akhiranBersih ? akhiranBersih.toUpperCase() : null,
         totalDitemukan: hasil.length,
         ditampilkan: sample.length,
         kata: sample,
