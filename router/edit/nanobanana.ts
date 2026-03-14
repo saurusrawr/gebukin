@@ -1,57 +1,94 @@
-import { Request, Response } from 'express'
-import axios from 'axios'
+import { Request, Response } from "express"
+import axios from "axios"
 
-const GEMINI_API_KEY = Buffer.from('QUl6YVN5Qy1DWTUyM1pwa1VLcTBSanlBU0xmZ0ZCR09sVHdTbkp3', 'base64').toString('utf-8')
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`
+// api keys gemini, kalo satu limit pindah ke selanjutnyee
+const kunci_gemini = [
+  "AIzaSyBKCADmlVZEtopWTQhNhRLqF-3U7fz8FVc",
+  "AIzaSyC-CY523ZpkUKq0RjyASLfgFBGOlTwSnJw",
+  "AIzaSyAoAVYZDGoniROPos9GE8OOwIXmy19XQsQ",
+]
 
-export default async function handler(req: Request, res: Response) {
-  const foto = req.query.foto as string
-  const prompt = req.query.prompt as string
+// prompt default kalo user males isi
+const prompt_default = "Edit gambar ini sesuai permintaan dengan hasil yang natural dan realistis."
 
-  if (!foto) return res.status(400).json({ status: false, message: 'kasih url foto nya bestie 😭 ?foto=' })
-  if (!prompt) return res.status(400).json({ status: false, message: 'kasih prompt nya bestie 😭 ?prompt=' })
+async function generate_gambar(foto_buf: Buffer, mime_type: string, prompt_text: string, key_index = 0): Promise<Buffer> {
+  if (key_index >= kunci_gemini.length) throw new Error("semua api key gemini limit, coba lagi ntar")
+
+  const api_key = kunci_gemini[key_index]
+  const base64_foto = foto_buf.toString("base64")
 
   try {
-    // download foto → base64
-    const imgRes = await axios.get(foto, { responseType: 'arraybuffer', timeout: 10000 })
-    const mimeType = (imgRes.headers['content-type'] || 'image/jpeg').split(';')[0]
-    const base64 = Buffer.from(imgRes.data).toString('base64')
+    const { data } = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${api_key}`,
+      {
+        contents: [{
+          parts: [
+            { text: prompt_text },
+            { inlineData: { mimeType: mime_type, data: base64_foto } }
+          ]
+        }],
+        generationConfig: {
+          responseModalities: ["Text", "Image"]
+        }
+      },
+      { timeout: 60000 }
+    )
 
-    const { data } = await axios.post(GEMINI_URL, {
-      contents: [{
-        parts: [
-          { text: `Edit gambar ini sesuai instruksi berikut, kembalikan hanya gambar hasil edit tanpa teks tambahan: ${prompt}` },
-          { inline_data: { mime_type: mimeType, data: base64 } }
-        ]
-      }],
-      generationConfig: {
-        response_modalities: ['IMAGE', 'TEXT'],
-        temperature: 1,
-      }
-    }, { timeout: 30000 })
-
-    // ambil hasil gambar dari response
+    // cari bagian gambar dari response
     const parts = data?.candidates?.[0]?.content?.parts || []
-    const imgPart = parts.find((p: any) => p.inline_data?.data)
+    for (const part of parts) {
+      if (part.inlineData?.data) {
+        return Buffer.from(part.inlineData.data, "base64")
+      }
+    }
 
-    if (!imgPart) {
-      const textPart = parts.find((p: any) => p.text)
-      return res.status(500).json({
+    throw new Error("gemini ga return gambar, zonk")
+  } catch (err: any) {
+    // kalo 429 = limit, coba key berikutnya
+    if (err.response?.status === 429 || err.response?.status === 403) {
+      return generate_gambar(foto_buf, mime_type, prompt_text, key_index + 1)
+    }
+    throw err
+  }
+}
+
+export default async function nanobananaHandler(req: Request, res: Response) {
+  const { url, prompt } = req.query
+
+  if (!url) {
+    return res.status(400).json({
+      status: false,
+      message: "parameter 'url' wajib diisi (url gambar)"
+    })
+  }
+
+  const prompt_text = String(prompt || prompt_default).trim()
+
+  try {
+    // donlot foto dari url dulu
+    const { data: foto_data, headers } = await axios.get(String(url), {
+      responseType: "arraybuffer",
+      timeout: 15000
+    })
+
+    const mime_type = headers["content-type"]?.split(";")?.[0] || "image/jpeg"
+
+    // validasi format, gemini cuma support jpeg/png/webp
+    if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(mime_type)) {
+      return res.status(400).json({
         status: false,
-        message: textPart?.text || 'Gemini ga bisa edit gambar ini 😭'
+        message: `format ${mime_type} ga didukung, pake jpeg/png/webp aja`
       })
     }
 
-    const resultBase64 = imgPart.inline_data.data
-    const resultMime = imgPart.inline_data.mime_type || 'image/png'
-    const imgBuffer = Buffer.from(resultBase64, 'base64')
+    const foto_buf = Buffer.from(foto_data)
 
-    res.setHeader('Content-Type', resultMime)
-    res.setHeader('Content-Length', imgBuffer.length)
-    return res.end(imgBuffer)
+    // proses pake gemini
+    const hasil = await generate_gambar(foto_buf, mime_type, prompt_text)
 
-  } catch (e: any) {
-    const msg = e?.response?.data?.error?.message || e.message
-    return res.status(500).json({ status: false, message: msg })
+    res.set("Content-Type", "image/png")
+    res.send(hasil)
+  } catch (err: any) {
+    res.status(500).json({ status: false, message: err.message })
   }
 }
