@@ -86,20 +86,22 @@ async function tgz_ke_zip(url_tgz: string, nama_file: string, versi: string): Pr
 }
 
 async function upload_ke_cdn(buffer_zip: Buffer, nama_file: string, versi: string): Promise<string> {
+  const filename = `${nama_file}-${versi}.zip`
   const form = new FormData()
-  form.append('file', buffer_zip, {
-    filename: `${nama_file}-${versi}.zip`,
+  form.append('files[]', buffer_zip, {
+    filename,
     contentType: 'application/zip'
   })
 
-  const { data: hasil_upload } = await axios.post(
-    'https://api.kawaiiyumee.web.id/api/tools/tourl',
+  const { data } = await axios.post(
+    'https://uguu.se/upload',
     form,
     { headers: { ...form.getHeaders() } }
   )
 
-  if (!hasil_upload?.result?.url) throw new Error('upload gagal')
-  return hasil_upload.result.url
+  const url = data?.files?.[0]?.url
+  if (!url) throw new Error('upload ke uguu.se gagal bestie 😭')
+  return url
 }
 
 export default async function npmHandler(req: Request, res: Response) {
