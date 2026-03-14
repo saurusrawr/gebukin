@@ -1778,6 +1778,11 @@
             "description": "Huruf awal kata (a-z)"
           },
           {
+            "name": "akhiran",
+            "required": false,
+            "description": "Akhiran Kata"
+          },
+          {
             "name": "min",
             "required": false,
             "description": "Panjang minimum kata (default: 2)"
