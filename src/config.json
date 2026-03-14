@@ -380,32 +380,32 @@
         ]
       },
       {
-  "name": "Fake WhatsApp Profile",
-  "endpoint": "/api/maker/fakewa",
-  "filename": "fakewa",
-  "method": "GET",
-  "params": [
-    {
-      "name": "foto",
-      "required": true,
-      "description": "URL foto profil"
-    },
-    {
-      "name": "nama",
-      "required": true,
-      "description": "Nama yang ditampilkan"
-    },
-    {
-      "name": "bio",
-      "required": true,
-      "description": "Bio / status"
-    },
-    {
-      "name": "nomor",
-      "required": true,
-      "description": "Nomor HP (+ otomatis ditambah)"
-    }
-  ]
+        "name": "Fake WhatsApp Profile",
+        "endpoint": "/api/maker/fakewa",
+        "filename": "fakewa",
+        "method": "GET",
+        "params": [
+          {
+            "name": "foto",
+            "required": true,
+            "description": "URL foto profil"
+          },
+          {
+            "name": "nama",
+            "required": true,
+            "description": "Nama yang ditampilkan"
+          },
+          {
+            "name": "bio",
+            "required": true,
+            "description": "Bio / status"
+          },
+          {
+            "name": "nomor",
+            "required": true,
+            "description": "Nomor HP (+ otomatis ditambah)"
+          }
+        ]
       }
     ],
     "edit": [
@@ -1549,6 +1549,68 @@
             "description": "Nomor pelanggan PLN"
           }
         ]
+      },
+      {
+        "name": "Cek BPJS",
+        "endpoint": "/api/check/cekbpjs",
+        "filename": "cekbpjs",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nik",
+            "required": true,
+            "description": "NIK KTP 16 digit"
+          }
+        ]
+      },
+      {
+        "name": "Cek Pajak Kendaraan",
+        "endpoint": "/api/check/cekpajak",
+        "filename": "cekpajak",
+        "method": "GET",
+        "params": [
+          {
+            "name": "plat",
+            "required": true,
+            "description": "Nomor plat kendaraan, contoh: B1234XYZ"
+          },
+          {
+            "name": "provinsi",
+            "required": false,
+            "description": "Nama provinsi (optional)"
+          }
+        ]
+      },
+      {
+        "name": "Cek E-Wallet",
+        "endpoint": "/api/check/ceksaldo",
+        "filename": "ceksaldo",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nomor",
+            "required": true,
+            "description": "Nomor HP pemilik wallet"
+          },
+          {
+            "name": "wallet",
+            "required": true,
+            "description": "Jenis wallet: gopay / ovo / dana / shopeepay / linkaja"
+          }
+        ]
+      },
+      {
+        "name": "Cek Nomor WhatsApp",
+        "endpoint": "/api/check/cekwa",
+        "filename": "cekwa",
+        "method": "GET",
+        "params": [
+          {
+            "name": "nomor",
+            "required": true,
+            "description": "Nomor HP yang ingin dicek"
+          }
+        ]
       }
     ],
     "encrypt": [
@@ -1699,6 +1761,36 @@
             "name": "page",
             "required": false,
             "description": "Halaman yang ingin ditampilkan (optional, default page 1)"
+          }
+        ]
+      }
+    ],
+    "roblox": [
+      {
+        "name": "Kamus Sambung Kata",
+        "endpoint": "/api/roblox/sambungkata",
+        "filename": "sambungkata",
+        "method": "GET",
+        "params": [
+          {
+            "name": "huruf",
+            "required": true,
+            "description": "Huruf awal kata (a-z)"
+          },
+          {
+            "name": "min",
+            "required": false,
+            "description": "Panjang minimum kata (default: 2)"
+          },
+          {
+            "name": "max",
+            "required": false,
+            "description": "Panjang maksimum kata (default: 15)"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "description": "Jumlah kata yang ditampilkan (default: 20, maks: 100)"
           }
         ]
       }
