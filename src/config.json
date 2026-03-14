@@ -350,6 +350,16 @@
             "description": "Nomor HP (+ otomatis ditambah)"
           }
         ]
+      },
+      {
+  "name": "Drake Hotline Meme",
+  "endpoint": "/api/maker/drakehotline",
+  "filename": "drakehotline",
+  "method": "GET",
+  "params": [
+    { "name": "teks1", "required": true, "description": "Teks yang ditolak Drake (atas)" },
+    { "name": "teks2", "required": true, "description": "Teks yang disetujui Drake (bawah)" }
+  ]
       }
     ],
     "edit": [
