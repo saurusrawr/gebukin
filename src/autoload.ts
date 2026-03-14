@@ -361,9 +361,12 @@ async function getPremiumKeys(forceRefresh = false): Promise<string[]> {
 
 /* =======================
    MAINTENANCE CHECK
+   'on'  = maintenance aktif, API mati
+   'off' = API normal, bisa dipakai
 ======================= */
 async function checkMaintenance(): Promise<string> {
   if (maintenanceOverride !== null) {
+    // true = maintenance aktif (API mati), false = API normal
     return maintenanceOverride ? 'on' : 'off'
   }
   try {
@@ -371,8 +374,29 @@ async function checkMaintenance(): Promise<string> {
     console.log(`[Maintenance] Status: "${status}"`)
     return status.toLowerCase()
   } catch {
-    console.error('[Maintenance] Fetch failed, defaulting to ON')
-    return 'on'
+    console.error('[Maintenance] Fetch failed, defaulting to OFF (API normal)')
+    return 'off' // gagal fetch = anggap normal biar ga ngeblok semua user
+  }
+}
+
+/* =======================
+   BROADCAST
+   Format broadcast.json:
+   { "foto": "url|-", "teks": "...", "tanggal": "YYYY-MM-DD", "munculkan": "yes|no" }
+======================= */
+async function getBroadcast(): Promise<{ foto: string, teks: string, tanggal: string, munculkan: string }> {
+  try {
+    const raw = await githubGet('broadcast.json')
+    const parsed = JSON.parse(raw)
+    return {
+      foto: parsed.foto || '-',
+      teks: parsed.teks || '',
+      tanggal: parsed.tanggal || '',
+      munculkan: parsed.munculkan || 'no',
+    }
+  } catch {
+    // belum ada file, return default
+    return { foto: '-', teks: '', tanggal: '', munculkan: 'no' }
   }
 }
 
@@ -422,14 +446,22 @@ export async function initAdminBot() {
     // /start
     if (text === '/start') {
       const maintStatus = await checkMaintenance()
+      const bcData = await getBroadcast()
       return reply(chatId, [
         '👾 <b>KawaiiYumee Admin Panel</b>',
         `🌐 <code>${apiDomain}</code>`,
         '',
         '━━━━━━━━━━━━━━━━━━━━',
         '🔧 <b>MAINTENANCE</b>',
-        '  /setmaintenance on — nyalain maintenance',
-        '  /setmaintenance off — matiin maintenance',
+        '  /setmaintenance on — matiin maintenance (API normal)',
+        '  /setmaintenance off — nyalain maintenance (API mati)',
+        '',
+        '📢 <b>BROADCAST</b>',
+        '  /broadcast on — aktifkan broadcast',
+        '  /broadcast off — nonaktifkan broadcast',
+        '  /setbroadcast text &lt;teks&gt; — set teks broadcast',
+        '  /setbroadcast foto &lt;url&gt; — set foto broadcast (- untuk hapus foto)',
+        '  /broadcastinfo — lihat isi broadcast sekarang',
         '',
         '🚫 <b>IP MANAGEMENT</b>',
         '  /blockip &lt;ip&gt; — blokir IP',
@@ -447,9 +479,10 @@ export async function initAdminBot() {
         '  /listkeyprem — lihat semua key premium',
         '',
         '━━━━━━━━━━━━━━━━━━━━',
-        `🔧 Maintenance sekarang: <b>${maintStatus === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>`,
+        `🔧 Maintenance: <b>${maintStatus === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}</b>`,
+        `📢 Broadcast: <b>${bcData.munculkan === 'yes' ? 'ON 🟡' : 'OFF ⚫'}</b>`,
         `🚫 Blocked IPs: <b>${blockedIPs.size}</b>`,
-        `⏱️ Uptime: <b>${Math.floor(process.uptime() / 60)} menit</b>`,
+        `⏱️ Uptime: <b>${process.uptime() < 3600 ? Math.floor(process.uptime() / 60) + 'm' : Math.floor(process.uptime() / 3600) + 'j ' + Math.floor((process.uptime() % 3600) / 60) + 'm'}</b>`,
       ].join('\n'), {
         reply_markup: {
           inline_keyboard: [
@@ -458,7 +491,11 @@ export async function initAdminBot() {
               { text: '📊 Stats', url: `https://${apiDomain}/stats`, style: 'primary' },
             ],
             [
-              { text: maintStatus === 'on' ? '🟢 Matiin Maintenance' : '🟡 Nyalain Maintenance', callback_data: `maint:${maintStatus === 'on' ? 'off' : 'on'}`, style: maintStatus === 'on' ? 'success' : 'danger' }
+              // on = API mati, tombol = matiin maintenance (ke off); off = API normal, tombol = nyalain maintenance (ke on)
+              { text: maintStatus === 'on' ? '🟢 Nyalain API (matiin maintenance)' : '🔴 Matiin API (maintenance)', callback_data: `maint:${maintStatus === 'on' ? 'off' : 'on'}`, style: maintStatus === 'on' ? 'success' : 'danger' }
+            ],
+            [
+              { text: bcData.munculkan === 'yes' ? '⚫ Matiin Broadcast' : '🟡 Nyalain Broadcast', callback_data: `bc:${bcData.munculkan === 'yes' ? 'off' : 'on'}`, style: bcData.munculkan === 'yes' ? 'danger' : 'success' }
             ]
           ]
         }
@@ -519,10 +556,10 @@ export async function initAdminBot() {
       try {
         await githubUpdate('database-api.txt', mode, `[bot] set maintenance ${mode}`)
         maintenanceOverride = null
-        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n✅ GitHub updated.`)
+        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}</b>\n✅ GitHub updated.`)
       } catch (e: any) {
-        maintenanceOverride = mode === 'on'
-        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🟡' : 'OFF 🟢'}</b>\n⚠️ GitHub gagal, override lokal aktif.`)
+        maintenanceOverride = mode === 'on' // true = maintenance aktif (API mati)
+        return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}</b>\n⚠️ GitHub gagal, override lokal aktif.`)
       }
     }
 
@@ -608,18 +645,98 @@ export async function initAdminBot() {
       }
     }
 
+    // /broadcast on|off
+    const bcToggle = text.match(/^\/broadcast (on|off)/)
+    if (bcToggle) {
+      const mode = bcToggle[1]
+      try {
+        const current = await getBroadcast()
+        current.munculkan = mode
+        await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] broadcast ${mode}`)
+        return reply(chatId, `📢 Broadcast: <b>${mode === 'on' ? 'ON 🟡 (akan muncul di web)' : 'OFF ⚫ (disembunyikan)'}</b>\n✅ Berhasil disimpan.`)
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal update GitHub: ${e.message}`)
+      }
+    }
+
+    // /setbroadcast text <teks>
+    const bcTextMatch = text.match(/^\/setbroadcast text (.+)/s)
+    if (bcTextMatch) {
+      const teks = bcTextMatch[1].trim()
+      try {
+        const current = await getBroadcast()
+        const tanggal = new Date().toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).split('/').reverse().join('-')
+        current.teks = teks
+        current.tanggal = tanggal
+        await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] set broadcast text`)
+        return reply(chatId, [
+          '📢 <b>Broadcast text berhasil diset!</b>',
+          '',
+          `📝 Teks: <i>${teks.substring(0, 200)}${teks.length > 200 ? '...' : ''}</i>`,
+          `📅 Tanggal: <code>${tanggal}</code>`,
+          `🖼️ Foto: <code>${current.foto || '-'}</code>`,
+          `👁️ Munculkan: <b>${current.munculkan}</b>`,
+        ].join('\n'))
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal update GitHub: ${e.message}`)
+      }
+    }
+
+    // /setbroadcast foto <url|-untuk hapus>
+    const bcFotoMatch = text.match(/^\/setbroadcast foto (.+)/)
+    if (bcFotoMatch) {
+      const foto = bcFotoMatch[1].trim()
+      try {
+        const current = await getBroadcast()
+        current.foto = foto
+        await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] set broadcast foto`)
+        return reply(chatId, foto === '-'
+          ? '🖼️ Foto broadcast berhasil dihapus. Broadcast akan tampil tanpa foto.'
+          : `🖼️ Foto broadcast berhasil diset!\n🔗 <code>${foto}</code>`
+        )
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal update GitHub: ${e.message}`)
+      }
+    }
+
+    // /broadcastinfo
+    if (text === '/broadcastinfo') {
+      try {
+        const bc = await getBroadcast()
+        return reply(chatId, [
+          '📢 <b>Info Broadcast Sekarang</b>',
+          '━━━━━━━━━━━━━━━━━━━━',
+          `👁️ Munculkan: <b>${bc.munculkan === 'yes' ? 'ON 🟡' : 'OFF ⚫'}</b>`,
+          `📅 Tanggal: <code>${bc.tanggal || '-'}</code>`,
+          `🖼️ Foto: <code>${bc.foto || '-'}</code>`,
+          `📝 Teks:`,
+          `<i>${bc.teks || '(kosong)'}</i>`,
+        ].join('\n'), {
+          reply_markup: {
+            inline_keyboard: [[
+              { text: bc.munculkan === 'yes' ? '⚫ Matiin' : '🟡 Nyalain', callback_data: `bc:${bc.munculkan === 'yes' ? 'off' : 'on'}`, style: bc.munculkan === 'yes' ? 'danger' : 'success' }
+            ]]
+          }
+        })
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal baca broadcast: ${e.message}`)
+      }
+    }
+
     // /status
     if (text === '/status') {
       const maintStatus = await checkMaintenance()
+      const bcData = await getBroadcast()
       const spamActive = [...spamMap.values()].filter(v => v.count >= 5).length
       return reply(chatId, [
         '📊 <b>Server Status</b>',
         '━━━━━━━━━━━━━━━━━━━━',
-        `🔧 Maintenance: ${maintStatus === 'on' ? 'ON 🟡' : 'OFF 🟢'}`,
+        `🔧 Maintenance: ${maintStatus === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}`,
+        `📢 Broadcast: ${bcData.munculkan === 'yes' ? 'ON 🟡' : 'OFF ⚫'}`,
         `🚫 Blocked IPs: ${blockedIPs.size}`,
         `⚠️ IP Spam Aktif: ${spamActive}`,
         `⏱️ Uptime: ${process.uptime() < 3600 ? Math.floor(process.uptime() / 60) + 'm' : Math.floor(process.uptime() / 3600) + 'j ' + Math.floor((process.uptime() % 3600) / 60) + 'm'}`,
-        `🔑 Override lokal: ${maintenanceOverride !== null ? (maintenanceOverride ? 'ON' : 'OFF') : 'tidak aktif'}`,
+        `🔑 Override lokal: ${maintenanceOverride !== null ? (maintenanceOverride ? 'ON (API mati)' : 'OFF (API normal)') : 'tidak aktif'}`,
         `🔑 Premium keys: ${premiumKeys.length}`,
       ].join('\n'))
     }
@@ -659,10 +776,29 @@ export async function initAdminBot() {
         await githubUpdate('database-api.txt', mode, `[bot] set maintenance ${mode}`)
         maintenanceOverride = null
       } catch {
+        // 'on' = normal, 'off' = maintenance aktif
         maintenanceOverride = mode === 'on'
       }
-      await bot.answerCallbackQuery(callbackId, { text: `Maintenance ${mode === 'on' ? 'dinyalakan' : 'dimatikan'}!` })
+      // on = maintenance aktif (API mati), off = API normal
+      await bot.answerCallbackQuery(callbackId, { text: mode === 'on' ? 'Maintenance dinyalakan (API dimatikan)!' : 'API dinyalakan (maintenance dimatikan)!' })
+      return
     }
+
+    // bc:on/off
+    const bcCb = data.match(/^bc:(on|off)/)
+    if (bcCb) {
+      const mode = bcCb[1]
+      try {
+        const current = await getBroadcast()
+        current.munculkan = mode
+        await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] broadcast ${mode}`)
+        await bot.answerCallbackQuery(callbackId, { text: `Broadcast ${mode === 'on' ? 'dinyalakan!' : 'dimatikan!'}` })
+      } catch {
+        await bot.answerCallbackQuery(callbackId, { text: 'Gagal update broadcast 😭' })
+      }
+      return
+    }
+
   }
 
   bot.on('message', async (msg) => {
@@ -832,8 +968,9 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
           }
 
           // MAINTENANCE CHECK
+          // database-api.txt: 'on' = maintenance aktif (API mati), 'off' = API normal bisa dipakai
           const maintenanceStatus = await checkMaintenance()
-          if (maintenanceStatus === 'off') {
+          if (maintenanceStatus === 'on') {
             return res.status(503).json({
               creator: targetCreator,
               status: false,
