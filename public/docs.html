@@ -455,17 +455,17 @@
 
         // broadcast dari github saurusrawr/penting/broadcast.json
         // format: { "foto": "url|-", "teks": "...", "tanggal": "2025-01-01", "munculkan": "yes|no" }
-        const BC_URL = 'https://raw.githubusercontent.com/saurusrawr/penting/refs/heads/main/broadcast.json';
+        const BC_URL = 'https://raw.githubusercontent.com/saurusrawr/penting/main/broadcast.json';
         const BC_KEY = 'kawaiiyumee_bc_seen';
         async function loadBroadcast() {
             try {
-                const res = await fetch(BC_URL + '?t=' + Date.now(), { cache: 'no-store' });
+                const res = await fetch(BC_URL + '?nocache=' + Date.now(), { cache: 'no-store' });
                 if(!res.ok) return;
                 const data = await res.json();
                 if(!data?.teks) return;
 
                 // kalau munculkan: "no" — skip
-                if((data.munculkan || 'yes').toLowerCase() !== 'yes') return;
+                if((data.munculkan || 'no').toLowerCase() !== 'yes') return;
 
                 // cek udah pernah liat broadcast ini belum (key = tanggal)
                 const seenKey = BC_KEY + '_' + (data.tanggal || 'nodate');
@@ -476,7 +476,6 @@
                 const dateEl = document.getElementById('broadcast-date');
 
                 txtEl.textContent  = data.teks;
-                // tanggal di bawah teks
                 dateEl.textContent = data.tanggal ? '📅 ' + data.tanggal : '';
 
                 // foto: "-" atau kosong = tanpa foto
@@ -490,16 +489,15 @@
                 }
 
                 document.getElementById('broadcast-overlay').classList.add('show');
-            } catch(e) {}
+            } catch(e) { console.error('[Broadcast] Error:', e); }
         }
         window.closeBroadcast = () => {
             document.getElementById('broadcast-overlay').classList.remove('show');
-            try {
-                fetch(BC_URL + '?t=' + Date.now(), { cache: 'no-store' })
-                    .then(r => r.json())
-                    .then(data => { if(data?.tanggal) localStorage.setItem(BC_KEY + '_' + data.tanggal, '1'); })
-                    .catch(() => {});
-            } catch(e) {}
+            // simpan key biar ga muncul lagi untuk tanggal yang sama
+            fetch(BC_URL + '?nocache=' + Date.now(), { cache: 'no-store' })
+                .then(r => r.json())
+                .then(data => { if(data?.tanggal) localStorage.setItem(BC_KEY + '_' + data.tanggal, '1'); })
+                .catch(() => {});
         };
 
         function termLog(msg, type='info') {
