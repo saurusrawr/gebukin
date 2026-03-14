@@ -378,6 +378,34 @@
             "description": "Teks yang ditampilkan di meme"
           }
         ]
+      },
+      {
+  "name": "Fake WhatsApp Profile",
+  "endpoint": "/api/maker/fakewa",
+  "filename": "fakewa",
+  "method": "GET",
+  "params": [
+    {
+      "name": "foto",
+      "required": true,
+      "description": "URL foto profil"
+    },
+    {
+      "name": "nama",
+      "required": true,
+      "description": "Nama yang ditampilkan"
+    },
+    {
+      "name": "bio",
+      "required": true,
+      "description": "Bio / status"
+    },
+    {
+      "name": "nomor",
+      "required": true,
+      "description": "Nomor HP (+ otomatis ditambah)"
+    }
+  ]
       }
     ],
     "edit": [
