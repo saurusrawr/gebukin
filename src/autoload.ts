@@ -97,7 +97,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
 const GITHUB_REPO  = 'saurusrawr/penting'
 
 async function githubGet(filePath: string): Promise<string> {
-  const { data } = await axios.get(
+  const res = await fetch(
     `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
     {
       headers: {
@@ -105,12 +105,10 @@ async function githubGet(filePath: string): Promise<string> {
         Accept: 'application/vnd.github.v3.raw',
         'Cache-Control': 'no-cache',
       },
-      timeout: 5000,
-      // paksa responseType text biar axios ga auto-parse jadi object
-      responseType: 'text',
     }
   )
-  return String(data).trim()
+  if (!res.ok) throw new Error(`GitHub GET failed: ${res.status} ${filePath}`)
+  return (await res.text()).trim()
 }
 
 async function githubGetSha(filePath: string): Promise<string | null> {
@@ -346,14 +344,17 @@ async function getPremiumKeys(forceRefresh = false): Promise<string[]> {
   if (!forceRefresh && premiumKeys.length > 0 && now - premiumKeyLastFetch < PREMIUM_KEY_CACHE_TTL) return premiumKeys
   try {
     const raw = await githubGet('apikeyprem.json')
+    console.log('[Premium] Raw dari GitHub:', raw.substring(0, 200))
     const parsed = JSON.parse(raw)
     if (Array.isArray(parsed)) {
       premiumKeys = parsed
       premiumKeyLastFetch = now
       console.log(`[Premium] Keys loaded: ${premiumKeys.length} keys`)
+    } else {
+      console.error('[Premium] Parse hasil bukan array:', typeof parsed)
     }
-  } catch {
-    // file belum ada di github, init kosong
+  } catch (e: any) {
+    console.error('[Premium] Gagal load apikeyprem.json:', e.message)
     if (premiumKeys.length === 0) {
       console.log('[Premium] apikeyprem.json belum ada, mulai kosong')
     }
