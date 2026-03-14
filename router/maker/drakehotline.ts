@@ -86,8 +86,8 @@ async function bikin_meme(teks1: string, teks2: string): Promise<Buffer> {
 
   // P6: (882, 313) → teks1 — area kanan atas (drake nolak)
   // P7: (896, 879) → teks2 — area kanan bawah (drake setuju)
-  tulis_teks(ctx, teks1, 815, 270, 480)
-  tulis_teks(ctx, teks2, 815, 810, 480)
+  tulis_teks(ctx, teks1, 912, 322, 480)
+  tulis_teks(ctx, teks2, 900, 913, 480)
 
   return await kanvas.encode("png")
 }
