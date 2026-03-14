@@ -8,7 +8,7 @@
       "https://cdn.kawaiiyumee.web.id/u3amhp.mp3"
     ],
     "apiVersion": "v2.0.0",
-    "visitors": "63",
+    "visitors": "74",
     "favicon": "/src/saurus.jpg",
     "thumbnail": "/src/thumbnail.jpg",
     "channelUrl": "https://whatsapp.com/channel/0029VbBloUfFXUuTiSvrzs2e",
@@ -567,6 +567,7 @@
             "name": "file",
             "required": true,
             "type": "file",
+            "requiredpost": true,
             "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)"
           }
         ]
@@ -665,6 +666,7 @@
           {
             "name": "file",
             "required": true,
+            "requiredpost": true,
             "description": "File video (multipart/form-data), max 50MB"
           }
         ]
