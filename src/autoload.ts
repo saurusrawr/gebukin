@@ -97,18 +97,24 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
 const GITHUB_REPO  = 'saurusrawr/penting'
 
 async function githubGet(filePath: string): Promise<string> {
+  // pakai contents API biasa (bukan .raw) lalu decode base64 sendiri
+  // ini paling reliable, ga kena auto-parse masalah
   const res = await fetch(
     `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
     {
       headers: {
         Authorization: `Bearer ${GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github.v3.raw',
+        Accept: 'application/vnd.github.v3+json',
         'Cache-Control': 'no-cache',
       },
     }
   )
   if (!res.ok) throw new Error(`GitHub GET failed: ${res.status} ${filePath}`)
-  return (await res.text()).trim()
+  const json = await res.json() as { content?: string, encoding?: string }
+  if (!json.content) throw new Error(`GitHub: content kosong untuk ${filePath}`)
+  // GitHub encode base64 dengan newline tiap 60 char — hapus dulu
+  const decoded = Buffer.from(json.content.replace(/\n/g, ''), 'base64').toString('utf-8')
+  return decoded.trim()
 }
 
 async function githubGetSha(filePath: string): Promise<string | null> {
@@ -655,7 +661,7 @@ export async function initAdminBot() {
       const mode = bcToggle[1]
       try {
         const current = await getBroadcast()
-        current.munculkan = mode
+        current.munculkan = mode === 'on' ? 'yes' : 'no'
         await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] broadcast ${mode}`)
         return reply(chatId, `📢 Broadcast: <b>${mode === 'on' ? 'ON 🟡 (akan muncul di web)' : 'OFF ⚫ (disembunyikan)'}</b>\n✅ Berhasil disimpan.`)
       } catch (e: any) {
@@ -794,7 +800,7 @@ export async function initAdminBot() {
       const mode = bcCb[1]
       try {
         const current = await getBroadcast()
-        current.munculkan = mode
+        current.munculkan = mode === 'on' ? 'yes' : 'no'
         await githubUpdate('broadcast.json', JSON.stringify(current, null, 2), `[bot] broadcast ${mode}`)
         await bot.answerCallbackQuery(callbackId, { text: `Broadcast ${mode === 'on' ? 'dinyalakan!' : 'dimatikan!'}` })
       } catch {
