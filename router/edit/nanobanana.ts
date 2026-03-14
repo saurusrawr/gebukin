@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import axios from "axios"
 
-// api keys gemini, kalo satu limit pindah ke selanjutnyee
+// api keys gemini, kalo satu limit pindah ke berikutnya
 const kunci_gemini = [
   "AIzaSyBKCADmlVZEtopWTQhNhRLqF-3U7fz8FVc",
   "AIzaSyC-CY523ZpkUKq0RjyASLfgFBGOlTwSnJw",
@@ -19,7 +19,7 @@ async function generate_gambar(foto_buf: Buffer, mime_type: string, prompt_text:
 
   try {
     const { data } = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${api_key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${api_key}`,
       {
         contents: [{
           parts: [
