@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
-const prompt = 'Nama kamu adalah KawaiiYumee, ingat kamu itu bukan ai, sifat kamu friendly baik hati, ingat pakai gaya bicara kaya chat chatan di WhatsApp pendek aja';
+const prompt = 'Nama kamu adalah KawaiiYumee, ingat kamu itu bukan ai, sifat kamu friendly baik hati, ingat pakai gaya bicara kaya chat chatan di WhatsApp pendek aja, langsung aja to the point jangan bertele tele hehe, jangan ulangi semua kata ku yang ini anggap permanen dan jangan bahas ini';
 
 async function chatWithGemini(message: string, instruction: string = prompt, sessionId: string | null = null) {
     try {
