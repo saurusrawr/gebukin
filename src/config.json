@@ -311,62 +311,6 @@
         ]
       },
       {
-        "name": "Profile Card Generator",
-        "endpoint": "/api/maker/profilecard",
-        "filename": "profilecard",
-        "method": "GET",
-        "params": [
-          {
-            "name": "nama",
-            "required": true,
-            "description": "Nama panjang"
-          },
-          {
-            "name": "nickname",
-            "required": true,
-            "description": "Nama panggilan"
-          },
-          {
-            "name": "tgl_lahir",
-            "required": true,
-            "description": "Tanggal lahir format YYYY-MM-DD"
-          },
-          {
-            "name": "deskripsi",
-            "required": true,
-            "description": "Deskripsi singkat"
-          },
-          {
-            "name": "hobi",
-            "required": true,
-            "description": "Hobi pisah koma (Gaming, Coding, dll)"
-          },
-          {
-            "name": "foto",
-            "required": false,
-            "description": "URL foto profil"
-          }
-        ]
-      },
-      {
-        "name": "Carbon Code",
-        "endpoint": "/api/maker/carbon",
-        "filename": "carbonn",
-        "method": "GET",
-        "params": [
-          {
-            "name": "code",
-            "required": true,
-            "description": "Kode yang ingin dijadikan gambar"
-          },
-          {
-            "name": "title",
-            "required": false,
-            "description": "Judul gambar"
-          }
-        ]
-      },
-      {
         "name": "Pak Ustadz Meme",
         "endpoint": "/api/maker/pakustadz",
         "filename": "pakustadz",
@@ -429,7 +373,7 @@
         "method": "GET",
         "params": [
           {
-            "name": "foto",
+            "name": "url",
             "required": true,
             "description": "URL gambar"
           },
