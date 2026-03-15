@@ -79,7 +79,7 @@ function parse_sse(raw: string): string | null {
         const parsed = JSON.parse(d.text)
         for (const item of parsed) {
           if (item.step_type === 'FINAL' && item.content?.answer) {
-            return JSON.parse(item.content.answer).answer
+            return JSON.parse(item.content.answer).answer.replace(/\[\d+\]/g, '').trim()
           }
         }
       }
@@ -204,8 +204,7 @@ export default async function perplexityHandler(req: Request, res: Response) {
       return res.json({
         status: true,
         query: q,
-        answer: jawaban,
-        method: name // debug info pake method apa
+        answer: jawaban
       })
     } catch (err: any) {
       last_err = `${name}: ${err.message}`
