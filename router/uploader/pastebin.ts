@@ -23,10 +23,11 @@ export default async function pastebinHandler(req: Request, res: Response) {
       api_dev_key: API_KEY,
       api_option: 'paste',
       api_paste_code: code,
-      api_paste_private: '0',
+      api_paste_private: '1',
       api_paste_name: title,
-      api_paste_expire_date: '10M', // expired 10 menit
-      api_paste_format: 'text'
+      api_paste_expire_date: '1D', // expired 10 menit
+      api_paste_format: 'text',
+      api_user_key: ''
     })
 
     const { data } = await axios.post(ENDPOINT, payload, { timeout: 10000 })
@@ -50,4 +51,4 @@ export default async function pastebinHandler(req: Request, res: Response) {
   } catch (err: any) {
     res.status(500).json({ status: false, message: err.message })
   }
-  }
+}
