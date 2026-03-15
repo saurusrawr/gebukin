@@ -8,7 +8,7 @@
       "https://cdn.kawaiiyumee.web.id/u3amhp.mp3"
     ],
     "apiVersion": "v2.0.0",
-    "visitors": "74",
+    "visitors": "99",
     "favicon": "/src/saurus.jpg",
     "thumbnail": "/src/thumbnail.jpg",
     "channelUrl": "https://whatsapp.com/channel/0029VbBloUfFXUuTiSvrzs2e",
@@ -859,6 +859,15 @@
             "description": "URL gambar"
           }
         ]
+      },
+      {
+  "name": "Cek ID Channel WhatsApp",
+  "endpoint": "/api/tools/cekidch",
+  "filename": "cekidch",
+  "method": "GET",
+  "params": [
+    { "name": "url", "required": true, "description": "URL atau ID channel WhatsApp" }
+  ]
       }
     ],
     "download": [
