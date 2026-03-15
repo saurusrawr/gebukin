@@ -1,6 +1,6 @@
 /*
   WA Session Manager
-  Tambahkan import + registerWARoutes(app) + connectWA() di initAutoLoad
+  Import dan panggil initWA(githubGet, githubUpdate, sendTelegram) di initAutoLoad
 */
 
 import makeWASocket, {
@@ -10,17 +10,36 @@ import makeWASocket, {
   makeCacheableSignalKeyStore
 } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
+import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 
 const WA_SESSION_PATH = path.join(os.tmpdir(), 'wa-session')
 const WA_SESSION_GITHUB_PATH = 'wa-session.json'
 
-let waSocket: any = null
-let waConnected = false
-let waPairingNumber: string | null = null
+export let waSocket: any = null
+export let waConnected = false
+export let waPairingNumber: string | null = null
 
-// ── simpan session ke github ──
+// inject fungsi dari autoload.ts
+type GithubGet = (filePath: string) => Promise<string>
+type GithubUpdate = (filePath: string, content: string, msg: string) => Promise<void>
+type SendTelegram = (msg: string) => Promise<void>
+
+let _githubGet: GithubGet
+let _githubUpdate: GithubUpdate
+let _sendTelegram: SendTelegram
+
+export function initWA(
+  githubGet: GithubGet,
+  githubUpdate: GithubUpdate,
+  sendTelegram: SendTelegram
+) {
+  _githubGet = githubGet
+  _githubUpdate = githubUpdate
+  _sendTelegram = sendTelegram
+}
+
 async function saveSessionToGithub() {
   try {
     if (!fs.existsSync(WA_SESSION_PATH)) return
@@ -29,18 +48,17 @@ async function saveSessionToGithub() {
     for (const file of sessionFiles) {
       sessionData[file] = fs.readFileSync(path.join(WA_SESSION_PATH, file), 'utf-8')
     }
-    await githubUpdate(WA_SESSION_GITHUB_PATH, JSON.stringify(sessionData, null, 2), '[bot] update wa session')
+    await _githubUpdate(WA_SESSION_GITHUB_PATH, JSON.stringify(sessionData, null, 2), '[bot] update wa session')
     console.log('[WA] Session disimpan ke GitHub')
   } catch (e: any) {
     console.error('[WA] Gagal simpan session:', e.message)
   }
 }
 
-// ── load session dari github ──
 async function loadSessionFromGithub(): Promise<boolean> {
   try {
     if (!fs.existsSync(WA_SESSION_PATH)) fs.mkdirSync(WA_SESSION_PATH, { recursive: true })
-    const raw = await githubGet(WA_SESSION_GITHUB_PATH)
+    const raw = await _githubGet(WA_SESSION_GITHUB_PATH)
     const sessionData: Record<string, string> = JSON.parse(raw)
     for (const [filename, content] of Object.entries(sessionData)) {
       fs.writeFileSync(path.join(WA_SESSION_PATH, filename), content, 'utf-8')
@@ -53,7 +71,6 @@ async function loadSessionFromGithub(): Promise<boolean> {
   }
 }
 
-// ── connect wa ──
 export async function connectWA(phoneNumber?: string): Promise<string | null> {
   await loadSessionFromGithub()
   if (!fs.existsSync(WA_SESSION_PATH)) fs.mkdirSync(WA_SESSION_PATH, { recursive: true })
@@ -86,12 +103,11 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
     if (connection === 'close') {
       waConnected = false
       const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut
-      console.log('[WA] Koneksi putus, reconnect:', shouldReconnect)
       if (shouldReconnect) setTimeout(() => connectWA(), 5000)
     } else if (connection === 'open') {
       waConnected = true
       console.log('[WA] Terhubung!')
-      await sendTelegram('✅ <b>WhatsApp kawaiiyumee terhubung!</b>')
+      await _sendTelegram('✅ <b>WhatsApp kawaiiyumee terhubung!</b>')
     }
   })
 
@@ -102,5 +118,3 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
 
   return null
 }
-
-export { waSocket, waConnected }
