@@ -7,7 +7,8 @@ import makeWASocket, {
   useMultiFileAuthState,
   DisconnectReason,
   fetchLatestBaileysVersion,
-  makeCacheableSignalKeyStore
+  makeCacheableSignalKeyStore,
+  Browsers
 } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom'
 import * as fs from 'fs'
