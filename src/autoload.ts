@@ -752,6 +752,36 @@ export async function initAdminBot() {
     }
   }
 
+  const pairingMatch = text.match(/^\/pairingwa (\d+)/)
+if (pairingMatch) {
+  const number = pairingMatch[1]
+  await reply(chatId, `⏳ Meminta pairing code untuk <code>${number}</code>...`)
+  try {
+    const code = await connectWA(number)
+    if (code) {
+      return reply(chatId, [
+        '🔗 <b>WA Pairing Code</b>',
+        '━━━━━━━━━━━━━━━━━━━━',
+        `📱 Nomor: <code>${number}</code>`,
+        `🔑 Kode: <code>${code}</code>`,
+        '',
+        'Masukkan kode di WhatsApp → Perangkat Tertaut → Tautkan Perangkat → Tautkan dengan nomor telepon'
+      ].join('\n'))
+    } else {
+      return reply(chatId, '✅ Session sudah ada, WA sudah terhubung!')
+    }
+  } catch (e: any) {
+    return reply(chatId, `❌ Gagal: <code>${e.message}</code>`)
+  }
+}
+
+// /wastatus
+if (text === '/wastatus') {
+  return reply(chatId, waConnected
+    ? `✅ WhatsApp terhubung\n📱 Nomor: <code>${waPairingNumber || '-'}</code>`
+    : '❌ WhatsApp belum terhubung. Ketik /pairingwa 628xxx')
+}
+
   async function handleCallbackQuery(callbackId: string, chatId: string | number, data: string, fromId: number) {
     if (!ADMIN_IDS.includes(fromId)) return
 
@@ -843,7 +873,8 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
   getPremiumKeys().catch(() => {})
   loadBlockedIPs().catch(() => {})
   initAdminBot().catch((e) => console.error('[Bot] Init error:', e))
-
+  connectWA().catch((e) => console.log('[WA] Auto connect:', e.message))
+  
   loadRouter(app, config)
 
   if (fs.existsSync(configPath)) {
