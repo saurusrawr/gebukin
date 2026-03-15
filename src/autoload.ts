@@ -6,7 +6,6 @@ import * as fs from 'fs'
 import * as path from 'path'
 import axios from 'axios'
 import TelegramBot from 'node-telegram-bot-api'
-import { initWA, connectWA, waConnected, waPairingNumber } from './autoload_wa'
 
 let regRouter = new Set<string>()
 let currentConfig: any = null
@@ -472,8 +471,6 @@ export async function initAdminBot() {
         '  /status — status server',
         '  /spamlist — lihat IP spam aktif',
         '  /testapi &lt;endpoint&gt; — test hit endpoint API',
-        '  /wastatus — cek status WhatsApp',
-        '  /pairingwa 62xx — pairing ke WhatsApp',
         '',
         '🔑 <b>PREMIUM KEYS</b>',
         '  /addkeyprem &lt;key&gt; — tambah key premium',
@@ -739,39 +736,9 @@ export async function initAdminBot() {
         `⏱️ Uptime: ${process.uptime() < 3600 ? Math.floor(process.uptime() / 60) + 'm' : Math.floor(process.uptime() / 3600) + 'j ' + Math.floor((process.uptime() % 3600) / 60) + 'm'}`,
         `🔑 Override lokal: ${maintenanceOverride !== null ? (maintenanceOverride ? 'ON (API mati)' : 'OFF (API normal)') : 'tidak aktif'}`,
         `🔑 Premium keys: ${premiumKeys.length}`,
-        `📱 WA: ${waConnected ? '🟢 Terhubung' : '🔴 Tidak terhubung'}`,
       ].join('\n'))
     }
 
-    // /pairingwa 628xxx
-    const pairingMatch = text.match(/^\/pairingwa (\d+)/)
-    if (pairingMatch) {
-      const number = pairingMatch[1]
-      await reply(chatId, `⏳ Meminta pairing code untuk <code>${number}</code>...`)
-      try {
-        const code = await connectWA(number)
-        if (code) {
-          return reply(chatId, [
-            '🔗 <b>WA Pairing Code</b>',
-            '━━━━━━━━━━━━━━━━━━━━',
-            `📱 Nomor: <code>${number}</code>`,
-            `🔑 Kode: <code>${code}</code>`,
-            '',
-            'Masukkan kode di WhatsApp → Perangkat Tertaut → Tautkan Perangkat → Tautkan dengan nomor telepon'
-          ].join('\n'))
-        }
-        return reply(chatId, '✅ Session sudah ada, WA sudah terhubung!')
-      } catch (e: any) {
-        return reply(chatId, `❌ Gagal: <code>${e.message}</code>`)
-      }
-    }
-
-    // /wastatus
-    if (text === '/wastatus') {
-      return reply(chatId, waConnected
-        ? `✅ WhatsApp terhubung\n📱 Nomor: <code>${waPairingNumber || '-'}</code>`
-        : '❌ WhatsApp belum terhubung. Ketik /pairingwa 628xxx')
-    }
   }
 
   async function handleCallbackQuery(callbackId: string, chatId: string | number, data: string, fromId: number) {
@@ -863,9 +830,6 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
   loadBlockedIPs().catch(() => {})
   initAdminBot().catch((e) => console.error('[Bot] Init error:', e))
 
-  // init WA — inject fungsi github & telegram, lalu auto connect
-  initWA(githubGet, githubUpdate, sendTelegram)
-  connectWA().catch((e) => console.log('[WA] Auto connect:', e.message))
 
   loadRouter(app, config)
 
