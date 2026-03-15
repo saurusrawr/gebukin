@@ -6,6 +6,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import axios from 'axios'
 import TelegramBot from 'node-telegram-bot-api'
+import { initWA, connectWA, waConnected, waPairingNumber } from './autoload_wa'
 
 let regRouter = new Set<string>()
 let currentConfig: any = null
@@ -63,8 +64,8 @@ async function saveBlockedIPs() {
 // ========================
 // SPAM DETECTION
 // ========================
-const SPAM_WINDOW_MS = 10_000   // 10 detik
-const SPAM_MAX_REQ   = 15       // max request per window
+const SPAM_WINDOW_MS = 10_000
+const SPAM_MAX_REQ   = 15
 const spamMap = new Map<string, { count: number, firstSeen: number, warned: boolean }>()
 
 function checkSpam(ip: string): boolean {
@@ -97,8 +98,6 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
 const GITHUB_REPO  = 'saurusrawr/penting'
 
 async function githubGet(filePath: string): Promise<string> {
-  // pakai contents API biasa (bukan .raw) lalu decode base64 sendiri
-  // ini paling reliable, ga kena auto-parse masalah
   const res = await fetch(
     `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
     {
@@ -112,7 +111,6 @@ async function githubGet(filePath: string): Promise<string> {
   if (!res.ok) throw new Error(`GitHub GET failed: ${res.status} ${filePath}`)
   const json = await res.json() as { content?: string, encoding?: string }
   if (!json.content) throw new Error(`GitHub: content kosong untuk ${filePath}`)
-  // GitHub encode base64 dengan newline tiap 60 char — hapus dulu
   const decoded = Buffer.from(json.content.replace(/\n/g, ''), 'base64').toString('utf-8')
   return decoded.trim()
 }
@@ -128,7 +126,7 @@ async function githubGetSha(filePath: string): Promise<string | null> {
     )
     return data.sha || null
   } catch {
-    return null // file belum ada di repo
+    return null
   }
 }
 
@@ -138,7 +136,7 @@ async function githubUpdate(filePath: string, content: string, commitMsg: string
     message: commitMsg,
     content: Buffer.from(content).toString('base64'),
   }
-  if (sha) body.sha = sha // ada sha = update, ga ada = create baru otomatis
+  if (sha) body.sha = sha
 
   await axios.put(
     `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
@@ -278,7 +276,6 @@ export async function logRouterRequest(
   const code = statusCode || res.statusCode || 200
   const codeEmoji = code >= 500 ? '🔴' : code >= 400 ? '🟡' : '🟢'
 
-  // console log
   console.log(`[${time}] ${codeEmoji} ${code} | ${method} ${url} | IP: ${ip} | ${browser} | ${os} | ${device}`)
 
   ;(async () => {
@@ -288,7 +285,6 @@ export async function logRouterRequest(
       ? '\n' + Object.entries(req.query).map(([k, v]) => `  • <code>${k}</code>: <code>${v}</code>`).join('\n')
       : ' <i>tidak ada</i>'
 
-    // response summary
     let respStr = '<i>tidak direkam</i>'
     if (responseBody && typeof responseBody === 'object') {
       const preview = JSON.stringify(responseBody)
@@ -370,12 +366,9 @@ async function getPremiumKeys(forceRefresh = false): Promise<string[]> {
 
 /* =======================
    MAINTENANCE CHECK
-   'on'  = maintenance aktif, API mati
-   'off' = API normal, bisa dipakai
 ======================= */
 async function checkMaintenance(): Promise<string> {
   if (maintenanceOverride !== null) {
-    // true = maintenance aktif (API mati), false = API normal
     return maintenanceOverride ? 'on' : 'off'
   }
   try {
@@ -384,14 +377,12 @@ async function checkMaintenance(): Promise<string> {
     return status.toLowerCase()
   } catch {
     console.error('[Maintenance] Fetch failed, defaulting to OFF (API normal)')
-    return 'off' // gagal fetch = anggap normal biar ga ngeblok semua user
+    return 'off'
   }
 }
 
 /* =======================
    BROADCAST
-   Format broadcast.json:
-   { "foto": "url|-", "teks": "...", "tanggal": "YYYY-MM-DD", "munculkan": "yes|no" }
 ======================= */
 async function getBroadcast(): Promise<{ foto: string, teks: string, tanggal: string, munculkan: string }> {
   try {
@@ -443,7 +434,6 @@ export async function initAdminBot() {
     await bot.sendMessage(chatId, text, { parse_mode: 'HTML', ...effectMsg(chatType), ...cleanExtra } as any).catch(() => {})
   }
 
-  // fallback axios reply untuk sendTelegram notif (tetap ada)
   async function replyAxios(chatId: string, text: string, extra?: object) {
     await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
       chat_id: chatId, text, parse_mode: 'HTML', ...extra
@@ -482,8 +472,8 @@ export async function initAdminBot() {
         '  /status — status server',
         '  /spamlist — lihat IP spam aktif',
         '  /testapi &lt;endpoint&gt; — test hit endpoint API',
-        '  /wastatus - Mengecek status WhatsApp',
-        '  /pairingwa 62xx - pairing ke WhatsApp',
+        '  /wastatus — cek status WhatsApp',
+        '  /pairingwa 62xx — pairing ke WhatsApp',
         '',
         '🔑 <b>PREMIUM KEYS</b>',
         '  /addkeyprem &lt;key&gt; — tambah key premium',
@@ -503,7 +493,6 @@ export async function initAdminBot() {
               { text: '📊 Stats', url: `https://${apiDomain}/stats`, style: 'primary' },
             ],
             [
-              // on = API mati, tombol = matiin maintenance (ke off); off = API normal, tombol = nyalain maintenance (ke on)
               { text: maintStatus === 'on' ? '🟢 Nyalain API (matiin maintenance)' : '🔴 Matiin API (maintenance)', callback_data: `maint:${maintStatus === 'on' ? 'off' : 'on'}`, style: maintStatus === 'on' ? 'success' : 'danger' }
             ],
             [
@@ -570,7 +559,7 @@ export async function initAdminBot() {
         maintenanceOverride = null
         return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}</b>\n✅ GitHub updated.`)
       } catch (e: any) {
-        maintenanceOverride = mode === 'on' // true = maintenance aktif (API mati)
+        maintenanceOverride = mode === 'on'
         return reply(chatId, `🔧 Maintenance: <b>${mode === 'on' ? 'ON 🔴 (API mati)' : 'OFF 🟢 (API normal)'}</b>\n⚠️ GitHub gagal, override lokal aktif.`)
       }
     }
@@ -750,39 +739,40 @@ export async function initAdminBot() {
         `⏱️ Uptime: ${process.uptime() < 3600 ? Math.floor(process.uptime() / 60) + 'm' : Math.floor(process.uptime() / 3600) + 'j ' + Math.floor((process.uptime() % 3600) / 60) + 'm'}`,
         `🔑 Override lokal: ${maintenanceOverride !== null ? (maintenanceOverride ? 'ON (API mati)' : 'OFF (API normal)') : 'tidak aktif'}`,
         `🔑 Premium keys: ${premiumKeys.length}`,
+        `📱 WA: ${waConnected ? '🟢 Terhubung' : '🔴 Tidak terhubung'}`,
       ].join('\n'))
     }
-  }
 
-  const pairingMatch = text.match(/^\/pairingwa (\d+)/)
-if (pairingMatch) {
-  const number = pairingMatch[1]
-  await reply(chatId, `⏳ Meminta pairing code untuk <code>${number}</code>...`)
-  try {
-    const code = await connectWA(number)
-    if (code) {
-      return reply(chatId, [
-        '🔗 <b>WA Pairing Code</b>',
-        '━━━━━━━━━━━━━━━━━━━━',
-        `📱 Nomor: <code>${number}</code>`,
-        `🔑 Kode: <code>${code}</code>`,
-        '',
-        'Masukkan kode di WhatsApp → Perangkat Tertaut → Tautkan Perangkat → Tautkan dengan nomor telepon'
-      ].join('\n'))
-    } else {
-      return reply(chatId, '✅ Session sudah ada, WA sudah terhubung!')
+    // /pairingwa 628xxx
+    const pairingMatch = text.match(/^\/pairingwa (\d+)/)
+    if (pairingMatch) {
+      const number = pairingMatch[1]
+      await reply(chatId, `⏳ Meminta pairing code untuk <code>${number}</code>...`)
+      try {
+        const code = await connectWA(number)
+        if (code) {
+          return reply(chatId, [
+            '🔗 <b>WA Pairing Code</b>',
+            '━━━━━━━━━━━━━━━━━━━━',
+            `📱 Nomor: <code>${number}</code>`,
+            `🔑 Kode: <code>${code}</code>`,
+            '',
+            'Masukkan kode di WhatsApp → Perangkat Tertaut → Tautkan Perangkat → Tautkan dengan nomor telepon'
+          ].join('\n'))
+        }
+        return reply(chatId, '✅ Session sudah ada, WA sudah terhubung!')
+      } catch (e: any) {
+        return reply(chatId, `❌ Gagal: <code>${e.message}</code>`)
+      }
     }
-  } catch (e: any) {
-    return reply(chatId, `❌ Gagal: <code>${e.message}</code>`)
-  }
-}
 
-// /wastatus
-if (text === '/wastatus') {
-  return reply(chatId, waConnected
-    ? `✅ WhatsApp terhubung\n📱 Nomor: <code>${waPairingNumber || '-'}</code>`
-    : '❌ WhatsApp belum terhubung. Ketik /pairingwa 628xxx')
-}
+    // /wastatus
+    if (text === '/wastatus') {
+      return reply(chatId, waConnected
+        ? `✅ WhatsApp terhubung\n📱 Nomor: <code>${waPairingNumber || '-'}</code>`
+        : '❌ WhatsApp belum terhubung. Ketik /pairingwa 628xxx')
+    }
+  }
 
   async function handleCallbackQuery(callbackId: string, chatId: string | number, data: string, fromId: number) {
     if (!ADMIN_IDS.includes(fromId)) return
@@ -818,10 +808,8 @@ if (text === '/wastatus') {
         await githubUpdate('database-api.txt', mode, `[bot] set maintenance ${mode}`)
         maintenanceOverride = null
       } catch {
-        // 'on' = normal, 'off' = maintenance aktif
         maintenanceOverride = mode === 'on'
       }
-      // on = maintenance aktif (API mati), off = API normal
       await bot.answerCallbackQuery(callbackId, { text: mode === 'on' ? 'Maintenance dinyalakan (API dimatikan)!' : 'API dinyalakan (maintenance dimatikan)!' })
       return
     }
@@ -840,7 +828,6 @@ if (text === '/wastatus') {
       }
       return
     }
-
   }
 
   bot.on('message', async (msg) => {
@@ -875,8 +862,11 @@ export const initAutoLoad = (app: Application, config: any, configPath: string) 
   getPremiumKeys().catch(() => {})
   loadBlockedIPs().catch(() => {})
   initAdminBot().catch((e) => console.error('[Bot] Init error:', e))
+
+  // init WA — inject fungsi github & telegram, lalu auto connect
+  initWA(githubGet, githubUpdate, sendTelegram)
   connectWA().catch((e) => console.log('[WA] Auto connect:', e.message))
-  
+
   loadRouter(app, config)
 
   if (fs.existsSync(configPath)) {
@@ -992,7 +982,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
         const wrappedHandler = async (req: Request, res: Response, next: NextFunction) => {
           const clientIp = getClientIp(req)
 
-          // IP BLOCK CHECK
           if (blockedIPs.has(clientIp)) {
             return res.status(403).json({
               creator: targetCreator,
@@ -1001,7 +990,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             })
           }
 
-          // SPAM CHECK
           if (checkSpam(clientIp)) {
             return res.status(429).json({
               creator: targetCreator,
@@ -1010,8 +998,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             })
           }
 
-          // MAINTENANCE CHECK
-          // database-api.txt: 'on' = maintenance aktif (API mati), 'off' = API normal bisa dipakai
           const maintenanceStatus = await checkMaintenance()
           if (maintenanceStatus === 'on') {
             return res.status(503).json({
@@ -1022,7 +1008,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             })
           }
 
-          // PREMIUM API KEY CHECK
           if (route.needpremium === true) {
             const apikey = (req.query.apikey || req.headers['x-api-key'] || req.body?.apikey) as string
             if (!apikey || apikey.trim() === '') {
@@ -1042,7 +1027,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             }
           }
 
-          // INJECT CREATOR + CAPTURE RESPONSE
           let capturedBody: any = null
           const originalJson = res.json.bind(res)
           res.json = function (body) {
@@ -1063,7 +1047,6 @@ const registerRoute = (route: any, category: string, creatorName?: string, app?:
             })
           }
 
-          // LOG AFTER RESPONSE
           logRouterRequest(req, res, capturedBody, res.statusCode)
         }
 
