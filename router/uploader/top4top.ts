@@ -68,7 +68,7 @@ async function upload_ke_top4top(buf: Buffer, filename: string): Promise<any> {
 }
 
 // middleware multer buat handle file upload
-export const middleware = multer({
+export const middleware = (multer as any)({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 } // max 50mb
 }).single('file')
@@ -97,5 +97,4 @@ export default async function top4topHandler(req: Request, res: Response) {
   } catch (err: any) {
     res.status(500).json({ status: false, message: err.message })
   }
-  }
-    
+}
