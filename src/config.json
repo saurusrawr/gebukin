@@ -64,6 +64,19 @@
             "description": "Cookie sID dari sahabat-ai.com"
           }
         ]
+      },
+      {
+        "name": "Perplexity AI",
+        "endpoint": "/api/ai/perplexity",
+        "filename": "perplexity",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Pertanyaan ke Perplexity"
+          }
+        ]
       }
     ],
     "maker": [
@@ -352,26 +365,50 @@
         ]
       },
       {
-  "name": "Drake Hotline Meme",
-  "endpoint": "/api/maker/drakehotline",
-  "filename": "drakehotline",
-  "method": "GET",
-  "params": [
-    { "name": "teks1", "required": true, "description": "Teks yang ditolak Drake (atas)" },
-    { "name": "teks2", "required": true, "description": "Teks yang disetujui Drake (bawah)" }
-  ]
+        "name": "Drake Hotline Meme",
+        "endpoint": "/api/maker/drakehotline",
+        "filename": "drakehotline",
+        "method": "GET",
+        "params": [
+          {
+            "name": "teks1",
+            "required": true,
+            "description": "Teks yang ditolak Drake (atas)"
+          },
+          {
+            "name": "teks2",
+            "required": true,
+            "description": "Teks yang disetujui Drake (bawah)"
+          }
+        ]
       },
       {
-  "name": "GenMyArt AI Image",
-  "endpoint": "/api/maker/genmyart",
-  "filename": "genmyart",
-  "method": "GET",
-  "params": [
-    { "name": "prompt", "required": true, "description": "Deskripsi gambar yang mau dibuat" },
-    { "name": "style", "required": false, "description": "anime | ghibli | photorealistic | cyberpunk | fantasy | dll (default: anime)" },
-    { "name": "resolution", "required": false, "description": "512x512 | 768x768 | 1024x1024 | 1280x720 | 1920x1080 (default: 512x512)" },
-    { "name": "ratio", "required": false, "description": "square | portrait | landscape (default: square)" }
-  ]
+        "name": "GenMyArt AI Image",
+        "endpoint": "/api/maker/genmyart",
+        "filename": "genmyart",
+        "method": "GET",
+        "params": [
+          {
+            "name": "prompt",
+            "required": true,
+            "description": "Deskripsi gambar yang mau dibuat"
+          },
+          {
+            "name": "style",
+            "required": false,
+            "description": "anime | ghibli | photorealistic | cyberpunk | fantasy | dll (default: anime)"
+          },
+          {
+            "name": "resolution",
+            "required": false,
+            "description": "512x512 | 768x768 | 1024x1024 | 1280x720 | 1920x1080 (default: 512x512)"
+          },
+          {
+            "name": "ratio",
+            "required": false,
+            "description": "square | portrait | landscape (default: square)"
+          }
+        ]
       }
     ],
     "edit": [
@@ -401,7 +438,7 @@
           },
           {
             "name": "prompt",
-            "required": true,
+            "required": false,
             "description": "Instruksi edit AI"
           }
         ]
@@ -524,21 +561,6 @@
     ],
     "tools": [
       {
-        "name": "Tourl all files",
-        "endpoint": "/api/tools/tourl",
-        "filename": "cdnupliad",
-        "method": "POST",
-        "params": [
-          {
-            "name": "file",
-            "required": true,
-            "type": "file",
-            "requiredpost": true,
-            "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)"
-          }
-        ]
-      },
-      {
         "name": "Screenshot Web",
         "endpoint": "/api/tools/ssweb",
         "filename": "ssweb",
@@ -607,33 +629,6 @@
             "name": "count",
             "required": true,
             "description": "Jumlah spam (max 50)"
-          }
-        ]
-      },
-      {
-        "name": "Lirik Lagu",
-        "endpoint": "/api/tools/lirik",
-        "filename": "lyrics",
-        "method": "GET",
-        "params": [
-          {
-            "name": "q",
-            "required": true,
-            "description": "Judul atau query lagu"
-          }
-        ]
-      },
-      {
-        "name": "Upload Videy",
-        "endpoint": "/api/tools/uploadvidey",
-        "filename": "upvidey",
-        "method": "POST",
-        "params": [
-          {
-            "name": "file",
-            "required": true,
-            "requiredpost": true,
-            "description": "File video (multipart/form-data), max 50MB"
           }
         ]
       },
@@ -851,6 +846,19 @@
             "description": "Kota tujuan"
           }
         ]
+      },
+      {
+        "name": "Remove Background",
+        "endpoint": "/api/tools/rmvbg",
+        "filename": "rmvbg",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL gambar"
+          }
+        ]
       }
     ],
     "download": [
@@ -955,6 +963,32 @@
             "name": "package",
             "required": true,
             "description": "Nama Package Di NPMny"
+          }
+        ]
+      },
+      {
+        "name": "Videy Downloader",
+        "endpoint": "/api/download/videy",
+        "filename": "videy",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL videy.co"
+          }
+        ]
+      },
+      {
+        "name": "Douyin Downloader",
+        "endpoint": "/api/download/douyin",
+        "filename": "douyin",
+        "method": "GET",
+        "params": [
+          {
+            "name": "url",
+            "required": true,
+            "description": "URL video Douyin"
           }
         ]
       }
@@ -1165,6 +1199,32 @@
             "description": "URL detail anime dari nekopoi.care — gunakan ini kalau mau ambil detail"
           }
         ]
+      },
+      {
+        "name": "Lirik Lagu",
+        "endpoint": "/api/search/lirik",
+        "filename": "lirik",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Judul lagu atau artis"
+          }
+        ]
+      },
+      {
+        "name": "Lahelu Search",
+        "endpoint": "/api/search/lahelu",
+        "filename": "lahelusearch",
+        "method": "GET",
+        "params": [
+          {
+            "name": "q",
+            "required": true,
+            "description": "Kata kunci meme (contoh: spongebob)"
+          }
+        ]
       }
     ],
     "berita": [
@@ -1261,6 +1321,24 @@
             "name": "username",
             "required": true,
             "description": "Username IGnya"
+          }
+        ]
+      },
+      {
+        "name": "MLBB Stalker",
+        "endpoint": "/api/stalker/mlbb",
+        "filename": "mlbbstalk",
+        "method": "GET",
+        "params": [
+          {
+            "name": "userId",
+            "required": true,
+            "description": "User ID MLBB"
+          },
+          {
+            "name": "zoneId",
+            "required": true,
+            "description": "Zone ID MLBB"
           }
         ]
       }
@@ -1762,6 +1840,55 @@
             "name": "limit",
             "required": false,
             "description": "Jumlah kata yang ditampilkan (default: 20, maks: 100)"
+          }
+        ]
+      }
+    ],
+    "uploader": [
+      {
+        "name": "Pastebin Uploader",
+        "endpoint": "/api/uploader/pastebin",
+        "filename": "pastebin",
+        "method": "GET",
+        "params": [
+          {
+            "name": "code",
+            "required": true,
+            "description": "Konten yang mau diupload"
+          },
+          {
+            "name": "title",
+            "required": false,
+            "description": "Judul paste (default: Upload)"
+          }
+        ]
+      },
+      {
+        "name": "Tourl all files",
+        "endpoint": "/api/tools/tourl",
+        "filename": "cdnupliad",
+        "method": "POST",
+        "params": [
+          {
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "requiredpost": true,
+            "description": "File yang diupload (jpg, png, mp4, mp3, zip, dll)"
+          }
+        ]
+      },
+      {
+        "name": "Upload Videy",
+        "endpoint": "/api/tools/uploadvidey",
+        "filename": "upvidey",
+        "method": "POST",
+        "params": [
+          {
+            "name": "file",
+            "required": true,
+            "requiredpost": true,
+            "description": "File video (multipart/form-data), max 50MB"
           }
         ]
       }
