@@ -96,12 +96,8 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
       keys: makeCacheableSignalKeyStore(state.keys, console as any)
     },
     printQRInTerminal: false,
-    browser: ['Ubuntu', 'Chrome', '22.04.2'],
+    browser: ['kawaiiyumee', 'Safari', '3'],  // make by SaurusOfficiall
     syncFullHistory: false,
-    connectTimeoutMs: 60000,
-    defaultQueryTimeoutMs: 60000,
-    keepAliveIntervalMs: 10000,
-    retryRequestDelayMs: 250,
     logger: require('pino')({ level: 'silent' })
   })
 
@@ -139,4 +135,3 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
 
   return null
 }
- 
