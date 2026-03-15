@@ -1846,7 +1846,7 @@
       },
       {
         "name": "Tourl all files",
-        "endpoint": "/api/tools/tourl",
+        "endpoint": "/api/uploader/tourl",
         "filename": "cdnupliad",
         "method": "POST",
         "params": [
@@ -1861,13 +1861,29 @@
       },
       {
         "name": "Upload Videy",
-        "endpoint": "/api/tools/uploadvidey",
+        "endpoint": "/api/uploader/uploadvidey",
         "filename": "upvidey",
         "method": "POST",
         "params": [
           {
             "name": "file",
             "required": true,
+            "type": "file",
+            "requiredpost": true,
+            "description": "File video (multipart/form-data), max 50MB"
+          }
+        ]
+      },
+      {
+        "name": "Upload Top4Top",
+        "endpoint": "/api/uploader/top4top",
+        "filename": "top4top",
+        "method": "POST",
+        "params": [
+          {
+            "name": "file",
+            "required": true,
+            "type": "file",
             "requiredpost": true,
             "description": "File video (multipart/form-data), max 50MB"
           }
