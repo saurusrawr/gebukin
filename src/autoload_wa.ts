@@ -96,7 +96,7 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
       keys: makeCacheableSignalKeyStore(state.keys, console as any)
     },
     printQRInTerminal: false,
-    browser: Browsers.baileys('Chrome'),
+    browser: ['Ubuntu', 'Chrome', '22.04.2'],
     syncFullHistory: false,
     connectTimeoutMs: 60000,
     defaultQueryTimeoutMs: 60000,
