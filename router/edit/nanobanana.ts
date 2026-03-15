@@ -1,3 +1,7 @@
+/*
+ PREMIUM NANO BANANA API BY SAURUS
+ Dibuat dengan cintah
+*/
 import { Request, Response } from "express"
 import axios from "axios"
 import FormData from "form-data"
