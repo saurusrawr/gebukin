@@ -72,7 +72,17 @@ async function loadSessionFromGithub(): Promise<boolean> {
 }
 
 export async function connectWA(phoneNumber?: string): Promise<string | null> {
-  await loadSessionFromGithub()
+  // kalo ada phoneNumber = pairing baru, hapus session lama dulu
+  if (phoneNumber) {
+    try {
+      if (fs.existsSync(WA_SESSION_PATH)) {
+        fs.rmSync(WA_SESSION_PATH, { recursive: true, force: true })
+        console.log('[WA] Session lama dihapus untuk pairing baru')
+      }
+    } catch {}
+  } else {
+    await loadSessionFromGithub()
+  }
   if (!fs.existsSync(WA_SESSION_PATH)) fs.mkdirSync(WA_SESSION_PATH, { recursive: true })
 
   const { state, saveCreds } = await useMultiFileAuthState(WA_SESSION_PATH)
@@ -85,16 +95,26 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
       keys: makeCacheableSignalKeyStore(state.keys, console as any)
     },
     printQRInTerminal: false,
-    browser: ['KawaiiYumee', 'Chrome', '124.0.0'],
-    syncFullHistory: false
+    browser: Browsers.baileys('Chrome'),
+    syncFullHistory: false,
+    connectTimeoutMs: 60000,
+    defaultQueryTimeoutMs: 60000,
+    keepAliveIntervalMs: 10000,
+    retryRequestDelayMs: 250,
+    logger: require('pino')({ level: 'silent' })
   })
 
   // minta pairing code kalo belum register
   if (!waSocket.authState.creds.registered && phoneNumber) {
-    await new Promise(r => setTimeout(r, 3000))
-    const code = await waSocket.requestPairingCode(phoneNumber)
+    await new Promise(r => setTimeout(r, 5000))
+    const formattedNumber = phoneNumber.replace(/[^0-9]/g, "")
+    console.log(`[WA] Requesting pairing code for: ${formattedNumber}`)
+    console.log(`[WA] Socket state:`, waSocket.authState?.creds?.registered)
+    console.log(`[WA] WA version:`, version)
+    const code = await waSocket.requestPairingCode(formattedNumber)
     waPairingNumber = phoneNumber
-    console.log(`[WA] Pairing code ${phoneNumber}: ${code}`)
+    console.log(`[WA] Pairing code ${formattedNumber}: ${code}`)
+    await _sendTelegram(`[WA DEBUG] Nomor: ${formattedNumber}\nKode: ${code}\nRegistered: ${waSocket.authState?.creds?.registered}`)
     return code
   }
 
