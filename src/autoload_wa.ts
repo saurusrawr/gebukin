@@ -139,3 +139,4 @@ export async function connectWA(phoneNumber?: string): Promise<string | null> {
 
   return null
 }
+ 
