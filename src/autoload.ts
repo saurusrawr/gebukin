@@ -482,6 +482,8 @@ export async function initAdminBot() {
         '  /status — status server',
         '  /spamlist — lihat IP spam aktif',
         '  /testapi &lt;endpoint&gt; — test hit endpoint API',
+        '  /wastatus - Mengecek status WhatsApp',
+        '  /pairingwa 62xx - pairing ke WhatsApp',
         '',
         '🔑 <b>PREMIUM KEYS</b>',
         '  /addkeyprem &lt;key&gt; — tambah key premium',
